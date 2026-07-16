@@ -753,12 +753,12 @@
       "TITLE": "防空第三旅",
       "EQ": "HQ-9 Hong",
       "DESC": "Generate: 1x Medium Range ADA token on the PRC Airbase",
-      "Spd": 1,
+      "Spd": 0,
       "Qty": 1,
       "Loc": "base",
       "VP": 2,
       "AcqR": 2,
-      "ShtR": -1,
+      "ShtR": 2,
       "Draftable": true,
       "Tags": [
         "SAM"
@@ -809,9 +809,7 @@
       "ShtR": -1,
       "Draftable": true,
       "Tags": [
-        "AEW",
-        "Fighter",
-        "Gen5"
+        "AEW"
       ],
       "winchesterType": "Standard",
       "hitThreshold": 2,
@@ -827,12 +825,12 @@
       "TITLE": "防空第五团",
       "EQ": "SA-21 Growler",
       "DESC": "Generate: 1x Long Range ADA token on the PRC Airbase",
-      "Spd": 1,
+      "Spd": 0,
       "Qty": 1,
       "Loc": "base",
       "VP": 2,
       "AcqR": 2,
-      "ShtR": -1,
+      "ShtR": 4,
       "Draftable": true,
       "Tags": [
         "SAM"
@@ -1072,7 +1070,7 @@
       "Type": "EN",
       "TITLE": "特殊任务飞机",
       "EQ": "PLAAF",
-      "DESC": "Choose: Roll 1d4 and acquire US tokens equal to roll OR",
+      "DESC": "Roll 1d4 and acquire US tokens equal to the roll.",
       "Use": "Single",
       "Draftable": true,
       "Authoritative": true,

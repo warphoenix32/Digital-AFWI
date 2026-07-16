@@ -1,7 +1,15 @@
-# AFWI RC1 Known Issues and Acceptance Notes
+# AFWI 1.0 Final - Acceptance Notes
 
-1. A complete four-ATO human hot-seat playthrough has not been performed inside this tool environment.
-2. Final validation on the exact DoD workstation, browser policy, display scaling, and Compatibility/Enterprise Mode configuration remains required.
-3. Host-authoritative LAN play is roadmap-only and is not present in RC1.
-4. A deterministic single-player computer opponent is not implemented or approved.
-5. Additional authoritative cards and content remain a future content-completion phase unless already represented in RC1.
+No open Phase One gameplay defect is known in this release.
+
+The following items are intentional boundaries rather than broken mechanics:
+
+1. The game is hot-seat only. Networked multiplayer is reserved for Phase Four.
+2. Reaction timing, hidden information, target selection, and card text that
+   offers a commander choice use explicit hot-seat prompts. This preserves the
+   human decisions in the physical board game.
+3. Final validation on the exact organizational workstation, browser policy,
+   display scaling, and enterprise compatibility configuration remains an
+   operational acceptance activity.
+4. Senior-leader visual polish and Quick Start are reserved for Phases Two and
+   Three respectively and were not added during Phase One.

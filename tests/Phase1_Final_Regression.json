@@ -1,0 +1,28 @@
+{
+  "release": "AFWI 1.0 Final",
+  "build": "1.0.0-final-phase1",
+  "date": "2026-07-16",
+  "result": "PASS",
+  "browser": "Google Chrome via Playwright",
+  "viewport": "1680x1050",
+  "named_playtests": 20,
+  "named_playtests_passed": 20,
+  "authoritative_cards": 88,
+  "authoritative_enablers_exercised": 68,
+  "campaigns_exercised": 5,
+  "complete_hot_seat_playthrough": "Meeting Engagement",
+  "maximum_campaign_progression": "Prolonged Combat, 5 ATOs",
+  "page_errors": 0,
+  "console_errors": 0,
+  "engine_validation_errors": 0,
+  "static_checks": {
+    "embedded_javascript_syntax": "PASS",
+    "authoritative_json_parse": "PASS",
+    "content_registry_validation": "PASS",
+    "local_asset_resolution": "PASS",
+    "remote_runtime_dependencies": "PASS",
+    "package_integrity_manifest": "PASS",
+    "diff_whitespace": "PASS",
+    "visual_qa_1680x1050": "PASS"
+  }
+}

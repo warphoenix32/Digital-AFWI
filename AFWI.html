@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AFWI 1.0 Candidate Phase 5.1</title>
+    <title>AFWI 1.0 Final</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #263238; padding: 0; color: #000; margin: 0; overflow-x: hidden; }
 
@@ -117,7 +117,7 @@
             <h2 style="margin-top:0; color:#0288d1;">AFWI Rules &amp; Mechanics Reference Guide</h2>
             <div class="rules-section">
                 <strong>1. Action Economy, Turn Structure & Passing</strong><br>
-                During your active Turn, you are allocated a global shared action pool consisting of exactly <strong>1 Move</strong>, <strong>1 Acquire</strong>, and <strong>1 Shoot</strong> action. You do not have to use all actions, and they can be executed by different tokens in any sequence. Additionally, you are limited to activating exactly <strong>1 Squadron card per turn</strong>. A round continues with alternating turns until both commanders choose to consecutively PASS, ending the current ATO Cycle.
+                During your active Turn, you are allocated a global shared action pool consisting of exactly <strong>1 Move</strong>, <strong>1 Acquire</strong>, and <strong>1 Shoot</strong> action. You do not have to use all actions, and they can be executed by different tokens in any sequence. Additionally, you may activate up to <strong>1 Squadron card per turn</strong>. Deploying a Squadron consumes the turn's remaining MAS actions, but legal Enabler play remains available. A round continues with alternating turns until both commanders choose to consecutively PASS, ending the current ATO Cycle.
             </div>
             <div class="rules-section">
                 <strong>2. The ATO Cycle Phases</strong><br>
@@ -132,7 +132,7 @@
             </div>
             <div class="rules-section">
                 <strong>3. Bidding for Initiative &amp; the Cyber Track</strong><br>
-                The commander who wins the Initiative Bid gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (+1 d4 roll)</strong> on all Acquisition checks.
+                The commander who wins the Initiative Bid gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (roll 2d4 and keep the higher die)</strong> on Acquisition checks.
             </div>
             <div class="rules-section">
                 <strong>4. Intel Domain, Active ID &amp; Fog of War</strong><br>
@@ -144,12 +144,12 @@
             </div>
             <div class="rules-section">
                 <strong>6. Combat, Munitions, &amp; the Winchester Rule</strong><br>
-                Fighters, bombers, and ships must roll equal to or higher than the target's acquisition threshold (usually 2+) to score a hit. Upon firing a shot, you must roll a d4 to check weapon depletion:
+                Armed units roll equal to or higher than their printed hit threshold to score a hit. Target acquisition uses the target's separate acquisition threshold before an attack may be declared. The natural attack die also determines weapon depletion:
                 <ul>
                     <li><strong>Winchester Penalty:</strong> If the roll is a 1, 2, or 3, the unit expends its ordnance and is marked as <strong>Winchester [W]</strong>. It must return to its home airbase to re-arm at the beginning of its next turn.</li>
                     <li><strong>Ammo Conservation:</strong> Rolling a Natural 4 represents a critical success where the asset destroys its target without exhausting its payload. It remains armed on the board.</li>
                     <li><strong>Infinite Drone Ammo:</strong> Drones (UAS) carry highly efficient payloads and only go Winchester on a roll of 1 or 2.</li>
-                    <li><strong>Exploding Dice:</strong> Heavy ground strikes (bombers/missiles) rolling a Natural 4 trigger "Exploding Dice", allowing an immediate bonus 1d4 damage roll.</li>
+                    <li><strong>Explosive Damage:</strong> A successful explosive air-to-surface attack rolls a separate 1d4 for damage. Missile Defense imposes Disadvantage on both the hit roll and this damage roll.</li>
                 </ul>
             </div>
             <div class="rules-section">
@@ -289,7 +289,13 @@
                 <button class="btn btn-warn" onclick="toggleModal('rules-overlay')">Open Full Rules &amp; Mechanics Reference</button>
             </div>
         </div>
-        <button class="btn" style="width:100%; font-size:16px;" onclick="beginSetupSequence()">Acknowledge & Begin Setup</button>
+        <div class="scenario-box" style="border-left-color:#f57f17;">
+            <strong>SELECT CAMPAIGN:</strong>
+            <p style="font-size:12px; color:#546e7a; margin:6px 0 12px;">Campaign rules control ATO length, legal forces, missions, postures, and special scoring. First-time players should use Meeting Engagement.</p>
+            <div id="campaign-list" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div id="campaign-summary" style="margin-top:10px; font-size:12px; line-height:1.5;"></div>
+        </div>
+        <button id="btn-begin-campaign" class="btn" style="width:100%; font-size:16px;" onclick="beginSetupSequence()">Acknowledge & Begin Setup</button>
     </div>
 
     <!-- COMBINED SETUP UI (Posture -> Mission -> Draft) -->
@@ -381,7 +387,7 @@
     <!-- PHASE 3: GAME -->
     <div id="game-ui">
         <div class="top-nav">
-            <h3 style="margin:0;">AFWI RC1</h3>
+            <h3 style="margin:0;">AFWI 1.0 FINAL</h3>
             <div>
                 <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
                 <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
@@ -467,6 +473,21 @@
 
         var MISSIONS = {"US":[{"id":"mU1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mU2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mU3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mU4","title":"N-K DOMINANCE","desc":"Score at end of each ATO. +3 VP x US Cyber Rate +1VP for each electronic-warfare, Cyber, or non-kinetic card played."},{"id":"mU5","title":"ENFORCE RULE OF LAW","desc":"Score at the end of each turn. +2 VP for each squadron card activated during turn. +1 VP for each token generated by Enabler Card during turn."}],"PRC":[{"id":"mP1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mP2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mP3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mP4","title":"THREE DOMINANCES","desc":"Score at end of each ATO. +2 VP x PRC Cyber Rate, +3 VP for each Naval unit on board, +1 VP for each Naval Enabler card played, and each intact Squadron."},{"id":"mP5","title":"COUNTER-INTERVENTION","desc":"+3 VP for each enemy Air Token destroyed on the ground. +1 VP for each PLARF card played."}]};
 
+        // Published Player Guide campaigns. The digital game applies these
+        // constraints directly so campaign selection is no longer cosmetic.
+        var CAMPAIGNS = [
+            { id:"campaign-1", title:"MEETING ENGAGEMENT", rounds:1, missions:["ATTRITION"], postures:["STANDARD"],
+              desc:"Introductory one-ATO fighter engagement.", fixedSquadrons:{US:["US-AUTH-SQ-10"],PRC:["PRC-AUTH-SQ-06"]}, noEnablers:true },
+            { id:"campaign-2", title:"TOURNAMENT", rounds:2, missions:["ATTRITION"], postures:["STANDARD"],
+              desc:"Two-ATO competitive campaign with alternating initiative and no initiative-card sacrifice.", tournamentInitiative:true },
+            { id:"campaign-3", title:"PROLONGED COMBAT", rounds:5, missions:null, postures:null,
+              desc:"Full five-ATO campaign using all legal resources." },
+            { id:"campaign-4", title:"THE WORLD WATCHES", rounds:2, missions:null, postures:null,
+              desc:"Two-ATO campaign; no long-range missiles, SOF, or bomber squadrons. Air kills earn up to +2 bonus VP per ATO.", worldOpinion:true },
+            { id:"campaign-5", title:"RESERVES", rounds:2, missions:null, postures:null,
+              desc:"Two-ATO second-line fight; no fifth-generation aircraft, bombers, or PRC long-range ADA. Intact squadrons score at campaign end.", reserves:true }
+        ];
+
         // Phase 1 Refactor: Map core stats directly to unit records, strip deprecated ammo pools
         var MASTER_DECK = [
           // US SQUADRONS
@@ -526,24 +547,80 @@
             MASTER_DECK = keep;
         })();
 
-        var phase5Metrics = {
-            US: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 },
-            PRC: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 }
+        // English operational labels replace corrupted legacy encoding in the
+        // embedded PRC titles while preserving the authoritative card IDs.
+        var PRC_OPERATIONAL_TITLES = {
+            "PRC-AUTH-SQ-01":"UAS REGIMENT", "PRC-AUTH-SQ-02":"3RD AIR DEFENSE BRIGADE", "PRC-AUTH-SQ-03":"UAS BRIGADE", "PRC-AUTH-SQ-04":"AEW REGIMENT", "PRC-AUTH-SQ-05":"5TH AIR DEFENSE REGIMENT",
+            "PRC-AUTH-SQ-06":"124TH AIR BRIGADE", "PRC-AUTH-SQ-07":"8TH BOMBER DIVISION", "PRC-AUTH-SQ-08":"5TH AIR BRIGADE", "PRC-AUTH-SQ-09":"26TH AIR BRIGADE", "PRC-AUTH-SQ-10":"126TH AIR BRIGADE",
+            "PRC-AUTH-EN-01":"ANTI-ACCESS / AREA DENIAL", "PRC-AUTH-EN-02":"AERIAL REFUELING", "PRC-AUTH-EN-03":"RESERVE AIR FORCE", "PRC-AUTH-EN-04":"UAS PROLIFERATION", "PRC-AUTH-EN-05":"ELITE PILOTS",
+            "PRC-AUTH-EN-06":"GROUND-BASED RADAR", "PRC-AUTH-EN-07":"H-6K GOD OF WAR", "PRC-AUTH-EN-08":"SPECIAL MISSION AIRCRAFT", "PRC-AUTH-EN-09":"SOF RECONNAISSANCE", "PRC-AUTH-EN-10":"MUNITIONS UPGRADE",
+            "PRC-AUTH-EN-11":"BALLISTIC MISSILE STRIKE", "PRC-AUTH-EN-12":"LAND-ATTACK CRUISE MISSILE", "PRC-AUTH-EN-13":"MARITIME STRIKE CRUISE MISSILE", "PRC-AUTH-EN-14":"HYPERSONIC MISSILE", "PRC-AUTH-EN-15":"DECOY WARHEADS",
+            "PRC-AUTH-EN-16":"NETWORK INFILTRATION", "PRC-AUTH-EN-17":"OFFENSIVE CYBER OPERATIONS", "PRC-AUTH-EN-18":"DEFENSIVE CYBER OPERATIONS", "PRC-AUTH-EN-19":"CYBER OPERATIONS", "PRC-AUTH-EN-20":"CYBER COUNTER-UAS",
+            "PRC-AUTH-EN-21":"SPACE-BASED ELECTRONIC WARFARE", "PRC-AUTH-EN-22":"SATELLITE CONSTELLATION REBUILD", "PRC-AUTH-EN-23":"COUNTER SPACE", "PRC-AUTH-EN-24":"ANTI-SATELLITE STRIKE", "PRC-AUTH-EN-25":"SPACE RECONNAISSANCE",
+            "PRC-AUTH-EN-26":"SHANDONG CARRIER AIR WING", "PRC-AUTH-EN-27":"GUIDED MISSILE CRUISER", "PRC-AUTH-EN-28":"GUIDED MISSILE DESTROYER", "PRC-AUTH-EN-29":"MISSILE BOAT FLOTILLA", "PRC-AUTH-EN-30":"DIESEL SUBMARINE ATTACK",
+            "PRC-AUTH-EN-31":"JIAOLONG COMMANDO ATTACK", "PRC-AUTH-EN-32":"MARINE CORPS RAID", "PRC-AUTH-EN-33":"SOF CYBER INFILTRATION", "PRC-AUTH-EN-34":"SOF RECONNAISSANCE"
         };
+
+        // Token-face rules distilled from the Player Guide and supplied token
+        // artwork. targetAcq is the roll required to identify the token;
+        // attackThreshold is the weapon hit roll shown on the token face.
+        (function applyAuthoritativeUnitProfiles() {
+            for(var i=0;i<MASTER_DECK.length;i++) {
+                var c=MASTER_DECK[i];
+                if(PRC_OPERATIONAL_TITLES[c.ID]) c.TITLE=PRC_OPERATIONAL_TITLES[c.ID];
+                if(c.ID==="PRC-AUTH-EN-08") c.DESC="Roll 1d4 and acquire US tokens equal to the roll.";
+                if(c.Type!=="SQ") continue;
+                if(c.ID==="PRC-AUTH-SQ-04") c.Tags=["AEW"];
+                if(c.ID==="PRC-AUTH-SQ-02") { c.Spd=0; c.ShtR=2; }
+                if(c.ID==="PRC-AUTH-SQ-05") { c.Spd=0; c.ShtR=4; }
+                c.targetAcq = 2;
+                c.attackThreshold = (typeof c.hitThreshold === "number") ? c.hitThreshold : 2;
+                c.canAttackAir = c.ShtR >= 0 && !(c.Tags && (c.Tags.indexOf("Bomber")>=0 || c.Tags.indexOf("UAS")>=0));
+                c.canAttackSurface = c.ShtR >= 0 && !(c.Tags && c.Tags.indexOf("AEW")>=0);
+                if(c.Tags && c.Tags.indexOf("UAS")>=0) { c.targetAcq=3; c.attackThreshold=3; c.canAttackAir=false; c.canAttackSurface=true; }
+                if(c.Tags && c.Tags.indexOf("Bomber")>=0) { c.attackThreshold=2; c.canAttackAir=false; c.canAttackSurface=true; }
+                if(c.Tags && c.Tags.indexOf("AEW")>=0) { c.canAttackAir=false; c.canAttackSurface=false; }
+                if(c.Tags && c.Tags.indexOf("SAM")>=0) { c.canAttackAir=true; c.canAttackSurface=false; }
+                if(c.Tags && c.Tags.indexOf("Naval")>=0) { c.canAttackAir=true; c.canAttackSurface=true; }
+                if(c.ID==="US-AUTH-SQ-10" || c.ID==="PRC-AUTH-SQ-06" || c.ID==="PRC-AUTH-SQ-10") c.targetAcq=3;
+            }
+        })();
+
+        var phase5Metrics = {
+            US: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0, worldOpinionVP:0, airKills:0 },
+            PRC: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0, worldOpinionVP:0, airKills:0 }
+        };
+
+        function chooseFromList(items, heading, formatter) {
+            if(!items || !items.length) return null;
+            if(items.length===1) return items[0];
+            var menu=heading+'\n';
+            for(var i=0;i<items.length;i++) menu+=(i+1)+'. '+formatter(items[i])+'\n';
+            var selected=parseInt(prompt(menu,'1'),10)-1;
+            if(isNaN(selected)||selected<0||selected>=items.length) selected=0;
+            return items[selected];
+        }
+
+        function tokenChoiceLabel(tok) {
+            return (tok.acquired===false?'UNIDENTIFIED TRACK':tok.name)+' at '+tok.loc;
+        }
 
         function phase5AcquireEnemy(side, count) {
             var enemy = side === 'US' ? 'PRC' : 'US'; var candidates=[];
             for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && !state.tokens[i].acquired) candidates.push(state.tokens[i]);
-            for(var j=0;j<count && j<candidates.length;j++) candidates[j].acquired=true;
-            logPub(side+' authoritative reconnaissance acquired '+Math.min(count,candidates.length)+' target(s).');
+            var acquired=0;
+            while(acquired<count && candidates.length) {
+                var chosen=chooseFromList(candidates,side+' COMMANDER: choose a track to acquire.',tokenChoiceLabel);
+                chosen.acquired=true; candidates.splice(candidates.indexOf(chosen),1); acquired++;
+            }
+            logPub(side+' authoritative reconnaissance acquired '+acquired+' target(s).');
         }
         function phase5DestroyEnemyUAS(side,count) {
-            var enemy=side==='US'?'PRC':'US', removed=0;
-            for(var i=state.tokens.length-1;i>=0 && removed<count;i--) { var t=state.tokens[i]; if(t.side===enemy && t.tags && t.tags.indexOf('UAS')>=0) { recordAircraftLoss(t); state.tokens.splice(i,1); removed++; } }
-            logPub(side+' Counter-UAS destroyed '+removed+' UAS token(s).');
+            return removeEnemyTokens(side,count,function(t){return t.tags&&t.tags.indexOf('UAS')>=0;},'Counter-UAS');
         }
         function phase5BaseDamage(side,damage) {
             var enemy=side==='US'?'PRC':'US', p=state[enemy.toLowerCase()], applied=Math.min(damage,Math.max(0,3-p.airbaseStrikes));
+            if(applied>0 && offerBaseDamageCancellation(enemy)) { logPub(enemy+' cancelled all base damage.'); return 0; }
             p.airbaseStrikes += applied; state[side.toLowerCase()].vp += applied;
             logPub(side+' base strike inflicted '+applied+' scoring strike(s), +'+applied+' VP.');
         }
@@ -554,10 +631,12 @@
         }
         function generatedUnitSpec(c) {
             var d=(c.DESC||'').toLowerCase(), side=c.Side;
-            if(d.indexOf('j-15')>=0) return {qty:4,name:'J-15 Flanker-X2',tags:['Naval','Carrier','Fighter','Gen4'],spd:2,acqR:1,shtR:1,hitThreshold:2,winchesterType:'Standard',salvos:null,asset:'assets/tokens/prc/j15.png'};
-            if(d.indexOf('guided missile cruiser')>=0) return {qty:1,name:'Type 055 Renhai CG',tags:['Naval','SAG','SAM'],spd:1,acqR:3,shtR:3,hitThreshold:2,winchesterType:'Salvo',salvos:9,asset:'assets/tokens/prc/ddg.png'};
-            if(d.indexOf('guided missile destroyer')>=0 || d.indexOf('ddg 81')>=0 || d.indexOf('ddg 115')>=0) return {qty:1,name:side==='US'?'Arleigh Burke DDG': 'Type 052D Luyang III DDG',tags:['Naval','SAG','SAM'],spd:1,acqR:3,shtR:3,hitThreshold:2,winchesterType:'Salvo',salvos:side==='US'?7:7,asset:side==='US'?'assets/tokens/us/ddg.png':'assets/tokens/prc/ddg.png'};
-            if(d.indexOf('missile boat flotilla')>=0) return {qty:1,name:'Type 022 Houbei Flotilla',tags:['Naval','SAG'],spd:1,acqR:2,shtR:2,hitThreshold:3,winchesterType:'Salvo',salvos:2,asset:'assets/tokens/prc/ddg.png'};
+            if(d.indexOf('j-15')>=0) return {qty:4,name:'J-15 Flanker-X2',tags:['Naval','Carrier','Fighter','Gen4'],spd:2,acqR:2,shtR:1,hitThreshold:2,targetAcq:2,canAttackAir:true,canAttackSurface:true,winchesterType:'Standard',salvos:null,asset:'assets/tokens/prc/j15.png'};
+            if(d.indexOf('guided missile cruiser')>=0) return {qty:1,name:'Type 055 Renhai CG',tags:['Naval','SAG','SAM'],spd:1,acqR:2,shtR:3,hitThreshold:2,targetAcq:2,canAttackAir:true,canAttackSurface:true,winchesterType:'Salvo',salvos:9,asset:'assets/tokens/prc/ddg.png'};
+            if(d.indexOf('guided missile destroyer')>=0 || d.indexOf('ddg 81')>=0 || d.indexOf('ddg 115')>=0) return {qty:1,name:side==='US'?'Arleigh Burke DDG': 'Type 052D Luyang III DDG',tags:['Naval','SAG','SAM'],spd:1,acqR:2,shtR:3,hitThreshold:2,targetAcq:2,canAttackAir:true,canAttackSurface:true,winchesterType:'Salvo',salvos:side==='US'?7:7,asset:side==='US'?'assets/tokens/us/ddg.png':'assets/tokens/prc/ddg.png'};
+            if(d.indexOf('missile boat flotilla')>=0) return {qty:1,name:'Type 022 Houbei Flotilla',tags:['Naval','SAG'],spd:1,acqR:2,shtR:2,hitThreshold:3,targetAcq:2,canAttackAir:false,canAttackSurface:true,winchesterType:'Salvo',salvos:2,asset:'assets/tokens/prc/ddg.png'};
+            if(/ec-130|compass call/.test(d+(c.Equipment||'').toLowerCase())) return {qty:1,name:'EC-130 Compass Call',tags:['AEW','EW'],spd:1,acqR:3,shtR:-1,hitThreshold:2,targetAcq:2,canAttackAir:false,canAttackSurface:false,winchesterType:'Standard',salvos:null,asset:'assets/tokens/us/aew.png'};
+            if(/ada token|nasam|air defense/.test(d+(c.Equipment||'').toLowerCase())) return {qty:1,name:side==='US'?'NASAMS ADA':'PRC ADA',tags:['SAM'],spd:0,acqR:2,shtR:2,hitThreshold:2,targetAcq:2,canAttackAir:true,canAttackSurface:false,winchesterType:'None',salvos:null,asset:side==='US'?'assets/tokens/us/ada.png':'assets/tokens/prc/ada.png'};
             var m=(c.DESC||'').match(/Generate:\s*(\d+)x\s*([^\n.]+)/i);
             if(m) {
                 var equipment=(c.Equipment||m[2]||c.TITLE), low=equipment.toLowerCase(), asset='', tags=[];
@@ -575,6 +654,104 @@
                 if(asset) return {qty:parseInt(m[1],10),name:equipment,tags:tags,spd:tags.indexOf('SAM')>=0?0:1,acqR:2,shtR:tags.indexOf('AEW')>=0?-1:1,hitThreshold:2,winchesterType:tags.indexOf('UAS')>=0?'Infinite':'Standard',salvos:null,asset:asset};
             }
             return null;
+        }
+
+        function removeEnemyTokens(side,count,predicate,label) {
+            var enemy=side==='US'?'PRC':'US', removed=0, candidates=[];
+            for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && (!predicate || predicate(state.tokens[i]))) candidates.push(state.tokens[i]);
+            while(removed<count && candidates.length) {
+                var tok=chooseFromList(candidates,side+' COMMANDER: choose target for '+(label||'effect')+'.',tokenChoiceLabel);
+                recordTokenLoss(tok); checkMissionVP(tok); state.tokens.splice(state.tokens.indexOf(tok),1); offerLossRecovery(tok);
+                candidates.splice(candidates.indexOf(tok),1); removed++;
+            }
+            logPub((label||'Effect')+': removed '+removed+' enemy token(s).');
+            return removed;
+        }
+
+        function discardEnemyEnablers(side,count) {
+            var enemy=side==='US'?'PRC':'US', opp=state[enemy.toLowerCase()], removed=0;
+            while(opp.enHand.length && removed<count) {
+                var card=chooseFromList(opp.enHand,'PASS DEVICE TO '+enemy+' COMMANDER. Choose an Enabler to discard.',function(c){return c.TITLE;});
+                opp.enHand.splice(opp.enHand.indexOf(card),1); opp.discarded.push(card); removed++;
+            }
+            logPub(side+' effect forced '+enemy+' to discard '+removed+' Enabler card(s).');
+            return removed;
+        }
+
+        function recoverLastAircraft(side) {
+            var player=state[side.toLowerCase()], lost=null;
+            for(var i=player.losses.length-1;i>=0;i--) if(player.losses[i].parentSqId && !(player.losses[i].tags&&player.losses[i].tags.indexOf('Naval')>=0)) { lost=player.losses.splice(i,1)[0]; break; }
+            if(!lost) return false;
+            var record=player.squadronLedger[lost.parentSqId];
+            if(record) record.remainingQty=Math.min(record.maxQty,record.remainingQty+1);
+            lost.loc=side==='US'?'lane-5':'lane-1'; lost.winchester=false; lost.rogue=false; lost.acquired=false;
+            state.tokens.push(lost); logPub(side+' recovered '+lost.name+' to its first range band.'); return true;
+        }
+
+        function recoverDiscardedCard(side) {
+            var player=state[side.toLowerCase()];
+            if(!player.discarded.length) return false;
+            var card=chooseFromList(player.discarded,side+' COMMANDER: choose a discarded card to recover.',function(c){return c.TITLE+' ['+c.Type+']';});
+            player.discarded.splice(player.discarded.indexOf(card),1);
+            if(card.Type==='SQ') player.sqHand.push(card); else player.enHand.push(card);
+            var master=getMasterCard(card.ID); if(master) master.Draftable=true;
+            logPub(side+' recovered '+card.TITLE+' from the discard pile.'); return true;
+        }
+
+        function addExtraSquadronToHand(side) {
+            var choices=[];
+            for(var i=0;i<MASTER_DECK.length;i++) {
+                var card=MASTER_DECK[i];
+                var already=false, player=state[side.toLowerCase()];
+                for(var h=0;h<player.sqHand.length;h++) if(player.sqHand[h].ID===card.ID) already=true;
+                for(var ds=0;ds<player.deployedSquadrons.length;ds++) if(player.deployedSquadrons[ds].cardId===card.ID) already=true;
+                if(!already && card.Side===side && card.Type==='SQ' && card.Draftable && cardAllowedByCampaign(card) && isSquadronAvailable(card)) choices.push(card);
+            }
+            if(!choices.length) return false;
+            var menu='Choose an additional Squadron number:\n';
+            for(var j=0;j<choices.length;j++) menu+=(j+1)+'. '+choices[j].TITLE+' ('+choices[j].EQ+')\n';
+            var selected=parseInt(prompt(menu,'1'),10)-1;
+            if(isNaN(selected)||selected<0||selected>=choices.length) return false;
+            state[side.toLowerCase()].sqHand.push(JSON.parse(JSON.stringify(choices[selected])));
+            state[side.toLowerCase()].draftedSquadrons[choices[selected].ID]=true;
+            logPub(side+' added '+choices[selected].TITLE+' beyond the Posture limit.'); return true;
+        }
+
+        function resolveCyberChoice(side,countMultiplier) {
+            var player=state[side.toLowerCase()], count=Math.max(0,player.cyber*(countMultiplier||1));
+            if(confirm('OK: remove enemy tokens. Cancel: force enemy Enabler discards.')) removeEnemyTokens(side,count,null,'Offensive Cyber');
+            else discardEnemyEnablers(side,count);
+            return true;
+        }
+
+        function resolveReconWithOptionalCyber(c,side,pState) {
+            var roll=rollD4('normal',0,false), count=roll.val;
+            phase5AcquireEnemy(side,count);
+            if(/increase cyber rate.*4|if rolled 4/i.test(c.DESC||'') && roll.nat===4) { pState.cyber=Math.min(4,pState.cyber+1); logPub(c.TITLE+': natural 4 also increased Cyber Rate.'); checkCyberWin(); }
+            return true;
+        }
+
+        function resolveBaseStrikeCard(c,side,unblockable) {
+            var d=c.DESC||'', hitRequired=/roll 2\+|roll 2 or higher/i.test(d), mode='normal';
+            if(!unblockable) {
+                var defendingSide=side==='US'?'PRC':'US', defenders=[];
+                for(var i=0;i<state.tokens.length;i++) {
+                    var dt=state.tokens[i];
+                    if(dt.side===defendingSide && dt.tags && dt.tags.indexOf('SAM')>=0 && !dt.winchester && (dt.winchesterType!=='Salvo'||dt.salvos>0)) defenders.push(dt);
+                }
+                if(defenders.length && confirm('PASS DEVICE TO '+defendingSide+' COMMANDER. Use Missile Defense against '+c.TITLE+'?')) {
+                    var chosenDefender=chooseFromList(defenders,defendingSide+' COMMANDER: choose a Missile Defense unit.',function(unit){return unit.name+' at '+unit.loc;});
+                    if(!offerMissileDefenseCounter(side)) {
+                        mode='dis';
+                        if(chosenDefender.winchesterType==='Salvo') chosenDefender.salvos=Math.max(0,chosenDefender.salvos-1);
+                        logPub(defendingSide+' Missile Defense imposed Disadvantage on '+c.TITLE+'.');
+                    }
+                }
+            }
+            if(hitRequired) { var hit=rollD4(mode,0,false); if(hit.val<2) { logPub(c.TITLE+': strike failed ('+hit.log+').'); return true; } }
+            var damage=rollD4(mode,0,false).val;
+            phase5BaseDamage(side,damage);
+            return true;
         }
         function validateEnablerEffect(c,side,pState,oppState) {
             var d=(c.DESC||'').toLowerCase();
@@ -600,7 +777,7 @@
             var spec=generatedUnitSpec(c); if(!spec) return false;
             var loc=chooseGeneratedLocation(side); if(!loc) return false;
             var before=state.tokens.length;
-            for(var i=0;i<spec.qty;i++) state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,assetPath:spec.asset,generatedByEnabler:true});
+            for(var i=0;i<spec.qty;i++) state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,targetAcq:spec.targetAcq||2,attackThreshold:spec.attackThreshold||spec.hitThreshold||2,canAttackAir:spec.canAttackAir!==false,canAttackSurface:spec.canAttackSurface!==false,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,assetPath:spec.asset,generatedByEnabler:true});
             var made=state.tokens.length-before;
             phase5Metrics[side].enablerUnitTokensGenerated+=made; phase5Metrics[side].enablerUnitTokensGeneratedThisTurn+=made;
             logPub(c.TITLE+': generated '+made+' '+spec.name+' token(s) in '+loc+'.'); return made>0;
@@ -610,6 +787,52 @@
             if((c.Family && /(cyber|electronic|information|space)/i.test(c.Family)) || /cyber|electronic|non-kinetic/i.test((c.EQ||'')+' '+(c.DESC||''))) phase5Metrics[side].enablerCategoriesPlayed++;
             if((c.Family && /nav|maritime|plan/i.test(c.Family)) || /naval|ship|destroyer|cruiser|carrier|missile boat/i.test((c.DESC||'')+' '+(c.Equipment||''))) phase5Metrics[side].navalEnablersPlayed++;
             if(c.Family && /plarf/i.test(c.Family)) phase5Metrics[side].plarfPlayed++;
+            switch(c.ID) {
+                case 'US-AUTH-EN-02': case 'US-AUTH-EN-07': return recoverLastAircraft(side);
+                case 'US-AUTH-EN-03': pState.buffs.nextAutoHit=true; logPub(c.TITLE+': next air-to-surface attack automatically hits.'); return true;
+                case 'US-AUTH-EN-04': case 'PRC-AUTH-EN-34': return resolveReconWithOptionalCyber(c,side,pState);
+                case 'US-AUTH-EN-05': case 'US-AUTH-EN-12': case 'PRC-AUTH-EN-16': case 'PRC-AUTH-EN-33':
+                    var cyberRoll=rollD4(pState.buffs.nextCyb,0,false), cyberNeed=Math.min(4,pState.cyber+1); pState.buffs.nextCyb='normal';
+                    if(cyberRoll.val>=cyberNeed) pState.cyber=Math.min(4,pState.cyber+1);
+                    logPub(c.TITLE+': '+cyberRoll.log+(cyberRoll.val>=cyberNeed?' SUCCESS (+1 Cyber).':' FAILED (needed '+cyberNeed+'+).')); checkCyberWin(); return true;
+                case 'US-AUTH-EN-06': case 'PRC-AUTH-EN-02': return addExtraSquadronToHand(side);
+                case 'US-AUTH-EN-08': return recoverDiscardedCard(side);
+                case 'US-AUTH-EN-09': pState.buffs.airAttackMode='adv'; logPub(c.TITLE+': air-to-air attacks have Advantage for this ATO.'); return true;
+                case 'US-AUTH-EN-10': pState.buffs.contingencyAutoGenerate=true; logPub(c.TITLE+': Contingency Location generates maximum aircraft this ATO.'); return true;
+                case 'US-AUTH-EN-13': case 'PRC-AUTH-EN-18': oppState.cyber=Math.max(0,oppState.cyber-1); logPub(c.TITLE+': enemy Cyber Rate degraded by 1.'); return true;
+                case 'US-AUTH-EN-14': case 'PRC-AUTH-EN-17': return resolveCyberChoice(side,1);
+                case 'US-AUTH-EN-15': case 'PRC-AUTH-EN-20': phase5DestroyEnemyUAS(side,pState.cyber); return true;
+                case 'US-AUTH-EN-16': oppState.buffs.acquisitionMode='dis'; logPub(c.TITLE+': enemy acquisition rolls have Disadvantage this ATO.'); return true;
+                case 'US-AUTH-EN-17': oppState.buffs.attackMode='dis'; logPub(c.TITLE+': enemy attacks have Disadvantage this ATO.'); return true;
+                case 'US-AUTH-EN-18': pState.buffs.attackMode='adv'; logPub(c.TITLE+': attacks have Advantage this ATO.'); return true;
+                case 'US-AUTH-EN-20': return spawnGeneratedUnit(c,side);
+                case 'US-AUTH-EN-23': oppState.cyber=Math.max(0,oppState.cyber-2); logPub(c.TITLE+': enemy Cyber Rate degraded by 2.'); return true;
+                case 'US-AUTH-EN-24': return resolveCyberChoice(side,2);
+                case 'US-AUTH-EN-25': oppState.buffs.attackMode='dis'; logPub(c.TITLE+': enemy base attacks have Disadvantage this ATO.'); return true;
+                case 'US-AUTH-EN-26': case 'US-AUTH-EN-27': return spawnGeneratedUnit(c,side);
+                case 'US-AUTH-EN-30': pState.buffs.sofProtected=true; logPub(c.TITLE+': bases are protected against SOF attacks this ATO.'); return true;
+                case 'US-AUTH-EN-31': return resolveBaseStrikeCard(c,side,false);
+                case 'US-AUTH-EN-32': var spawned=spawnGeneratedUnit(c,side); if(!spawned) return false; return resolveBaseStrikeCard(c,side,false);
+                case 'US-AUTH-EN-33': removeEnemyTokens(side,1,function(t){return t.tags&&t.tags.indexOf('Naval')>=0;},c.TITLE); return true;
+                case 'US-AUTH-EN-34': removeEnemyTokens(side,1,function(t){return t.tags&&t.tags.indexOf('Naval')>=0;},c.TITLE); return true;
+                case 'PRC-AUTH-EN-03':
+                    for(var lid in pState.squadronLedger) if(pState.squadronLedger.hasOwnProperty(lid) && pState.squadronLedger[lid].remainingQty===0 && !pState.squadronLedger[lid].destroyed) { pState.squadronLedger[lid].remainingQty=pState.squadronLedger[lid].maxQty; var reserveCard=getMasterCard(lid); if(reserveCard) pState.sqHand.push(JSON.parse(JSON.stringify(reserveCard))); logPub(c.TITLE+': '+lid+' fully regenerated.'); return true; }
+                    return false;
+                case 'PRC-AUTH-EN-04': pState.buffs.nextUASReroll=true; logPub(c.TITLE+': next UAS acquisition may reroll or make an additional attempt.'); return true;
+                case 'PRC-AUTH-EN-05': pState.buffs.nextAtk='adv'; logPub(c.TITLE+': next air-to-air attack has Advantage.'); return true;
+                case 'PRC-AUTH-EN-06': case 'PRC-AUTH-EN-09': case 'PRC-AUTH-EN-19': case 'PRC-AUTH-EN-25': return resolveReconWithOptionalCyber(c,side,pState);
+                case 'PRC-AUTH-EN-07': pState.buffs.bomberAttackMode='adv'; logPub(c.TITLE+': H-6K attacks have Advantage this ATO.'); return true;
+                case 'PRC-AUTH-EN-10': pState.buffs.fighterRange=4; logPub(c.TITLE+': one fighter squadron may attack at range 4 this ATO; select the intended fighter when firing.'); return true;
+                case 'PRC-AUTH-EN-11': case 'PRC-AUTH-EN-12': case 'PRC-AUTH-EN-14': return resolveBaseStrikeCard(c,side,/unblockable/i.test(c.DESC||''));
+                case 'PRC-AUTH-EN-31': case 'PRC-AUTH-EN-32': if(oppState.buffs.sofProtected) { logPub(c.TITLE+': attack prevented by Infantry Battalion protection.'); return true; } return resolveBaseStrikeCard(c,side,true);
+                case 'PRC-AUTH-EN-13': case 'PRC-AUTH-EN-30': removeEnemyTokens(side,1,function(t){return t.tags&&t.tags.indexOf('Naval')>=0;},c.TITLE); return true;
+                case 'PRC-AUTH-EN-21': oppState.buffs.attackMode='dis'; logPub(c.TITLE+': enemy attacks have Disadvantage this ATO.'); return true;
+                case 'PRC-AUTH-EN-22':
+                    var spentPLASSF=[]; for(var di=0;di<pState.discarded.length;di++) if(pState.discarded[di].Family && /PLASSF/i.test(pState.discarded[di].Family)) spentPLASSF.push(pState.discarded[di]);
+                    if(spentPLASSF.length) { var restored=chooseFromList(spentPLASSF,'PRC COMMANDER: choose a spent PLASSF card to restore.',function(card){return card.TITLE;}); pState.discarded.splice(pState.discarded.indexOf(restored),1); pState.enHand.push(restored); logPub(c.TITLE+': restored '+restored.TITLE+'.'); return true; }
+                    return false;
+                case 'PRC-AUTH-EN-26': case 'PRC-AUTH-EN-27': case 'PRC-AUTH-EN-28': case 'PRC-AUTH-EN-29': return spawnGeneratedUnit(c,side);
+            }
             if(/acquire .*equal to (the roll|your cyber rate)/i.test(c.DESC||'')) { var n=/cyber rate/i.test(c.DESC||'')?pState.cyber:rollD4('normal',0,false).val; phase5AcquireEnemy(side,n); return true; }
             if(/improve your .*cyber rate by 1/i.test(c.DESC||'')) { var r=rollD4(pState.buffs.nextCyb,0,false); pState.buffs.nextCyb='normal'; if(r.val>=2) pState.cyber++; logPub(c.TITLE+': '+r.log+(r.val>=2?' SUCCESS (+1 Cyber).':' FAILED.')); checkCyberWin(); return true; }
             if(/degrade .*cyber rate by 2/i.test(c.DESC||'')) { oppState.cyber=Math.max(0,oppState.cyber-2); logPub(c.TITLE+': enemy Cyber -2.'); return true; }
@@ -625,6 +848,7 @@
         // STATE ENGINE
         var state = { 
             round: 1, maxRounds: 4, turnSide: 'US', consecutivePasses: 0,
+            campaign: null, initiativeHistory: [],
             phase: 'landing', actionLocked: false, gameOver: false, engineErrors: [],
             tokens: [], selected: null, sqDeployedThisTurn: 0,
             acts: { move: 1, acq: 1, sht: 1 }, 
@@ -633,8 +857,8 @@
             revealedUSenCount: 0, 
             revealedPRCenCount: 0,
             usLog: [], prcLog: [], sitrep: [],
-            us: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, sqHand: [], enHand: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false }, posture: null, lastPostureId: null, mission: null },
-            prc: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, sqHand: [], enHand: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false }, posture: null, lastPostureId: null, mission: null }
+            us: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, draftedSquadrons:{}, sqHand: [], enHand: [], discarded: [], losses: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false, attackMode:'normal', acquisitionMode:'normal', airAttackMode:'normal', bomberAttackMode:'normal', contingencyAutoGenerate:false, fighterRange:null, nextAutoHit:false, nextUASReroll:false, sofProtected:false }, posture: null, lastPostureId: null, mission: null },
+            prc: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, draftedSquadrons:{}, sqHand: [], enHand: [], discarded: [], losses: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false, attackMode:'normal', acquisitionMode:'normal', airAttackMode:'normal', bomberAttackMode:'normal', contingencyAutoGenerate:false, fighterRange:null, nextAutoHit:false,nextUASReroll:false, sofProtected:false }, posture: null, lastPostureId: null, mission: null }
         };
 
         var pendingAttack = null;
@@ -665,11 +889,23 @@
         window.AFWI = AFWI;
 
         AFWI.Build = {
-            engineVersion: "1.1.0",
-            buildVersion: "5.1.0-rc1",
+            engineVersion: "2.0.0",
+            buildVersion: "1.0.0-final-phase1",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
+        };
+
+        AFWI.Random = {
+            queue: [],
+            setSequence:function(values) { this.queue=(values||[]).slice(); },
+            d4:function() {
+                if(this.queue.length) {
+                    var value=parseInt(this.queue.shift(),10);
+                    if(value>=1 && value<=4) return value;
+                }
+                return Math.floor(Math.random()*4)+1;
+            }
         };
 
         AFWI.Events = (function() {
@@ -733,12 +969,15 @@
             getTokens: function() { return state.tokens; },
             getDeployedSquadrons: function(side) { return state[String(side).toLowerCase()].deployedSquadrons; },
             clear: function() {
-                state.us.sqHand = []; state.us.enHand = []; state.us.deployedSquadrons = [];
-                state.prc.sqHand = []; state.prc.enHand = []; state.prc.deployedSquadrons = [];
+                state.us.sqHand = []; state.us.enHand = []; state.us.discarded=[]; state.us.losses=[]; state.us.deployedSquadrons = [];
+                state.prc.sqHand = []; state.prc.enHand = []; state.prc.discarded=[]; state.prc.losses=[]; state.prc.deployedSquadrons = [];
+                state.us.buffs={nextAtk:'normal',nextCyb:'normal',moveDenied:false,attackMode:'normal',acquisitionMode:'normal',airAttackMode:'normal',bomberAttackMode:'normal',contingencyAutoGenerate:false,fighterRange:null,nextAutoHit:false,nextUASReroll:false,sofProtected:false};
+                state.prc.buffs={nextAtk:'normal',nextCyb:'normal',moveDenied:false,attackMode:'normal',acquisitionMode:'normal',airAttackMode:'normal',bomberAttackMode:'normal',contingencyAutoGenerate:false,fighterRange:null,nextAutoHit:false,nextUASReroll:false,sofProtected:false};
                 state.tokens = [];
             phase5Metrics.US.activatedThisATO={}; phase5Metrics.PRC.activatedThisATO={};
             phase5Metrics.US.enablerCategoriesPlayed=0; phase5Metrics.PRC.enablerCategoriesPlayed=0; phase5Metrics.US.navalEnablersPlayed=0; phase5Metrics.PRC.navalEnablersPlayed=0; phase5Metrics.US.enablerUnitTokensGenerated=0; phase5Metrics.PRC.enablerUnitTokensGenerated=0; phase5Metrics.US.activatedThisTurn=0; phase5Metrics.PRC.activatedThisTurn=0; phase5Metrics.US.enablerUnitTokensGeneratedThisTurn=0; phase5Metrics.PRC.enablerUnitTokensGeneratedThisTurn=0;
             phase5Metrics.US.plarfPlayed=0; phase5Metrics.PRC.plarfPlayed=0; state.selected = null; pendingAttack = null;
+            phase5Metrics.US.worldOpinionVP=0; phase5Metrics.PRC.worldOpinionVP=0; phase5Metrics.US.airKills=0; phase5Metrics.PRC.airKills=0;
                 AFWI.Events.emit("ato.cleared");
             },
             snapshot: function() {
@@ -775,7 +1014,7 @@
                 airbase:{ acquisitionRequired:false, maxStrikes:3, vpPerSuccessfulStrike:1, destructible:false },
                 campaignPersistence:{ boardClearsEachATO:true, squadronHpPersists:true, aircraftLossesPersist:true },
                 cyber:{ instantVictoryRate:4 },
-                rounds:4
+                roundsByCampaign:[1,2,5,2,2]
             }
         };
 
@@ -810,8 +1049,8 @@
                 return { valid:errors.length===0, errors:errors, warnings:warnings };
             }
             function validateState(context) {
-                var issues = validateEngineState(context || "AFWI.Validator");
-                return { valid:!issues || issues.length===0, issues:issues || [] };
+                var valid = validateEngineState(context || "AFWI.Validator");
+                return { valid:valid, issues:valid ? [] : state.engineErrors.slice(-1) };
             }
             return { validateContent:validateContent, validateState:validateState };
         })();
@@ -918,7 +1157,7 @@
 
         function refreshDiagnostics() {
             var summary = {
-                version:'3.36.2', round:state.round, phase:state.phase, activeSide:state.turnSide,
+                version:AFWI.Build.buildVersion, round:state.round, phase:state.phase, activeSide:state.turnSide,
                 actions:state.acts, actionLocked:state.actionLocked, pendingAttack:!!pendingAttack,
                 tokenCount:state.tokens.length,
                 US:{vp:state.us.vp, cyber:state.us.cyber, intel:state.us.intel, airbaseStrikes:state.us.airbaseStrikes, handSquadrons:state.us.sqHand.length, handEnablers:state.us.enHand.length, deployed:state.us.deployedSquadrons.length, ledger:state.us.squadronLedger},
@@ -945,10 +1184,70 @@
             overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
         }
 
+        function renderCampaignSelection() {
+            var el=document.getElementById('campaign-list');
+            if(!el) return;
+            var html='';
+            for(var i=0;i<CAMPAIGNS.length;i++) {
+                var selected=state.campaign && state.campaign.id===CAMPAIGNS[i].id;
+                html += "<div class='card "+(selected?'card-sel':'')+"' style='width:145px;' onclick='selectCampaign("+i+")'><b>"+(i+1)+". "+CAMPAIGNS[i].title+"</b><br><span style='font-size:10px;'>"+CAMPAIGNS[i].rounds+" ATO"+(CAMPAIGNS[i].rounds===1?'':'s')+"</span></div>";
+            }
+            el.innerHTML=html;
+            if(state.campaign) {
+                document.getElementById('campaign-summary').innerHTML='<b>'+state.campaign.title+'</b> &mdash; '+state.campaign.rounds+' ATO'+(state.campaign.rounds===1?'':'s')+': '+state.campaign.desc;
+                document.getElementById('btn-begin-campaign').disabled=false;
+            }
+        }
+
+        function selectCampaign(index) {
+            if(index<0 || index>=CAMPAIGNS.length) return;
+            state.campaign=CAMPAIGNS[index];
+            state.maxRounds=state.campaign.rounds;
+            renderCampaignSelection();
+        }
+
+        function campaignAllowsPosture(posture) {
+            return !state.campaign || !state.campaign.postures || state.campaign.postures.indexOf(posture.title)>=0;
+        }
+
+        function campaignAllowsMission(mission) {
+            return !state.campaign || !state.campaign.missions || state.campaign.missions.indexOf(mission.title)>=0;
+        }
+
+        function cardAllowedByCampaign(card) {
+            var campaign=state.campaign;
+            if(!campaign) return true;
+            if(campaign.fixedSquadrons && card.Type==='SQ') return campaign.fixedSquadrons[card.Side].indexOf(card.ID)>=0;
+            if(campaign.noEnablers && card.Type==='EN') return false;
+            if(campaign.worldOpinion) {
+                if(card.Type==='SQ' && card.Tags && card.Tags.indexOf('Bomber')>=0) return false;
+                if(card.Type==='EN' && ((card.Family && /SOF|AFSOC|PLARF/i.test(card.Family)) || /long-range|ballistic|cruise missile|hypersonic|tomahawk|HIMARS/i.test((card.TITLE||'')+' '+(card.DESC||'')))) return false;
+            }
+            if(campaign.reserves && card.Type==='SQ') {
+                if(card.Tags && (card.Tags.indexOf('Gen5')>=0 || card.Tags.indexOf('Bomber')>=0)) return false;
+                if(card.Side==='PRC' && card.Tags && card.Tags.indexOf('SAM')>=0 && /Long Range|SA-21/i.test((card.TITLE||'')+' '+(card.EQ||''))) return false;
+            }
+            return true;
+        }
+
+        function cardAllowedByPosture(card, posture) {
+            if(!posture) return true;
+            if(card.Side==='PRC' && posture.title==='PLAAF' && card.Type==='EN') return !!(card.Family && /PLAAF/i.test(card.Family));
+            if(card.Side==='PRC' && posture.title==='JOINT OPERATIONS' && card.Type==='SQ') return !(card.Tags && card.Tags.indexOf('SAM')>=0);
+            return true;
+        }
+
+        function draftCost(card, posture) {
+            if(card.Type!=='SQ') return 1;
+            if(card.Side==='US' && posture && posture.title==='STANDOFF' && card.Tags && card.Tags.indexOf('Bomber')>=0) return 0;
+            if(card.Side==='PRC' && posture && posture.title==='ADA' && card.Tags && card.Tags.indexOf('SAM')>=0) return 0;
+            return 1;
+        }
+
         function countAvailableDraftCards(side, type) {
             var count = 0;
             for(var i=0; i<MASTER_DECK.length; i++) {
-                if(MASTER_DECK[i].Side === side && MASTER_DECK[i].Type === type && MASTER_DECK[i].Draftable) count++;
+                if(MASTER_DECK[i].Side === side && MASTER_DECK[i].Type === type && MASTER_DECK[i].Draftable && cardAllowedByCampaign(MASTER_DECK[i]) && cardAllowedByPosture(MASTER_DECK[i], state[side.toLowerCase()].posture || setup.selPosture)) count++;
             }
             return count;
         }
@@ -997,7 +1296,7 @@
             sideState.deployedSquadrons.push(deployed);
             var loc = getDeploymentLocation(card);
             var generateQty = record.remainingQty;
-            if(loc === "us-contingency" && !(state.us.posture && state.us.posture.title === "ACE")) {
+            if(loc === "us-contingency" && !(state.us.posture && state.us.posture.title === "ACE") && !state.us.buffs.contingencyAutoGenerate) {
                 generateQty = Math.min(record.remainingQty, singleRoll());
                 logPriv("US", "Contingency austerity generation: " + generateQty + " of " + record.remainingQty + " aircraft generated.", false);
             }
@@ -1006,6 +1305,8 @@
                 state.tokens.push({
                     isBase:false, parentSqId:card.ID, side:card.Side, cardId:card.ID, name:card.EQ, loc:loc, spd:card.Spd, vp:card.VP,
                     acqR:card.AcqR, shtR:card.ShtR, winchesterType:card.winchesterType, hitThreshold:card.hitThreshold, acqBonus:card.acqBonus,
+                    targetAcq:card.targetAcq || 2, attackThreshold:card.attackThreshold || card.hitThreshold || 2,
+                    canAttackAir:card.canAttackAir, canAttackSurface:card.canAttackSurface,
                     acquired:false, winchester:false, rogue:false, tags:card.Tags, explosive:card.Explosive || false, isCL:(loc === "us-contingency"),
                     salvos:(card.Tags && card.Tags.includes("Naval")) ? 4 : null
                 });
@@ -1014,9 +1315,12 @@
         }
 
         function recordTokenLoss(tok) {
-            if(!tok || !tok.parentSqId) return;
-            var ledger = state[tok.side.toLowerCase()].squadronLedger;
-            var record = ledger[tok.parentSqId];
+            if(!tok) return;
+            var owner=state[tok.side.toLowerCase()];
+            owner.losses.push(JSON.parse(JSON.stringify(tok)));
+            if(owner.losses.length>30) owner.losses.shift();
+            if(!tok.parentSqId) return;
+            var record = owner.squadronLedger[tok.parentSqId];
             if(record && record.remainingQty > 0) record.remainingQty--;
         }
 
@@ -1028,6 +1332,8 @@
         }
 
         function getEffectiveDraftLimit(side, type, posture) {
+            if(state.campaign && state.campaign.fixedSquadrons && type==='SQ') return state.campaign.fixedSquadrons[side].length;
+            if(state.campaign && state.campaign.noEnablers && type==='EN') return 0;
             var requested = (type === "SQ") ? posture.sq : posture.en;
             return Math.min(requested, countAvailableDraftCards(side, type));
         }
@@ -1042,9 +1348,12 @@
                 if(isNaN(lane) || lane < 1 || lane > 5) lane = 1;
                 return card.Side === "US" ? "lane-" + (6-lane) : "lane-" + lane;
             }
-            // Aircraft normally begin grounded at their owning airbase or approved contingency location.
-            // UAS and naval units retain their explicit class deployment rules above.
-            return (card.Side === "US") ? "us-airbase" : "prc-airbase";
+            if(card.Tags && (card.Tags.includes("Bomber") || card.Tags.includes("AEW"))) {
+                if(confirm("Deploy " + card.EQ + " to the Standoff area? OK=Standoff, Cancel=first range band.")) return card.Side === "US" ? "us-standoff" : "prc-standoff";
+                return card.Side === "US" ? "lane-5" : "lane-1";
+            }
+            if(card.Tags && card.Tags.includes("SAM")) return card.Side === "US" ? "us-airbase" : "prc-airbase";
+            return card.Side === "US" ? "lane-5" : "lane-1";
         }
 
         function recordNavalLoss(tokenOrCard) {
@@ -1055,6 +1364,8 @@
 
         // SETUP PHASE ENGINE
         function beginSetupSequence() {
+            if(!state.campaign) { alert('Select a Campaign.'); return; }
+            state.maxRounds=state.campaign.rounds;
             setup.side = "US"; setup.step = 1; setup.selPosture = null; setup.selMission = null; setup.picks = [];
             renderSetupUI();
             showUI('setup-ui');
@@ -1069,7 +1380,9 @@
             document.getElementById('setup-step-3').style.display = (setup.step === 3) ? 'block' : 'none';
 
             if(setup.step === 1) {
-                var pList = POSTURES[setup.side];
+                var pList = [];
+                for(var pi=0;pi<POSTURES[setup.side].length;pi++) if(campaignAllowsPosture(POSTURES[setup.side][pi])) pList.push(POSTURES[setup.side][pi]);
+                setup.posturePool=pList;
                 var html = "";
                 for(var i=0; i<pList.length; i++) {
                     var isSel = (setup.selPosture && setup.selPosture.id === pList[i].id) ? "card-sel" : "";
@@ -1079,7 +1392,8 @@
             }
             else if (setup.step === 2) {
                 if(!setup.missionPool) {
-                    setup.missionPool = MISSIONS[setup.side].slice().sort(function() { return 0.5 - Math.random(); }).slice(0, 3);
+                    setup.missionPool = [];
+                    for(var mi=0;mi<MISSIONS[setup.side].length;mi++) if(campaignAllowsMission(MISSIONS[setup.side][mi])) setup.missionPool.push(MISSIONS[setup.side][mi]);
                 }
                 var html = "";
                 for(var i=0; i<setup.missionPool.length; i++) {
@@ -1097,7 +1411,7 @@
             }
         }
 
-        function selectPosture(idx) { setup.selPosture = POSTURES[setup.side][idx]; renderSetupUI(); }
+        function selectPosture(idx) { setup.selPosture = (setup.posturePool || POSTURES[setup.side])[idx]; renderSetupUI(); }
         function confirmPosture() {
             if(!setup.selPosture) { alert("Select a Posture."); return; }
             var postureState = state[setup.side.toLowerCase()];
@@ -1129,13 +1443,13 @@
             document.getElementById('draft-en-limit').innerText = effectiveEnLimit;
 
             for(var i=0; i<setup.picks.length; i++) {
-                if(setup.picks[i].Type === "SQ") sqCount++; else enCount++;
-                picksHtml += "<div class='card'><b>" + setup.picks[i].TITLE + "</b> [" + setup.picks[i].Type + "]<br><i style='color:#666;'>" + setup.picks[i].EQ + "</i></div>";
+                if(setup.picks[i].Type === "SQ") sqCount += draftCost(setup.picks[i], setup.selPosture); else enCount++;
+                picksHtml += "<div class='card'><b>" + setup.picks[i].TITLE + "</b> [" + setup.picks[i].Type + "]<br><i style='color:#666;'>" + setup.picks[i].EQ + "</i>" + (setup.picks[i].Type==='SQ' && draftCost(setup.picks[i],setup.selPosture)===0?"<br><b>Posture bonus: no draft cost</b>":"") + "</div>";
             }
 
             for(var j=0; j<MASTER_DECK.length; j++) {
                 var c = MASTER_DECK[j];
-                if(c.Side === setup.side && c.Draftable && isSquadronAvailable(c)) {
+                if(c.Side === setup.side && c.Draftable && isSquadronAvailable(c) && cardAllowedByCampaign(c) && cardAllowedByPosture(c, setup.selPosture)) {
                     var picked = false;
                     for(var p=0; p<setup.picks.length; p++) { if(setup.picks[p].ID === c.ID) picked = true; }
                     if(!picked) {
@@ -1157,14 +1471,14 @@
             document.getElementById('draft-sq-count').innerText = sqCount;
             document.getElementById('draft-en-count').innerText = enCount;
 
-            document.getElementById('btn-confirm-draft').style.display = (sqCount === effectiveSqLimit && enCount === effectiveEnLimit) ? "inline-block" : "none";
+            document.getElementById('btn-confirm-draft').style.display = (sqCount > 0 && sqCount <= effectiveSqLimit && enCount <= effectiveEnLimit) ? "inline-block" : "none";
         }
 
         function draftCard(idx) {
             var c = MASTER_DECK[idx];
             var sqC = 0, enC = 0;
-            for(var i=0; i<setup.picks.length; i++) { if(setup.picks[i].Type==="SQ") sqC++; else enC++; }
-            if(c.Type === "SQ" && sqC >= getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture)) return;
+            for(var i=0; i<setup.picks.length; i++) { if(setup.picks[i].Type==="SQ") sqC += draftCost(setup.picks[i],setup.selPosture); else enC++; }
+            if(c.Type === "SQ" && draftCost(c,setup.selPosture)>0 && sqC >= getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture)) return;
             if(c.Type === "EN" && enC >= getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture)) return;
             setup.picks.push(JSON.parse(JSON.stringify(c)));
             renderDraft();
@@ -1174,7 +1488,7 @@
 
         function confirmDraft() {
             for(var u=0; u<setup.picks.length; u++) {
-                if(setup.picks[u].Type === "SQ") state[setup.side.toLowerCase()].sqHand.push(setup.picks[u]);
+                if(setup.picks[u].Type === "SQ") { state[setup.side.toLowerCase()].sqHand.push(setup.picks[u]); state[setup.side.toLowerCase()].draftedSquadrons[setup.picks[u].ID]=true; }
                 else state[setup.side.toLowerCase()].enHand.push(setup.picks[u]);
             }
 
@@ -1196,6 +1510,18 @@
             setup.usSacrifices = [];
             setup.prcSacrifices = [];
             setup.bidSide = "US"; 
+
+            if(state.campaign && state.campaign.tournamentInitiative) {
+                state.forcedInitiativeWinner=(state.round>1 && state.tournamentFirstWinner)?(state.tournamentFirstWinner==='US'?'PRC':'US'):null;
+                resolveInitiativeBid(true);
+                return;
+            }
+            if(state.campaign && state.campaign.worldOpinion && state.round===2 && state.worldOpinionInitiative) {
+                state.forcedInitiativeWinner=state.worldOpinionInitiative;
+                resolveInitiativeBid(false);
+                return;
+            }
+            state.forcedInitiativeWinner=null;
 
             document.getElementById('bid-handover-box').style.display = 'block';
             document.getElementById('bid-handover-title').innerText = "PASS DEVICE TO US COMMANDER";
@@ -1254,16 +1580,22 @@
             }
         }
 
-        function resolveInitiativeBid() {
+        function resolveInitiativeBid(tournamentMode) {
             var usMod = setup.usSacrifices.length;
             var prcMod = setup.prcSacrifices.length;
 
-            var usRoll, prcRoll, usTotal, prcTotal;
-            do {
-                usRoll = singleRoll(); prcRoll = singleRoll();
-                usTotal = usRoll + usMod; prcTotal = prcRoll + prcMod;
-            } while(usTotal === prcTotal);
-            var winner = prcTotal > usTotal ? 'PRC' : 'US';
+            var usRoll, prcRoll, usTotal, prcTotal, winner;
+            if(state.forcedInitiativeWinner) {
+                winner=state.forcedInitiativeWinner; usRoll=0; prcRoll=0; usTotal=winner==='US'?1:0; prcTotal=winner==='PRC'?1:0;
+            } else {
+                do {
+                    usRoll = singleRoll(); prcRoll = singleRoll();
+                    usTotal = usRoll + usMod; prcTotal = prcRoll + prcMod;
+                } while(usTotal === prcTotal);
+                winner = prcTotal > usTotal ? 'PRC' : 'US';
+            }
+            if(tournamentMode && state.round===1) state.tournamentFirstWinner=winner;
+            state.initiativeHistory.push({round:state.round,winner:winner});
             var chosenFirst = confirm(winner + " won initiative. Should US act first? OK=US, Cancel=PRC") ? "US" : "PRC";
             state.initiativeFirstSide = chosenFirst;
 
@@ -1340,9 +1672,9 @@
 
             var html = "<h3>" + sideStr + " PRIVATE INTEL SUMMARY</h3>";
             if(isWinner) {
-                html += "<p style='color: #2e7d32; font-weight: bold;'>You won the Initiative Bid! You hold Intel Advantage and go first.</p>";
+                html += "<p style='color: #2e7d32; font-weight: bold;'>You won the Initiative Bid and hold Intel Advantage. " + state.initiativeFirstSide + " will act first.</p>";
             } else {
-                html += "<p style='color: #c62828; font-weight: bold;'>The adversary won the Initiative Bid and holds Intel Advantage and goes first.</p>";
+                html += "<p style='color: #c62828; font-weight: bold;'>The adversary won the Initiative Bid and holds Intel Advantage. " + state.initiativeFirstSide + " will act first.</p>";
             }
 
             if(oppHandCount > 0) {
@@ -1369,6 +1701,12 @@
             setPhase('action');
             state.turnSide = state.initiativeFirstSide || state.intelAdvSide || 'US'; 
 
+            if(state.us.posture && state.us.posture.title==='HEDGEHOG') {
+                var hasPostureADA=false;
+                for(var ht=0;ht<state.tokens.length;ht++) if(state.tokens[ht].cardId==='POSTURE-HEDGEHOG') hasPostureADA=true;
+                if(!hasPostureADA) state.tokens.push({isBase:false,parentSqId:null,side:'US',cardId:'POSTURE-HEDGEHOG',name:'Hedgehog ADA',loc:'us-airbase',spd:0,vp:0,acqR:2,shtR:2,winchesterType:'None',hitThreshold:2,attackThreshold:2,targetAcq:2,canAttackAir:true,canAttackSurface:false,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:['SAM'],explosive:false,salvos:null,assetPath:'assets/tokens/us/ada.png',generatedByPosture:true});
+            }
+
             initGame();
 
             logPub("=========================================");
@@ -1381,7 +1719,7 @@
         }
 
         // ADVANCED d4 DICE SYSTEM
-        function singleRoll() { return Math.floor(Math.random() * 4) + 1; }
+        function singleRoll() { return AFWI.Random.d4(); }
 
         function rollD4(mode, bonus, canExplode) {
             var r1 = singleRoll(); var r2 = singleRoll();
@@ -1399,11 +1737,24 @@
             }
 
             var total = baseRoll + (bonus || 0);
-            var damage = exploded ? (1 + explTotal) : 1;
+            var damage = exploded ? explTotal : 1;
             var bTxt = bonus ? (" +"+bonus) : "";
             var explTxt = exploded ? (" -> 4 (Explodes; bonus damage 1d4=" + explTotal + ")") : (" -> " + baseRoll);
 
             return { val: total, nat: naturalRoll, damage: damage, exploded: exploded, log: "1d4" + modeTxt + explTxt + bTxt + " = " + total };
+        }
+
+        function mergeRollModes(first, second) {
+            first=first||'normal'; second=second||'normal';
+            if(first==='normal') return second;
+            if(second==='normal') return first;
+            if(first!==second) return 'normal';
+            return first;
+        }
+
+        function isSurfaceTarget(tok) {
+            if(tok.isAirbase || tok.isSquadronCard) return true;
+            return !!(tok.tags && (tok.tags.indexOf('SAM')>=0 || tok.tags.indexOf('Naval')>=0));
         }
 
         // LOGGING
@@ -1534,19 +1885,23 @@
 
             var pState = state[state.turnSide.toLowerCase()];
 
-            // Mission Display
+            // Mission Display. Null handling keeps diagnostics and automated
+            // playtests usable before setup has selected missions.
             if(state.turnSide === "US") {
-                document.getElementById('us-mission').innerHTML = "<b>" + state.us.mission.title + "</b><br><i style='font-size:10px;'>"+state.us.mission.desc+"</i>";
+                document.getElementById('us-mission').innerHTML = state.us.mission ? ("<b>" + state.us.mission.title + "</b><br><i style='font-size:10px;'>"+state.us.mission.desc+"</i>") : "<b>NO MISSION SELECTED</b>";
                 document.getElementById('prc-mission').innerHTML = "<b>UNDISCLOSED MISSION</b>";
             } else {
-                document.getElementById('prc-mission').innerHTML = "<b>" + state.prc.mission.title + "</b><br><i style='font-size:10px;'>"+state.prc.mission.desc+"</i>";
+                document.getElementById('prc-mission').innerHTML = state.prc.mission ? ("<b>" + state.prc.mission.title + "</b><br><i style='font-size:10px;'>"+state.prc.mission.desc+"</i>") : "<b>NO MISSION SELECTED</b>";
                 document.getElementById('us-mission').innerHTML = "<b>UNDISCLOSED MISSION</b>";
             }
 
             var bArr = [];
-            if(state.us.cyber > state.prc.cyber && state.turnSide === 'US') bArr.push("CYBER ADV (+1 Acq)");
-            if(state.prc.cyber > state.us.cyber && state.turnSide === 'PRC') bArr.push("CYBER ADV (+1 Acq)");
+            if(state.us.cyber > state.prc.cyber && state.turnSide === 'US') bArr.push("CYBER ADV (Acq Advantage)");
+            if(state.prc.cyber > state.us.cyber && state.turnSide === 'PRC') bArr.push("CYBER ADV (Acq Advantage)");
             if(pState.buffs.nextAtk !== 'normal') bArr.push("Atk: " + pState.buffs.nextAtk);
+            if(pState.buffs.attackMode !== 'normal') bArr.push("ATO Atk: " + pState.buffs.attackMode);
+            if(pState.buffs.airAttackMode !== 'normal') bArr.push("Air Atk: " + pState.buffs.airAttackMode);
+            if(pState.buffs.acquisitionMode !== 'normal') bArr.push("Acq: " + pState.buffs.acquisitionMode);
             if(pState.buffs.moveDenied) bArr.push("MOVE DENIED");
 
             var bStr = bArr.length > 0 ? bArr.join(" | ") : "No Active Buffs";
@@ -1638,7 +1993,7 @@
                     if(tok.rogue) displayTxt += "<br>[R]";
 
                     var wTypeCode = tok.winchesterType ? tok.winchesterType.charAt(0) : "S";
-                    statHtml = "WT:" + wTypeCode + "|HT:" + (tok.hitThreshold || 2);
+                    statHtml = "AQ:" + (tok.targetAcq || 2) + "|HT:" + (tok.attackThreshold || tok.hitThreshold || 2);
                 }
                 div.innerHTML = displayTxt;
 
@@ -1675,6 +2030,93 @@
             return Math.abs(idx1 - idx2);
         }
 
+        function findHandCard(side, ids) {
+            var hand=state[side.toLowerCase()].enHand;
+            for(var i=0;i<hand.length;i++) if(ids.indexOf(hand[i].ID)>=0) return i;
+            return -1;
+        }
+
+        function chooseHandCardIndex(side,ids,heading) {
+            var hand=state[side.toLowerCase()].enHand, candidates=[];
+            for(var i=0;i<hand.length;i++) if(ids.indexOf(hand[i].ID)>=0) candidates.push(hand[i]);
+            var chosen=chooseFromList(candidates,heading,function(card){return card.TITLE;});
+            return chosen?hand.indexOf(chosen):-1;
+        }
+
+        function consumeReactionCard(side,index,reason) {
+            var player=state[side.toLowerCase()], card=player.enHand[index];
+            if(!card) return false;
+            player.enHand.splice(index,1); player.discarded.push(card);
+            if(card.Use==='Single') { var master=getMasterCard(card.ID); if(master) master.Draftable=false; }
+            logPub(side+' reaction '+card.TITLE+' '+reason+'.');
+            return true;
+        }
+
+        function offerCounterReaction(card,playingSide) {
+            var defender=playingSide==='US'?'PRC':'US', ids=[];
+            var text=((card.Family||'')+' '+(card.EQ||'')+' '+(card.DESC||'')).toLowerCase();
+            if(/sof|special operations/.test(text) && defender==='US') ids.push('US-AUTH-EN-01');
+            if(/logistics|mobility|maintenance|mob\/main/.test(text) && defender==='PRC') ids.push('PRC-AUTH-EN-01');
+            if(/space/.test(text)) ids=ids.concat(defender==='US'?['US-AUTH-EN-22']:['PRC-AUTH-EN-23','PRC-AUTH-EN-24']);
+            if(/cyber/.test(text)) ids=ids.concat(defender==='US'?['US-AUTH-EN-13']:['PRC-AUTH-EN-18']);
+            if(card.ID==='US-AUTH-EN-33' && defender==='PRC') ids.push('PRC-AUTH-EN-30');
+            if(card.ID==='PRC-AUTH-EN-30' && defender==='US') ids.push('US-AUTH-EN-33');
+            var idx=chooseHandCardIndex(defender,ids,'PASS DEVICE TO '+defender+' COMMANDER. Choose a reaction card.');
+            if(idx<0) return false;
+            var reaction=state[defender.toLowerCase()].enHand[idx];
+            if(confirm('PASS DEVICE TO '+defender+' COMMANDER.\n\nPlay '+reaction.TITLE+' to cancel '+card.TITLE+'?')) return consumeReactionCard(defender,idx,'cancelled '+card.TITLE);
+            return false;
+        }
+
+        function offerMissileDefenseCounter(attackerSide) {
+            var ids=attackerSide==='US'?['US-AUTH-EN-19']:['PRC-AUTH-EN-15'];
+            var idx=findHandCard(attackerSide,ids);
+            if(idx<0) return false;
+            var reaction=state[attackerSide.toLowerCase()].enHand[idx];
+            if(confirm(attackerSide+' may play '+reaction.TITLE+' to cancel Missile Defense. Play it?')) return consumeReactionCard(attackerSide,idx,'cancelled Missile Defense');
+            return false;
+        }
+
+        function offerHitCancellation(attackingSide,targetSide) {
+            if(attackingSide!=='PRC' || targetSide!=='US') return false;
+            var idx=findHandCard('US',['US-AUTH-EN-19']);
+            if(idx<0) return false;
+            var reaction=state.us.enHand[idx];
+            if(confirm('PASS DEVICE TO US COMMANDER. Play '+reaction.TITLE+' to cancel this PRC hit?')) return consumeReactionCard('US',idx,'cancelled the PRC hit');
+            return false;
+        }
+
+        function offerBaseDamageCancellation(defendingSide) {
+            if(defendingSide!=='US') return false;
+            var idx=chooseHandCardIndex('US',['US-AUTH-EN-28','US-AUTH-EN-29'],'US COMMANDER: choose a base-defense reaction.');
+            if(idx<0) return false;
+            var reaction=state.us.enHand[idx];
+            if(confirm('US may play '+reaction.TITLE+' to cancel all base damage. Play it?')) return consumeReactionCard('US',idx,'cancelled all base damage');
+            return false;
+        }
+
+        function offerLossRecovery(tok) {
+            if(!tok || !tok.parentSqId) return false;
+            if(tok.side==='US') {
+                var usIdx=chooseHandCardIndex('US',['US-AUTH-EN-02','US-AUTH-EN-07'],'US COMMANDER: choose an aircraft-recovery reaction.');
+                if(usIdx>=0) {
+                    var usCard=state.us.enHand[usIdx];
+                    if(confirm('US may play '+usCard.TITLE+' to recover '+tok.name+'. Play it?')) { consumeReactionCard('US',usIdx,'recovered '+tok.name); return recoverLastAircraft('US'); }
+                }
+            } else {
+                var rec=state.prc.squadronLedger[tok.parentSqId], prcIdx=findHandCard('PRC',['PRC-AUTH-EN-03']);
+                if(rec && rec.remainingQty===0 && prcIdx>=0) {
+                    var prcCard=state.prc.enHand[prcIdx];
+                    if(confirm('PRC may play '+prcCard.TITLE+' to regenerate the depleted squadron. Play it?')) {
+                        consumeReactionCard('PRC',prcIdx,'regenerated '+rec.name); rec.remainingQty=rec.maxQty;
+                        var master=getMasterCard(tok.parentSqId); if(master) state.prc.sqHand.push(JSON.parse(JSON.stringify(master)));
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         function playCard(side, isSq, idx) {
             if(!canAcceptGameAction('Play card')) return;
             if(side !== state.turnSide) { engineError('Play card rejected: wrong side.'); return; }
@@ -1699,6 +2141,15 @@
                 if(effectValidation.ok==='manual') { if(!confirm(c.TITLE+"\n\n"+c.DESC+"\n\n"+effectValidation.reason+" Select OK only after resolving it; Cancel keeps the card.")) return; c._manualConfirmed=true; }
                 var resolved = true;
                 logAction("Enabler Played: " + c.TITLE, "Adversary activated an Enabler.");
+
+                if(offerCounterReaction(c,side)) {
+                    resolved=true;
+                    if(c.Use==='Single') { var counteredMaster=getMasterCard(c.ID); if(counteredMaster) counteredMaster.Draftable=false; }
+                    pState.discarded.push(c);
+                    hand.splice(idx,1);
+                    drawUI();
+                    return;
+                }
 
                 if(c.Authoritative) {
                     resolved = resolvePhase5Enabler(c, side, pState, oppState);
@@ -1748,6 +2199,7 @@
             }
             if(!isSq && resolved===false) { logPriv(side,'Card effect was not completed; card remains in hand.',true); drawUI(); return; }
             if(!isSq && c.Use === 'Single') { var consumedMaster=getMasterCard(c.ID); if(consumedMaster) consumedMaster.Draftable=false; }
+            if(!isSq) pState.discarded.push(JSON.parse(JSON.stringify(c)));
             hand.splice(idx, 1);
             drawUI();
             if(isSq) {
@@ -1828,14 +2280,22 @@
             setPhase('action');
             document.getElementById('missile-defense-overlay').style.display = 'none';
             var defender = pa.defenderIndex >= 0 ? pa.defenders[pa.defenderIndex] : null;
+            if(defender && offerMissileDefenseCounter(state.turnSide)) defender=null;
             resolveCommittedAttack(pa.attacker, pa.target, pa.playerState, !!defender, defender);
             drawUI();
         }
 
         function resolveCommittedAttack(atk, tok, pState, useMD, defenderUsed) {
-            var mod = pState.buffs.nextAtk;
+            var targetIsSurface=isSurfaceTarget(tok);
+            if(targetIsSurface && atk.canAttackSurface===false) { logPriv(state.turnSide,atk.name+' has no surface-attack capability.',true); return; }
+            if(!targetIsSurface && atk.canAttackAir===false) { logPriv(state.turnSide,atk.name+' has no air-to-air capability.',true); return; }
+            var mod = mergeRollModes(pState.buffs.attackMode, pState.buffs.nextAtk);
+            if(!targetIsSurface) mod=mergeRollModes(mod,pState.buffs.airAttackMode);
+            if(atk.tags && atk.tags.indexOf('Bomber')>=0) mod=mergeRollModes(mod,pState.buffs.bomberAttackMode);
+            var enemyEW=enemyTokensFor(state.turnSide,function(t){return t.tags&&t.tags.indexOf('EW')>=0&&t.loc===atk.loc;});
+            if(enemyEW.length) mod=mergeRollModes(mod,'dis');
             if (useMD) {
-                mod = 'dis';
+                mod = mergeRollModes(mod,'dis');
                 if (defenderUsed.winchesterType === "Salvo") {
                     defenderUsed.salvos = Math.max(0, (defenderUsed.salvos == null ? 4 : defenderUsed.salvos) - 1);
                     logPub("Naval SAM " + defenderUsed.name + " expended one air-defense salvo (" + defenderUsed.salvos + " remaining).");
@@ -1846,14 +2306,23 @@
                 }
             }
 
-            var isExplosive = atk.explosive;
-            var shtRoll = rollD4(mod, 0, isExplosive);
+            var isExplosive = atk.explosive && targetIsSurface;
+            var shtRoll = rollD4(mod, 0, false);
             var resolvedShootRoll = shtRoll;
             pState.buffs.nextAtk = 'normal'; 
 
-            var requiredSht = (atk.hitThreshold || 2);
-            var isHit = resolvedShootRoll.val >= requiredSht;
+            var requiredSht = (atk.attackThreshold || atk.hitThreshold || 2);
+            var autoHit=targetIsSurface && pState.buffs.nextAutoHit;
+            var isHit = autoHit || resolvedShootRoll.val >= requiredSht;
+            if(autoHit) pState.buffs.nextAutoHit=false;
             var nat4 = resolvedShootRoll.nat === 4;
+            var damage=1, damageLog='';
+            if(isHit && offerHitCancellation(state.turnSide,tok.side)) { isHit=false; logPub('The attack hit was cancelled by an Air Launched Decoy.'); }
+            if(isHit && isExplosive) {
+                var damageRoll=rollD4(mod,0,false);
+                damage=damageRoll.val;
+                damageLog=' Damage: '+damageRoll.log+'.';
+            }
 
             if(!isHit) {
                 logAction("Shoot: " + resolvedShootRoll.log + ". MISS.", "Adversary fired at your " + tok.name + " and missed.");
@@ -1863,20 +2332,24 @@
                 if(tok.isAirbase) {
                     var baseState = state[tok.side.toLowerCase()];
                     if(baseState.airbaseStrikes < 3) {
-                        baseState.airbaseStrikes++;
-                        state[state.turnSide.toLowerCase()].vp += 1;
-                        logPub("Shoot: " + resolvedShootRoll.log + ". " + tok.name + " STRUCK (+1 VP, " + baseState.airbaseStrikes + "/3 strikes).");
+                        if(offerBaseDamageCancellation(tok.side)) { logPub(tok.side+' base damage was cancelled.'); isHit=false; }
+                    }
+                    if(isHit && baseState.airbaseStrikes < 3) {
+                        var applied=Math.min(damage,3-baseState.airbaseStrikes);
+                        baseState.airbaseStrikes+=applied;
+                        state[state.turnSide.toLowerCase()].vp += applied;
+                        logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" " + tok.name + " STRUCK (+"+applied+" VP, " + baseState.airbaseStrikes + "/3 strikes).");
                         logSitrep("STRATEGIC STRIKE: Your " + tok.name + " sustained strike " + baseState.airbaseStrikes + " of 3.");
                     }
                 } else if(tok.isSquadronCard) {
-                    tok.sqRef.currentHp -= resolvedShootRoll.damage;
+                    tok.sqRef.currentHp -= damage;
                     syncSquadronDamage(tok.sqRef);
                     if(tok.sqRef.currentHp <= 0 && !tok.sqRef.destroyed) {
                         tok.sqRef.destroyed = true;
                         syncSquadronDamage(tok.sqRef);
-                        logPub("Shoot: " + resolvedShootRoll.log + ". SQUADRON DESTROYED (+" + tok.vp + " VP)!");
+                        logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" SQUADRON DESTROYED!");
                         logSitrep("CRITICAL LOSS: Deployed squadron " + tok.sqRef.name + " was DESTROYED by enemy fire!");
-                        state[state.turnSide.toLowerCase()].vp += tok.vp;
+                        checkMissionVP({side:tok.side,tags:['Squadron'],sqRef:tok.sqRef,loc:tok.side==='US'?'us-airbase':'prc-airbase'});
                         var destroyedMaster = getMasterCard(tok.sqRef.cardId);
                         if(destroyedMaster) recordNavalLoss(destroyedMaster);
                         resolveDestroyedSquadronTokens(tok.sqRef.cardId, tok.side);
@@ -1885,13 +2358,12 @@
                             if(defendingSquadrons[ds] === tok.sqRef) defendingSquadrons.splice(ds, 1);
                         }
                     } else if(!tok.sqRef.destroyed) {
-                        logPub("Shoot: " + resolvedShootRoll.log + ". SQUADRON DAMAGED (" + tok.sqRef.currentHp + " HP remaining).");
+                        logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" SQUADRON DAMAGED (" + tok.sqRef.currentHp + " HP remaining).");
                         logSitrep("ALERT: Deployed squadron " + tok.sqRef.name + " was damaged (" + tok.sqRef.currentHp + " HP remaining).");
                     }
                 } else {
-                    logPub("Shoot: " + resolvedShootRoll.log + ". HIT! " + tok.name + " destroyed (+" + tok.vp + " VP).");
+                    logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" HIT! " + tok.name + " destroyed.");
                     logSitrep("LOSS: Active " + tok.name + " token at " + tok.loc + " was DESTROYED by enemy fire!");
-                    state[state.turnSide.toLowerCase()].vp += tok.vp;
                     checkMissionVP(tok);
                     recordNavalLoss({ Side: tok.side, Tags: tok.tags });
                     destroyTarget(tok);
@@ -1903,8 +2375,8 @@
             if(isStaticADA) {
                 logAction(atk.name + " is ADA and does not go Winchester.", null);
             } else if(atk.winchesterType === "Salvo") {
-                atk.salvos = Math.max(0, (atk.salvos == null ? 4 : atk.salvos) - 1);
-                logAction(atk.name + " expended one salvo (" + atk.salvos + " remaining).", null);
+                if(!nat4) atk.salvos = Math.max(0, (atk.salvos == null ? 4 : atk.salvos) - 1);
+                logAction(atk.name + (nat4 ? " conserved its salvo on a natural 4." : " expended one salvo (" + atk.salvos + " remaining)."), null);
                 if(atk.salvos <= 0) atk.winchester = true;
             } else if(atk.winchesterType === "Infinite") {
                 if(resolvedShootRoll.nat <= 2) { goneWinchester = true; logAction(atk.name + " goes Winchester.", null); }
@@ -1943,17 +2415,27 @@
                     if(state.intelAdvActive) {
                         tok.acquired = true; state.intelAdvActive = false; logAction("INTEL ADV: Target Auto-Acquired.", "Adversary auto-painted an unknown track.");
                     } else {
-                        var acqMod = hasCyberAdv ? 'adv' : 'normal';
-                        var bonusVal = (hasCyberAdv ? 1 : 0) + (atk.acqBonus || 0); 
+                        var acqMod = mergeRollModes(hasCyberAdv ? 'adv' : 'normal',pState.buffs.acquisitionMode);
+                        var bonusVal = (atk.acqBonus || 0);
                         var acqRoll = rollD4(acqMod, bonusVal, false);
-
-                        if(acqRoll.val >= 2) { 
-                            tok.acquired = true; logAction("Acquisition: " + acqRoll.log + ". SUCCESS!", "Adversary painted your " + tok.name + "."); 
-                        } else { 
-                            logPriv(state.turnSide, "Acq Failed: " + acqRoll.log, false);
+                        var targetAcq=tok.targetAcq || 2;
+                        var uasBonusAttempt=false;
+                        if(acqRoll.val<targetAcq && pState.buffs.nextUASReroll && atk.tags && atk.tags.indexOf('UAS')>=0) {
+                            acqRoll=rollD4(acqMod,bonusVal,false); pState.buffs.nextUASReroll=false;
+                            logPriv(state.turnSide,'UAS Proliferation reroll: '+acqRoll.log,false);
+                        } else if(pState.buffs.nextUASReroll && atk.tags && atk.tags.indexOf('UAS')>=0) {
+                            uasBonusAttempt=true; pState.buffs.nextUASReroll=false;
                         }
 
-                        if(atk.tags && atk.tags.includes("AEW")) {
+                        if(acqRoll.val >= targetAcq) {
+                            tok.acquired = true; logAction("Acquisition: " + acqRoll.log + ". SUCCESS!", "Adversary painted your " + tok.name + "."); 
+                        } else { 
+                            logPriv(state.turnSide, "Acq Failed: " + acqRoll.log + " (needed " + targetAcq + "+)", false);
+                        }
+
+                        if(uasBonusAttempt) {
+                            logPriv(state.turnSide,'UAS Proliferation grants one additional acquisition attempt.',false);
+                        } else if(atk.tags && atk.tags.includes("AEW")) {
                             if(!atk.firstAcqDone) {
                                 atk.firstAcqDone = true;
                                 logPriv(state.turnSide, "AEW radar swept (1 of 2 attempts complete). Select next target.", false);
@@ -1968,7 +2450,11 @@
                 } else {
                     if(state.acts.sht <= 0) { logPriv(state.turnSide, "No SHOOT actions left.", true); return; }
                     if(atk.shtR === -1) { logPriv(state.turnSide, "Unit has no weapons.", true); return; }
-                    if(dist > atk.shtR) { logPriv(state.turnSide, "Target out of Weapon Range.", true); return; }
+                    var effectiveRange=atk.shtR;
+                    if(pState.buffs.fighterRange && atk.tags && atk.tags.indexOf('Fighter')>=0) effectiveRange=Math.max(effectiveRange,pState.buffs.fighterRange);
+                    if(dist > effectiveRange) { logPriv(state.turnSide, "Target out of Weapon Range.", true); return; }
+                    if(isSurfaceTarget(tok) && atk.canAttackSurface===false) { logPriv(state.turnSide,"Selected unit cannot attack surface targets.",true); return; }
+                    if(!isSurfaceTarget(tok) && atk.canAttackAir===false) { logPriv(state.turnSide,"Selected unit cannot attack air targets.",true); return; }
 
                     // Phase 4: Symmetrical Missile Defense (WEZ path crossing check)
                     var oppSide = (state.turnSide === 'US') ? 'PRC' : 'US';
@@ -2011,6 +2497,7 @@
             var newTokens = [];
             for(var i=0; i<state.tokens.length; i++) if(state.tokens[i] !== tok) newTokens.push(state.tokens[i]);
             state.tokens = newTokens;
+            offerLossRecovery(tok);
         }
 
         function resolveDestroyedSquadronTokens(cardId, sideStr) {
@@ -2019,7 +2506,7 @@
                 var t=state.tokens[i];
                 if(t.parentSqId !== cardId) continue;
                 if(baseLocations.indexOf(t.loc) >= 0) {
-                    recordTokenLoss(t); state.tokens.splice(i,1);
+                    checkMissionVP(t); recordTokenLoss(t); state.tokens.splice(i,1);
                     logPub(t.name + " destroyed on the ground with its Squadron Card.");
                 } else t.rogue = true;
             }
@@ -2036,15 +2523,26 @@
 
         function checkMissionVP(destroyedTok) {
             var victimSide=destroyedTok.side, scorer=victimSide==='US'?'PRC':'US', ps=state[scorer.toLowerCase()], m=ps.mission;
-            if(!m) return; var tags=destroyedTok.tags||[], points=0, title=m.title;
-            if(title==='ATTRITION') {
-                if(tags.indexOf('Naval')>=0 || tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0) points=3;
-                else if(destroyedTok.sqRef) points=2; else points=1;
-            } else if(title==='INTERDICTION') {
-                if(tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0 || destroyedTok.sqRef) points=4;
-                else if(tags.indexOf('Naval')>=0 || tags.indexOf('SAM')>=0) points=3; else points=2;
-            } else if(title==='COUNTER-INTERVENTION' && destroyedTok.loc && (destroyedTok.loc.indexOf('airbase')>=0 || destroyedTok.loc.indexOf('contingency')>=0)) points=3;
-            if(points) { ps.vp+=points; logPub(scorer+' Mission ('+title+'): +'+points+' VP'); }
+            var tags=destroyedTok.tags||[], points=0, title=m?m.title:'';
+            if(m) {
+                if(title==='ATTRITION') {
+                    if(destroyedTok.sqRef || tags.indexOf('Squadron')>=0) points=2;
+                    else if(tags.indexOf('Naval')>=0 || tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0 || tags.indexOf('SAM')>=0) points=3;
+                    else points=1;
+                } else if(title==='INTERDICTION') {
+                    if(tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0 || destroyedTok.sqRef) points=4;
+                    else if(tags.indexOf('Naval')>=0 || tags.indexOf('SAM')>=0) points=3; else points=2;
+                } else if(title==='COUNTER-INTERVENTION' && !destroyedTok.sqRef && tags.indexOf('Squadron')<0 && destroyedTok.loc && (destroyedTok.loc.indexOf('airbase')>=0 || destroyedTok.loc.indexOf('contingency')>=0) && tags.indexOf('SAM')<0 && tags.indexOf('Naval')<0) points=3;
+                if(points) { ps.vp+=points; logPub(scorer+' Mission ('+title+'): +'+points+' VP'); }
+            }
+            var destroyedInAir=destroyedTok.loc && destroyedTok.loc.indexOf('lane-')===0 && tags.indexOf('SAM')<0 && tags.indexOf('Naval')<0;
+            if(state.campaign && state.campaign.worldOpinion && destroyedInAir) {
+                phase5Metrics[scorer].airKills++;
+                if(phase5Metrics[scorer].worldOpinionVP<2) {
+                    phase5Metrics[scorer].worldOpinionVP++; ps.vp++;
+                    logPub(scorer+' World Opinion air-victory bonus: +1 VP ('+phase5Metrics[scorer].worldOpinionVP+'/2 this ATO).');
+                }
+            }
         }
 
         function checkRoundEndMissions() {
@@ -2057,7 +2555,7 @@
                 } else if(m.title==='N-K DOMINANCE') pts += 3*ps.cyber + phase5Metrics[side].enablerCategoriesPlayed;
                 else if(m.title==='THREE DOMINANCES') {
                     var naval=0,intact=0; for(var t=0;t<state.tokens.length;t++) if(state.tokens[t].side===side && state.tokens[t].tags && state.tokens[t].tags.indexOf('Naval')>=0) naval++;
-                    for(var id in ps.squadronLedger) if(ps.squadronLedger[id].currentHp>0) intact++;
+                    for(var id in phase5Metrics[side].activatedThisATO) if(phase5Metrics[side].activatedThisATO.hasOwnProperty(id) && ps.squadronLedger[id] && ps.squadronLedger[id].currentHp>0 && ps.squadronLedger[id].remainingQty===ps.squadronLedger[id].maxQty) intact++;
                     pts += 2*ps.cyber + 3*naval + phase5Metrics[side].navalEnablersPlayed + intact;
                 } else if(m.title==='COUNTER-INTERVENTION') pts += phase5Metrics[side].plarfPlayed;
                 if(pts) { ps.vp+=pts; logPub(side+' Mission ('+m.title+') end-of-ATO score: +'+pts+' VP'); }
@@ -2100,7 +2598,7 @@
                 if(t.side === state.turnSide && t.winchester) {
                     if(t.rogue) {
                         rDeaths++;
-                        state[state.turnSide === 'US' ? 'prc' : 'us'].vp += t.vp;
+                        checkMissionVP(t);
                         recordNavalLoss({ Side: t.side, Tags: t.tags });
                         recordTokenLoss(state.tokens[i]);
                         state.tokens.splice(i, 1);
@@ -2157,6 +2655,11 @@
             state.actionLocked = true;
             setPhase('roundResolution');
             checkRoundEndMissions();
+            if(state.campaign && state.campaign.worldOpinion && state.round===1) {
+                if(phase5Metrics.US.airKills>phase5Metrics.PRC.airKills) state.worldOpinionInitiative='US';
+                else if(phase5Metrics.PRC.airKills>phase5Metrics.US.airKills) state.worldOpinionInitiative='PRC';
+                else state.worldOpinionInitiative=null;
+            }
 
             // Phase 4 Attrition Check: Airborne units whose base is destroyed crash when attempting to land
             var crashCount = 0;
@@ -2170,8 +2673,7 @@
                     }
                     if (parentSq && parentSq.currentHp <= 0) {
                         crashCount++;
-                        var oppSide = (tok.side === 'US') ? 'prc' : 'us';
-                        state[oppSide].vp += tok.vp;
+                        checkMissionVP(tok);
                         recordNavalLoss({ Side: tok.side, Tags: tok.tags });
                         logSitrep("CRITICAL LOSS: Your " + tok.name + " crashed because its parent squadron card was destroyed.");
                         recordTokenLoss(tok);
@@ -2187,7 +2689,7 @@
             for(var i=state.tokens.length-1; i>=0; i--) {
                 if(state.tokens[i].rogue) {
                     rogueEnd++;
-                    state[state.tokens[i].side === 'US' ? 'prc' : 'us'].vp += state.tokens[i].vp;
+                    checkMissionVP(state.tokens[i]);
                     recordNavalLoss({ Side: state.tokens[i].side, Tags: state.tokens[i].tags });
                     recordTokenLoss(state.tokens[i]);
                     state.tokens.splice(i, 1);
@@ -2201,6 +2703,16 @@
             validateEngineState('endRound');
             state.round++;
             if(state.round > state.maxRounds) {
+                if(state.campaign && state.campaign.reserves && !state.campaignEndScored) {
+                    var reserveSides=['US','PRC'];
+                    for(var rs=0;rs<reserveSides.length;rs++) {
+                        var reserveSide=reserveSides[rs], reservePlayer=state[reserveSide.toLowerCase()], intact=0;
+                        for(var rid in reservePlayer.draftedSquadrons) if(reservePlayer.draftedSquadrons.hasOwnProperty(rid) && reservePlayer.squadronLedger[rid] && reservePlayer.squadronLedger[rid].currentHp>0) intact++;
+                        reservePlayer.vp+=intact;
+                        if(intact) logPub(reserveSide+' Reserves campaign intact-squadron bonus: +'+intact+' VP.');
+                    }
+                    state.campaignEndScored=true;
+                }
                 var winnerTxt = "DRAW (STALEMATE)";
                 if(state.us.vp > state.prc.vp) winnerTxt = "US FORCES WIN";
                 else if (state.prc.vp > state.us.vp) winnerTxt = "PRC FORCES WIN";
@@ -2234,6 +2746,11 @@
             pendingAttack = null;
             state.selected = null;
             document.getElementById('missile-defense-overlay').style.display = 'none';
+            var winnerHeading='GAME OVER';
+            if(/US Forces|US FORCES/i.test(reason)) winnerHeading='US FORCES WIN';
+            else if(/PRC Forces|PRC FORCES/i.test(reason)) winnerHeading='PRC FORCES WIN';
+            else if(/DRAW|STALEMATE/i.test(reason)) winnerHeading='DRAW';
+            document.getElementById('go-winner').innerText=winnerHeading;
             document.getElementById('go-reason').innerText = reason;
             document.getElementById('go-us-vp').innerText = state.us.vp;
             document.getElementById('go-prc-vp').innerText = state.prc.vp;
@@ -2242,6 +2759,7 @@
         }
 
         /* Boot after all legacy function declarations are available. */
+        selectCampaign(0);
         AFWI.Bootstrap.initialize();
     </script>
 </body>
