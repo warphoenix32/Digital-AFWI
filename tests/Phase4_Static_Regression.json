@@ -1,0 +1,18 @@
+{
+  "javascript_syntax": "PASS",
+  "all_relative_assets_exist": true,
+  "no_remote_dependencies": true,
+  "postures_each_ato": true,
+  "initiative_tie_reroll": true,
+  "initiative_winner_first_choice": true,
+  "squadron_activation_ends_turn": true,
+  "contingency_location": true,
+  "uas_any_band": true,
+  "aew_bomber_choice": true,
+  "naval_salvos": true,
+  "ada_no_winchester": true,
+  "grounded_cleanup": true,
+  "approved_image_assets": 20,
+  "contingency_squadron_rendering": true,
+  "squadron_card_images": true
+}

@@ -1,0 +1,57 @@
+{
+  "browser": "Chromium headless via Playwright set_content",
+  "viewport": "1680x1050",
+  "page_errors": [],
+  "checks": {
+    "no_runtime_errors": true,
+    "deployment_keeps_active_player": true,
+    "deployment_consumes_mas_only": true,
+    "enabler_play_after_deployment": true,
+    "bomber_starts_at_airbase": true,
+    "squadron_card_rendered": true,
+    "no_squadron_aircraft_image": true,
+    "equal_top_bottom_zone_heights": true,
+    "all_operational_boxes_equal_height": true,
+    "token_stats_not_wrapping": true
+  },
+  "measurements": {
+    "afterSq": {
+      "turn": "US",
+      "acts": {
+        "move": 0,
+        "acq": 0,
+        "sht": 0
+      },
+      "tokens": 1,
+      "tokenLocations": [
+        "us-airbase"
+      ],
+      "enablers": 1,
+      "squadronCards": 1,
+      "squadronImages": 0
+    },
+    "afterEn": {
+      "turn": "US",
+      "enablers": 0,
+      "intel": 2
+    },
+    "zones": [
+      150,
+      150
+    ],
+    "bases": [
+      131,
+      131,
+      131,
+      131,
+      131
+    ],
+    "stats": [
+      {
+        "scrollWidth": 68,
+        "clientWidth": 68,
+        "height": 12
+      }
+    ]
+  }
+}

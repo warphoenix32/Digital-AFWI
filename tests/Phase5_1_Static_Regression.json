@@ -1,0 +1,14 @@
+{
+  "standard_first_us": true,
+  "standard_first_prc": true,
+  "effect_validator": true,
+  "spawn_validator": true,
+  "aircraft_asset_direct": true,
+  "zone_background_removed": true,
+  "mission_turn_scoring": true,
+  "three_dominances_naval_enabler": true,
+  "no_remote_dependencies": true,
+  "pass_turn_mission_scoring": true,
+  "js_syntax_checked": true,
+  "browser_smoke_test": "BLOCKED_BY_CONTAINER_POLICY"
+}

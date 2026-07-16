@@ -1,0 +1,2248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AFWI 1.0 Candidate Phase 5.1</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #263238; padding: 0; color: #000; margin: 0; overflow-x: hidden; }
+
+        /* Shared Styles */
+        .btn { padding: 10px 15px; background: #0288d1; color: #fff; cursor: pointer; font-weight: bold; border: 2px solid transparent; margin: 5px; border-radius: 4px;}
+        .btn:hover { background: #0277bd; border-color: #fff; }
+        .btn-danger { background: #c62828; }
+        .btn-danger:hover { background: #b71c1c; }
+        .btn-warn { background: #f57f17; }
+        .btn-warn:hover { background: #e65100; }
+        .btn-pass { background: #78909c; }
+
+        .card { border: 2px solid #90a4ae; padding: 8px; margin-bottom: 8px; background: #eceff1; cursor: pointer; font-size: 11px; position: relative; border-radius: 4px;}
+        .card:hover { border-color: #ffb300; background: #fffde7; z-index: 10;}
+        .card-vp { position: absolute; top: 4px; right: 6px; font-weight: bold; color: #2e7d32; font-size: 10px; }
+        .card-sel { border-color: #00e676; background: #e8f5e9; }
+
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999 !important; }
+        .modal { position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 750px; background: #fff; border: 4px solid #37474f; padding: 25px; box-sizing: border-box; max-height: 80vh; overflow-y: auto; border-radius: 8px;}
+        .rules-section { margin-bottom: 15px; border-bottom: 1px solid #cfd8dc; padding-bottom: 10px; }
+
+        /* Phase 0: Landing */
+        #landing-ui { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background: #1c2833; color: #fff; text-align: center; }
+        .landing-title { font-size: 80px; margin: 0; letter-spacing: 2px; margin-bottom: 40px;}
+        .landing-subtitle { font-size: 20px; font-style: italic; color: #90a4ae; margin-bottom: 40px; max-width: 600px;}
+        .landing-footer { position: absolute; bottom: 20px; font-size: 12px; color: #78909c; }
+
+        /* General Container for setup and phase transitions */
+        .setup-container { display: none; background: #fff; border: 4px solid #37474f; padding: 30px; max-width: 900px; margin: 40px auto; border-radius: 8px;}
+        .scenario-box { background: #eceff1; padding: 15px; border-left: 5px solid #0288d1; margin-bottom: 20px; }
+        .header-us { color: #1565c0; border-bottom: 2px solid #1565c0; padding-bottom: 5px;}
+        .header-prc { color: #c62828; border-bottom: 2px solid #c62828; padding-bottom: 5px;}
+
+        /* Phase 2: Draft UI */
+        .draft-layout { display: flex; gap: 20px; height: 450px; margin-top: 15px;}
+        .draft-pool { flex: 2; border: 2px solid #90a4ae; padding: 10px; background: #f9f9f9; display: flex; gap: 10px; overflow-y: auto;}
+        .draft-pool-col { flex: 1; overflow-y: auto; padding-right: 5px;}
+        .draft-picks { flex: 1; border: 2px solid #37474f; padding: 10px; background: #eceff1; overflow-y: auto; }
+
+        /* Interstitial */
+        #interstitial-ui { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #263238; z-index: 1000; color: #fff; text-align: center; padding-top: 10vh; }
+        #sitrep-ui { display: none; max-width: 600px; margin: 20px auto; background: #eceff1; color: #000; padding: 20px; border-left: 6px solid #f57f17; text-align: left; border-radius: 4px;}
+        .sitrep-item { margin-bottom: 10px; font-family: monospace; font-size: 14px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 5px;}
+
+        /* Phase 3: Game Board */
+        #game-ui { display: none; padding: 15px; background: #cfd8dc; min-height: 100vh; box-sizing: border-box;}
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #37474f; padding: 10px 20px; color: #fff; border-radius: 6px;}
+        .status-bar { background: #fff; padding: 10px 20px; border: 2px solid #90a4ae; margin-bottom: 10px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; border-radius: 6px;}
+        .flex-container { display: flex; gap: 12px; height: calc(100vh - 285px); min-height: 680px;}
+
+        .panel { width: 280px; min-height:0; background: #fff; border: 2px solid #90a4ae; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; border-radius: 6px;}
+        .track-box { font-size: 12px; background: #eceff1; padding: 6px; border: 1px solid #cfd8dc; margin-bottom: 8px; text-align: center; font-weight: bold; border-radius: 4px; cursor: pointer;}
+        .track-box:hover { border-color: #ffeb3b; background: #fffde7;}
+        .vp-disp { font-size: 22px; font-weight: bold; }
+
+        .board { flex-grow: 1; border: 4px solid #37474f; background: #fff; display: flex; flex-direction: column; border-radius: 6px; overflow: hidden;}
+        .zone { display: flex; padding: 8px; background: #b0bec5; border-bottom: 2px solid #90a4ae; height: 150px; min-height: 150px; flex: 0 0 150px; box-sizing:border-box; }
+        .base { flex: 1; border: 2px dashed #78909c; margin: 0 5px; background: rgba(255,255,255,0.8); padding: 5px; font-size: 11px; font-weight: bold; display: flex; flex-wrap: wrap; align-content: flex-start; overflow-y: auto; color: #37474f;}
+        .airbase-target { cursor: crosshair; position: relative; gap: 4px; }
+        .airbase-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 5px 4px; box-sizing: border-box; border-bottom: 1px solid #90a4ae; margin-bottom: 3px; }
+        .airbase-strikes { font-family: monospace; font-size: 10px; padding: 2px 5px; background: #eceff1; border: 1px solid #90a4ae; border-radius: 3px; }
+        .airbase-strikes.capped { background: #ffcdd2; border-color: #c62828; color: #b71c1c; }
+        .squadron-board-card { width: 104px; min-height: 52px; margin: 2px; padding: 5px; box-sizing: border-box; border: 2px solid #455a64; background: #eceff1; border-radius: 4px; cursor: pointer; font-size: 9px; line-height: 1.25; position: relative; z-index: 4; flex-shrink: 0; }
+        .squadron-board-card:hover { border-color: #ffb300; background: #fffde7; }
+        .squadron-board-card.us { border-left: 6px solid #1565c0; }
+        .squadron-board-card.prc { border-left: 6px solid #c62828; }
+        .squadron-board-card.destroyed { opacity: 0.55; cursor: default; }
+
+        .bands-container { flex-grow: 1; display: flex; flex-direction: column; background: #1a1c1e; }
+        .band { flex: 1 1 0; border-bottom: 2px solid #111315; display: flex; padding: 5px 60px; color: #fff; cursor: pointer; font-weight: bold; flex-wrap: wrap; align-items: center; position: relative; min-height: 82px; box-sizing: border-box; transition: background 0.1s;}
+
+        .band .prc-label { position: absolute; left: 15px; color: #ff8a80; font-family: monospace; font-weight: bold; font-size: 20px; pointer-events: none; text-shadow:0 1px 2px #000;}
+        .band .us-label { position: absolute; right: 15px; color: #82b1ff; font-family: monospace; font-weight: bold; font-size: 20px; pointer-events: none; text-shadow:0 1px 2px #000;}
+
+        .token { width: 72px; height: 66px; border: 2px solid #fff; margin: 2px; cursor: pointer; font-size: 9px; font-weight: bold; text-align: center; color: #fff; padding:3px 2px 15px 2px; box-sizing: border-box; flex-shrink: 0; position: relative; overflow: hidden; border-radius: 3px; z-index: 5;}
+        .token.us { background: #1565c0; }
+        .token.prc { background: #c62828; }
+        .token.unknown { background: #546e7a; border: 2px dashed #cfd8dc; color: #eceff1; }
+        .token-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.78); font-size: 8px; line-height:12px; height:12px; padding: 0; color: #ffeb3b; letter-spacing: -0.2px; white-space:nowrap; overflow:hidden; }
+
+        .log-container { height: 140px; background: #1c2833; color: #00e676; font-family: monospace; padding: 10px; overflow-y: auto; margin-top: 15px; font-size: 12px; border-radius: 6px; border: 2px solid #90a4ae;}
+
+        /* Phase 4 approved local imagery; all assets are relative and offline. */
+        #landing-ui { background-image: linear-gradient(rgba(28,40,51,.90),rgba(28,40,51,.90)), url('assets/board/board.jpg'); background-size: cover; background-position:center; }
+        .board { background:#fff; }
+        .bands-container { background-image: linear-gradient(rgba(20,32,40,.34),rgba(20,32,40,.34)), url('assets/board/board.jpg') !important; background-size: cover !important; background-position:center center !important; background-repeat:no-repeat !important; } .band { background: transparent !important; background-image:none !important; }
+        .zone .base { background-image:none !important; background-color:rgba(255,255,255,.90) !important; }
+        .bands-container { position:relative; }
+        .bands-container:before, .bands-container:after { content:''; position:absolute; top:0; bottom:0; width:54px; background:rgba(20,32,40,.78); z-index:1; pointer-events:none; }
+        .bands-container:before { left:0; } .bands-container:after { right:0; }
+        .band { z-index:2; }
+        .token-art { width:44px; height:28px; object-fit:contain; display:block; margin:0 auto 1px; pointer-events:none; }
+        .sq-art { display:none !important; }
+        #us-contingency { border-color:#1565c0; }
+        *, *:before, *:after { animation:none !important; transition:none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- PHASE 0: LANDING -->
+    <div id="landing-ui">
+        <img src="assets/logos/AFWI_game_logo.png" alt="AFWI" style="max-width:360px;max-height:180px;margin-bottom:20px;"><h1 class="landing-title" style="font-size:54px;">Digital AFWI</h1>
+        <div class="landing-subtitle"><br>A Tactical Simulation of the Basics of Airpower, Air Combat, and Air Superiority</div>
+        <button class="btn" style="font-size: 18px; padding: 15px 30px;" onclick="showUI('scenario-ui')">Initialize Simulation</button>
+        <div class="landing-footer">A product of the Air Force Wargaming Institute</div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="rules-overlay" class="overlay">
+        <div id="rules-modal" class="modal">
+            <h2 style="margin-top:0; color:#0288d1;">AFWI Rules &amp; Mechanics Reference Guide</h2>
+            <div class="rules-section">
+                <strong>1. Action Economy, Turn Structure & Passing</strong><br>
+                During your active Turn, you are allocated a global shared action pool consisting of exactly <strong>1 Move</strong>, <strong>1 Acquire</strong>, and <strong>1 Shoot</strong> action. You do not have to use all actions, and they can be executed by different tokens in any sequence. Additionally, you are limited to activating exactly <strong>1 Squadron card per turn</strong>. A round continues with alternating turns until both commanders choose to consecutively PASS, ending the current ATO Cycle.
+            </div>
+            <div class="rules-section">
+                <strong>2. The ATO Cycle Phases</strong><br>
+                Every campaign round runs through a rigid multi-domain sequence:
+                <ul>
+                    <li><strong>Setup &amp; Deployment:</strong> Select Postures, select covert Missions, and draft squadrons/enablers.</li>
+                    <li><strong>Initiative Bid:</strong> Sacrifice Enabler cards secretly to modify a 1d4 roll. High roll wins Initiative.</li>
+                    <li><strong>Play Intel:</strong> Roll 1d4 (with Advantage for initiative winner) to sweep/unmask enemy Enabler cards. At least 1 card remains hidden.</li>
+                    <li><strong>MAS Action Phase:</strong> Alternating commander turns utilizing the Move-Acquire-Shoot combat engine.</li>
+                    <li><strong>End of Round Cleanup:</strong> The tactical board clears for the next ATO. Squadron HP and aircraft losses persist in the campaign ledger. A redrafted squadron returns at its normal starting location with only its surviving aircraft unless an Enabler changes that state. Any airborne assets whose parent Squadron Cards were destroyed crash during land-back attrition.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>3. Bidding for Initiative &amp; the Cyber Track</strong><br>
+                The commander who wins the Initiative Bid gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (+1 d4 roll)</strong> on all Acquisition checks.
+            </div>
+            <div class="rules-section">
+                <strong>4. Intel Domain, Active ID &amp; Fog of War</strong><br>
+                Opponents' squadron and enabler hands are MASKED. Assets spawned on the map begin as unacquired <strong>UNIDENTIFIED TRACKS</strong> with locked details. You must paint them via Acquisition before they can be shot. If you hold Intel Advantage at round start, you roll the d4 with Advantage. <strong>Intel Rating:</strong> Intel is a persistent, non-spendable rating used by scenario effects and information-advantage mechanics. AWACS and bases automatically reveal certain targets on sensory contact.
+            </div>
+            <div class="rules-section">
+                <strong>5. Static Board Geography &amp; Movement</strong><br>
+                The theater map consists of a static layout with 5 consolidated central tactical movement bands (Lanes 1 to 5), flanked by each side's respective Airbase and Standoff zones. The PRC commander plays top-down (bottom bands are closer to US, top bands closer to PRC), while the US commander plays bottom-up. Standard aircraft have a Move Range of 2 bands, while heavy bombers and AEW platforms have a Move Range of 1 band. Static assets (SAMs) cannot move.
+            </div>
+            <div class="rules-section">
+                <strong>6. Combat, Munitions, &amp; the Winchester Rule</strong><br>
+                Fighters, bombers, and ships must roll equal to or higher than the target's acquisition threshold (usually 2+) to score a hit. Upon firing a shot, you must roll a d4 to check weapon depletion:
+                <ul>
+                    <li><strong>Winchester Penalty:</strong> If the roll is a 1, 2, or 3, the unit expends its ordnance and is marked as <strong>Winchester [W]</strong>. It must return to its home airbase to re-arm at the beginning of its next turn.</li>
+                    <li><strong>Ammo Conservation:</strong> Rolling a Natural 4 represents a critical success where the asset destroys its target without exhausting its payload. It remains armed on the board.</li>
+                    <li><strong>Infinite Drone Ammo:</strong> Drones (UAS) carry highly efficient payloads and only go Winchester on a roll of 1 or 2.</li>
+                    <li><strong>Exploding Dice:</strong> Heavy ground strikes (bombers/missiles) rolling a Natural 4 trigger "Exploding Dice", allowing an immediate bonus 1d4 damage roll.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>7. Symmetrical Missile Defense (WEZ Intercepts)</strong><br>
+                Ground-based ADA (SAMs) and Guided Missile Destroyers (SAG) project a Weapon Engagement Zone (WEZ) equal to their shoot range. Any offensive strike path originating in or transiting through an enemy asset's WEZ triggers an active intercept warning. The defending player can activate Missile Defense, forcing the attacker's hit and damage rolls to suffer <strong>Disadvantage (roll 2 d4 and take the lower value)</strong>. Naval units must cover a physical Salvo Block to perform this, whereas static SAM units have infinite defensive payloads.
+            </div>
+            <div class="rules-section">
+                <strong>8. Deployed Squadron Damage &amp; Attrition</strong><br>
+                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their side's airbase. Their health and surviving aircraft count are displayed on the card. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the campaign. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
+            </div>
+            <button class="btn btn-danger" style="float:right;" onclick="toggleModal('rules-overlay')">Close</button>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
+    <div id="glossary-overlay" class="overlay">
+        <div id="glossary-modal" class="modal">
+            <h2 style="margin-top:0; color:#0288d1;">Military Asset Glossary &amp; Strategic Role Playbook</h2>
+            <div class="rules-section">
+                <strong>5th Generation Stealth Fighters (F-22 Raptor, F-35A Lightning, J-20 Dragon)</strong><br>
+                <em>Strategic Role:</em> The premier air-dominance platforms. Equipped with advanced stealth cross-sections, they are extremely difficult for enemy radars to paint, granting them a baseline `+1` Acquisition Bonus (or hiding their properties entirely until scanned).
+                <ul>
+                    <li><strong>Combat Profile:</strong> High speed (Move Range: 2), moderate sensor suite, and high weapon lethality at short range (Shoot Range: 1).</li>
+                    <li><strong>Employment:</strong> Hunt enemy stealth fighters, run vanguard sweeps to clear paths for bombers, and intercept incoming strike groups. Multi-role F-35s can carry ground munitions.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>4th Generation Tactical Fighters (F-15EX Strike Eagle, J-16 Flanker, J-10C Firebird)</strong><br>
+                <em>Strategic Role:</em> As heavy loadout workhorses, 4th Gen fighters lack the stealth of 5th Gen platforms but compensate with massive, versatile payloads capable of firing both Air-to-Air (AAM) and Air-to-Ground (AGM) missiles.
+                <ul>
+                    <li><strong>Combat Profile:</strong> High speed (Move Range: 2), standard sensor suite, and devastating multi-role strikes at close-combat range (Shoot Range: 1).</li>
+                    <li><strong>Employment:</strong> Exploit holes in enemy air defenses created by stealth vanguards, escort high-value AWACS platforms, and execute kinetic ground-strike packages on airfields.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>Standoff Heavy Bombers (B-52H Stratofortress, H-6K Badger)</strong><br>
+                <em>Strategic Role:</em> Heavy long-range strategic bombers. They operate exclusively from the safety of home Standoff zones, completely out of reach of ordinary fighter aircraft.
+                <ul>
+                    <li><strong>Combat Profile:</strong> Very slow (Move Range: 1), poor sensors, but equipped with devastating standoff cruise missiles capable of striking targets across the entire map (Shoot Range: 6/5).</li>
+                    <li><strong>Employment:</strong> Target and systematically dismantle static enemy airbase structures and ground radars from extreme distances. Bomber strikes inherently trigger Exploding d4 damage, but they depend on AEW AWACS to paint target locks first.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>Unmanned Aerial Systems / UAS Combat Drones (MQ-9 Reaper, TB-001 Twin-Tailed Scorpion)</strong><br>
+                <em>Strategic Role:</em> Slower, expendable, cost-effective remotely piloted vehicles used to sustain continuous ground-strike pressure without risking pilot lives.
+                <ul>
+                    <li><strong>Combat Profile:</strong> Slow speed (Move Range: 1), standard sensors, and close range air-to-ground missiles (Shoot Range: 1).</li>
+                    <li><strong>Employment:</strong> UAS drones feature unique "Infinite Ammo" payloads, meaning they only go Winchester on a low roll of 1 or 2. Use them as persistent harassment assets to force SAM units to waste their ammo or slowly chip away at naval hulls.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>Airborne Early Warning / AEW AWACS (E-3 Sentry, KJ-500)</strong><br>
+                <em>Strategic Role:</em> High-altitude flying radar and battle management systems. They carry zero weapons but represent the eyes and ears of the theater commander.
+                <ul>
+                    <li><strong>Combat Profile:</strong> Slow speed (Move Range: 1), zero weapons, but project an extreme sensor suite (Sensor Range: 3) with a massive `+2` Acquisition Roll Bonus.</li>
+                    <li><strong>Employment:</strong> Strategically park AWACS in Standoff zones. Due to their sensor suite, they can attempt <strong>two acquisitions per turn</strong>, sweeping away enemy fog of war to paint targets for fighters and heavy bombers. Protect them at all costs.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>Surface-to-Air Missile Batteries / SAM ADA (Patriot, S-400 Triumf)</strong><br>
+                <em>Strategic Role:</em> Strategic ground-based air defenses placed on airfields to deny the enemy unrestricted airspace access.
+                <ul>
+                    <li><strong>Combat Profile:</strong> Stationary (Move Range: 0), strong radar sensors, and long-range interceptors (Shoot Range: 3/4).</li>
+                    <li><strong>Employment:</strong> SAM batteries establish lethal Weapon Engagement Zones (WEZs). Any enemy attack originating from or transiting through their sector automatically triggers active missile defense, forcing incoming enemy rolls to suffer Disadvantage. They hold infinite defensive reloads.</li>
+                </ul>
+            </div>
+            <div class="rules-section">
+                <strong>Naval guided Missile Destroyers / SAG Flotillas (DDG-81, Type 055 Renhai)</strong><br>
+                <em>Strategic Role:</em> Mobile, heavily armored surface combatants that act as floating multi-mission fortresses.
+                <ul>
+                    <li><strong>Combat Profile:</strong> Moderate speed (Move Range: 1), deep magazines represented by finite <strong>Salvo Blocks</strong>, and heavy air defense (Shoot Range: 3).</li>
+                    <li><strong>Employment:</strong> Sail guided-missile destroyers into forward lanes to extend a mobile protective air defense umbrella (WEZ) over advancing fighters. They must expend their air salvo blocks to perform active missile defense intercepts, but they can also launch offensive kinetic strikes against bases.</li>
+                </ul>
+            </div>
+            <button class="btn btn-danger" style="float:right;" onclick="toggleModal('glossary-overlay')">Close</button>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
+    <div id="missile-defense-overlay" class="overlay">
+        <div class="modal" style="text-align:center; width:620px;">
+            <h2 id="md-title" style="margin-top:0; color:#f57f17;">MISSILE DEFENSE DECISION</h2>
+            <div id="md-handoff" style="padding:15px;">
+                <p id="md-instruction" style="font-size:16px; font-weight:bold;"></p>
+                <button id="md-ready-btn" class="btn" onclick="revealMissileDefenseOptions()">DEFENDER READY</button>
+            </div>
+            <div id="md-options" style="display:none; text-align:left;">
+                <p>The attacker has committed the attack. Select one eligible defensive system or decline interception.</p>
+                <div id="md-defender-list"></div>
+                <button class="btn btn-pass" style="width:100%;" onclick="chooseMissileDefense(-1)">DECLINE INTERCEPTION</button>
+            </div>
+            <div id="md-return" style="display:none; padding:15px;">
+                <p style="font-size:16px; font-weight:bold;">Defensive decision locked. Pass the device back to the attacking commander.</p>
+                <button class="btn" onclick="completeMissileDefenseHandoff()">ATTACKER READY — RESOLVE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="diagnostics-overlay" class="overlay">
+        <div class="modal" style="width:700px;">
+            <h2 style="margin-top:0; color:#0288d1;">Engine Diagnostics</h2>
+            <p style="font-size:12px; color:#546e7a;">Read-only engine state. Intended for troubleshooting and disabled from normal gameplay flow.</p>
+            <pre id="diagnostics-content" style="white-space:pre-wrap; background:#1c2833; color:#00e676; padding:12px; max-height:55vh; overflow:auto;"></pre>
+            <button class="btn" onclick="refreshDiagnostics()">Refresh</button>
+            <button class="btn btn-danger" style="float:right;" onclick="toggleModal('diagnostics-overlay')">Close</button>
+            <div style="clear:both;"></div>
+        </div>
+    </div>
+
+    <div id="game-over-overlay" class="overlay">
+        <div class="modal" style="text-align: center; width: 500px;">
+            <h1 id="go-winner" style="margin-top:0;">GAME OVER</h1>
+            <h3 id="go-reason" style="color:#546e7a;"></h3>
+            <div style="display:flex; justify-content:space-around; margin: 30px 0;">
+                <div><div style="font-size:24px; color:#1565c0; font-weight:bold;" id="go-us-vp">0</div><div>US VP</div></div>
+                <div><div style="font-size:24px; color:#c62828; font-weight:bold;" id="go-prc-vp">0</div><div>PRC VP</div></div>
+            </div>
+            <button class="btn" onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+
+    <!-- PHASE 1: BRIEFING -->
+    <div id="scenario-ui" class="setup-container">
+        <h2 style="color: #37474f; font-size:28px;">OPERATIONAL BRIEFING: Escalation in the Strait</h2>
+        <div class="scenario-box">
+            <strong>SITUATION:</strong> Tensions have boiled over in the Indo-Pacific. PRC forces have initiated aggressive area denial. US INDOPACOM has authorized deployment.
+        </div>
+        <div class="scenario-box">
+            <strong>COMMANDER's GUIDE &amp; HOW TO PLAY:</strong> 
+            <ul style="margin:5px 0;">
+                <li><strong>1. Pre-Game Strategic Setup:</strong> Both commanders sequentially select their strategic Posture (altering draft limits &amp; starting VP), choose an undisclosed covert Mission (bonus victory points), and draft their initial squadrons and enabler decks.</li>
+                <li><strong>2. Bidding for Initiative:</strong> Each round starts with players sacrificing Enabler cards (out of the game) to modify their d4 Initiative roll. The winner chooses turn order, attempts a Cyber Track progress roll, and gains the Intel Advantage.</li>
+                <li><strong>3. Play Intel &amp; Fog of War:</strong> Commanders roll to see how many opposing Enablers they sweep. The winner rolls with Advantage. All unacquired enemy assets remain MASKED as 'UNIDENTIFIED TRACKS' on the board.</li>
+                <li><strong>4. Combat Round Rotation (MAS Loop):</strong> Players alternate taking actions. You share 1 Move, 1 Acquire, and 1 Shoot action per turn across your forces. Turn ends when both pass consecutively. Deployed squadrons have 2 HP. Airborne tokens must RTB to avoid crashing if their base is destroyed.</li>
+            </ul>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn btn-warn" onclick="toggleModal('rules-overlay')">Open Full Rules &amp; Mechanics Reference</button>
+            </div>
+        </div>
+        <button class="btn" style="width:100%; font-size:16px;" onclick="beginSetupSequence()">Acknowledge & Begin Setup</button>
+    </div>
+
+    <!-- COMBINED SETUP UI (Posture -> Mission -> Draft) -->
+    <div id="setup-ui" class="setup-container" style="max-width: 1100px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 id="setup-header" class="header-us" style="border:none; margin:0;">US PLAYER: Strategic Setup</h2>
+            <div>
+                <button class="btn" style="background:#546e7a;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
+                <button class="btn" style="background:#546e7a;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
+            </div>
+        </div>
+        <hr style="border: 1px solid #cfd8dc; margin-bottom: 20px;">
+
+        <div id="setup-step-1">
+            <h3>Step 1: Select Posture</h3>
+            <p style="font-size:12px; color:#666;">Postures alter your starting VP and limit how many Squadrons/Enablers you can draft this round.</p>
+            <div id="posture-list" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+            <button class="btn" style="margin-top:15px;" onclick="confirmPosture()">Confirm Posture</button>
+        </div>
+
+        <div id="setup-step-2" style="display:none;">
+            <h3>Step 2: Select Undisclosed Mission</h3>
+            <p style="font-size:12px; color:#666;">Select an objective to earn bonus VP. This remains masked to your opponent.</p>
+            <div id="mission-list" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
+            <button class="btn" style="margin-top:15px;" onclick="confirmMission()">Confirm Mission</button>
+        </div>
+
+        <div id="setup-step-3" style="display:none;">
+            <h3>Step 3: Draft Forces (Round <span id="setup-round-txt">1</span>)</h3>
+            <div style="background:#eceff1; padding:10px; border-radius:4px; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+                <div>Squadrons: <span id="draft-sq-count">0</span> / <span id="draft-sq-limit">5</span> &nbsp;|&nbsp; Enablers: <span id="draft-en-count">0</span> / <span id="draft-en-limit">5</span></div>
+                <div><button class="btn btn-warn" onclick="resetDraft()">Reset Picks</button> <button id="btn-confirm-draft" class="btn" style="display:none;" onclick="confirmDraft()">Complete Setup</button></div>
+            </div>
+            <div class="draft-layout">
+                <div class="draft-pool">
+                    <div class="draft-pool-col"><h4 style="margin-top:0;">Squadrons</h4><div id="draft-pool-sq"></div></div>
+                    <div class="draft-pool-col" style="border-left: 2px solid #cfd8dc; padding-left: 10px;"><h4 style="margin-top:0;">Enablers</h4><div id="draft-pool-en"></div></div>
+                </div>
+                <div class="draft-picks" id="draft-picks-container">
+                    <h4 style="margin-top:0;">Your Roster</h4>
+                    <div id="draft-picks-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INITIATIVE BID (HOT-SEAT ENFORCED) -->
+    <div id="initiative-ui" class="setup-container" style="max-width: 600px;">
+        <h2 style="color: #37474f;">ATO CYCLE PHASE: Bid for Initiative</h2>
+
+        <!-- Handover Cover Box -->
+        <div id="bid-handover-box" style="text-align: center; padding: 20px;">
+            <h3 id="bid-handover-title" style="color: #0288d1; margin-bottom: 15px;">PASS DEVICE TO US COMMANDER</h3>
+            <p style="font-size: 14px; color: #546e7a; margin-bottom: 25px;">Hand control over safely. Make sure other commanders cannot view the screen.</p>
+            <button class="btn" id="btn-bid-start" onclick="revealActiveBidder()">I AM READY</button>
+        </div>
+
+        <!-- Active Bid Interface -->
+        <div id="bid-active-box" style="display: none;">
+            <p style="font-size: 13px; color: #546e7a; margin-bottom: 20px;">Sacrifice Enabler cards to augment your Initiative d4 Roll. Sacrificed cards are destroyed and completely out of the game for this round.</p>
+            <h3 id="active-bidder-header" class="header-us">US BIDDER</h3>
+            <div id="active-sac-status" style="font-weight: bold; margin-bottom: 10px;">Select cards to sacrifice...</div>
+            <div id="active-sac-pool" style="max-height: 250px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #90a4ae; padding: 10px; border-radius: 4px; background: #fafafa;"></div>
+            <button class="btn" style="width:100%; font-size:16px;" id="btn-submit-bid" onclick="submitActiveBid()">Confirm Bid & Next Step</button>
+        </div>
+    </div>
+
+    <!-- INTEL REVEAL INTERFACE (HOT-SEAT ENFORCED) -->
+    <div id="intel-reveal-ui" class="setup-container" style="max-width: 800px;">
+        <h2 style="color: #37474f;">ATO CYCLE PHASE: Play Intel Rollup</h2>
+        <p style="font-size:13px; color:#546e7a;">The Commander with Intel Advantage rolls their d4 with Advantage. At least one Enabler card must remain masked.</p>
+        <div id="intel-result-box" style="background:#eceff1; padding:20px; border-radius:6px; margin:15px 0; font-family:monospace; line-height: 1.6;"></div>
+        <button id="btn-intel-next" class="btn" style="width:100%; font-size:16px;">Advance</button>
+    </div>
+
+    <!-- INTERSTITIAL / SITREP -->
+    <div id="interstitial-ui">
+        <h1 id="inter-title">STANDBY FOR HANDOVER</h1>
+        <p style="font-size: 20px; margin-bottom: 30px;">Pass the device to the <span id="inter-side" style="font-weight:bold; color:#ffeb3b;"></span> Commander.</p>
+        <button class="btn" style="font-size: 24px; padding: 15px 40px;" onclick="showSitrep()">I AM READY</button>
+
+        <div id="sitrep-ui">
+            <h3 style="margin-top:0; border-bottom:2px solid #f57f17; padding-bottom:5px; color:#000;">SITREP & ADVERSARY INTEL RECORD</h3>
+            <div id="sitrep-content" style="margin-bottom: 20px; max-height: 300px; overflow-y:auto; color:#333;"></div>
+            <button class="btn" style="width:100%;" onclick="dismissInterstitial()">Acknowledge SITREP & Begin Turn</button>
+        </div>
+    </div>
+
+    <!-- PHASE 3: GAME -->
+    <div id="game-ui">
+        <div class="top-nav">
+            <h3 style="margin:0;">AFWI RC1</h3>
+            <div>
+                <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
+                <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
+                <button class="btn" style="background:#455a64; margin:0;" onclick="openDiagnostics()">[D] Diagnostics</button>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div><span style="color:#0288d1" id="turn-txt">US TURN</span> &nbsp;|&nbsp; <span style="color:#546e7a;">Round <span id="round-txt">1</span></span></div>
+            <div id="unit-status" style="color: #37474f; font-weight:normal;">Actions: M:1 | A:1 | S:1</div>
+            <div>
+                <button class="btn btn-warn" onclick="rtbWinchester()" style="margin:0;">RTB Winchester</button>
+                <button class="btn btn-pass" onclick="passTurn()" style="margin:0 5px;">PASS</button>
+                <button class="btn btn-danger" onclick="endTurn()" style="margin:0;">END TURN</button>
+            </div>
+        </div>
+
+        <div class="flex-container">
+            <!-- US Panel -->
+            <div class="panel" id="panel-us" style="border-top-width: 6px; border-top-color:#1565c0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0; color:#1565c0;">US COMMAND</h3>
+                    <div class="vp-disp" style="color:#1565c0;" id="us-vp">0 VP</div>
+                </div>
+                <div class="track-box" style="margin-top:15px; cursor:default;">CYBER: <span id="us-cyb" style="color:#d84315;">1</span> | INTEL: <span id="us-int" style="color:#0288d1;">0</span></div>
+
+                <div class="track-box" style="background:#e3f2fd; border-color:#90caf9; cursor:default;">MISSION: <br><span id="us-mission" style="font-weight:normal;">None</span></div>
+                <div class="track-box" id="us-buffs" style="font-weight:normal; cursor:default;">No Active Buffs</div>
+<h4 style="border-bottom:1px solid #cfd8dc; margin-top:10px;">Squadrons (Hand)</h4><div id="us-sq"></div>
+                <h4 style="border-bottom:1px solid #cfd8dc;">Enablers (Unsacrificed)</h4><div id="us-en"></div>
+            </div>
+
+            <!-- Board -->
+            <div class="board">
+                <div class="zone" style="background:#ffcdd2; border-bottom: 3px solid #c62828;">
+                    <div class="base" id="prc-standoff">PRC STANDOFF</div>
+                    <div class="base airbase-target" id="prc-airbase" onclick="targetAirbase('PRC')">PRC AIRBASE</div>
+                </div>
+                <div class="bands-container" id="bands-container"></div>
+                <div class="zone" style="background:#bbdefb; border-bottom:none; border-top: 3px solid #1565c0;">
+                    <div class="base" id="us-standoff">US STANDOFF</div>
+                    <div class="base" id="us-contingency">US CONTINGENCY LOCATION</div>
+                    <div class="base airbase-target" id="us-airbase" onclick="targetAirbase('US')">US AIRBASE</div>
+                </div>
+            </div>
+
+            <!-- PRC Panel -->
+            <div class="panel" id="panel-prc" style="border-top-width: 6px; border-top-color: #c62828;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="margin:0; color:#c62828;">PRC COMMAND</h3>
+                    <div class="vp-disp" style="color:#c62828;" id="prc-vp">0 VP</div>
+                </div>
+                <div class="track-box" style="margin-top:15px; cursor:default;">CYBER: <span id="prc-cyb" style="color:#d84315;">1</span> | INTEL: <span id="prc-int" style="color:#0288d1;">0</span></div>
+
+                <div class="track-box" style="background:#ffebee; border-color:#ef9a9a; cursor:default;">MISSION: <br><span id="prc-mission" style="font-weight:normal;">None</span></div>
+                <div class="track-box" id="prc-buffs" style="font-weight:normal; cursor:default;">No Active Buffs</div>
+<h4 style="border-bottom:1px solid #cfd8dc; margin-top:10px;">Squadrons (Hand)</h4><div id="prc-sq"></div>
+                <h4 style="border-bottom:1px solid #cfd8dc;">Enablers (Unsacrificed)</h4><div id="prc-en"></div>
+            </div>
+        </div>
+
+        <div class="log-container" id="log-box">System Initialized...<br></div>
+    </div>
+
+    <script>
+        // DATA STRUCTURES
+        var POSTURES = {
+            US: [
+                { id:"pU5", title:"STANDARD", desc:"Limits: 4 Squadrons / 6 Enablers. May always be selected.", sq:4, en:6, vp:0 },
+                { id:"pU1", title:"ACE", desc:"All Contingency Locations generate maximum aircraft.", sq:3, en:5, vp:0 },
+                { id:"pU2", title:"SURGE", desc:"Limits: 6 Squadrons / 7 Enablers. Contingency Locations unavailable.", sq:6, en:7, vp:0 },
+                { id:"pU3", title:"HEDGEHOG", desc:"Limits: 4 Squadrons / 6 Enablers.", sq:4, en:6, vp:0 },
+                { id:"pU4", title:"STANDOFF", desc:"Limits: 3 Squadrons / 6 Enablers.", sq:3, en:6, vp:0 }
+            ],
+            PRC: [
+                { id:"pP5", title:"STANDARD", desc:"Limits: 4 Squadrons / 6 Enablers. May always be selected.", sq:4, en:6, vp:0 },
+                { id:"pP1", title:"PLAAF", desc:"Limits: 6 Squadrons / 5 Enablers.", sq:6, en:5, vp:0 },
+                { id:"pP2", title:"JOINT OPERATIONS", desc:"Limits: 3 flying Squadrons / 9 Enablers.", sq:3, en:9, vp:0 },
+                { id:"pP3", title:"ADA", desc:"Limits: 4 Squadrons / 6 Enablers.", sq:4, en:6, vp:0 },
+                { id:"pP4", title:"STANDOFF", desc:"Limits: 3 Squadrons / 6 Enablers.", sq:3, en:6, vp:0 }
+            ]
+        };
+
+        var MISSIONS = {"US":[{"id":"mU1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mU2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mU3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mU4","title":"N-K DOMINANCE","desc":"Score at end of each ATO. +3 VP x US Cyber Rate +1VP for each electronic-warfare, Cyber, or non-kinetic card played."},{"id":"mU5","title":"ENFORCE RULE OF LAW","desc":"Score at the end of each turn. +2 VP for each squadron card activated during turn. +1 VP for each token generated by Enabler Card during turn."}],"PRC":[{"id":"mP1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mP2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mP3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mP4","title":"THREE DOMINANCES","desc":"Score at end of each ATO. +2 VP x PRC Cyber Rate, +3 VP for each Naval unit on board, +1 VP for each Naval Enabler card played, and each intact Squadron."},{"id":"mP5","title":"COUNTER-INTERVENTION","desc":"+3 VP for each enemy Air Token destroyed on the ground. +1 VP for each PLARF card played."}]};
+
+        // Phase 1 Refactor: Map core stats directly to unit records, strip deprecated ammo pools
+        var MASTER_DECK = [
+          // US SQUADRONS
+          { ID: "US-SQ-1", Side: "US", Type: "SQ", TITLE: "90th FIGHTER", EQ: "F-22 Raptor", DESC: "Gen 5", Spd: 2, Qty: 4, Loc: "base", VP: 2, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen5"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 1, Explosive: false },
+          { ID: "US-SQ-2", Side: "US", Type: "SQ", TITLE: "34th FIGHTER", EQ: "F-35A", DESC: "Gen 5 Multi", Spd: 2, Qty: 4, Loc: "base", VP: 2, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen5"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "US-SQ-3", Side: "US", Type: "SQ", TITLE: "336th FIGHTER", EQ: "F-15EX", DESC: "Gen 4 Multi", Spd: 2, Qty: 4, Loc: "base", VP: 1, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen4"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "US-SQ-4", Side: "US", Type: "SQ", TITLE: "124th ATTACK", EQ: "MQ-9 Reaper", DESC: "UAS", Spd: 1, Qty: 4, Loc: "base", VP: 1, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["UAS"], winchesterType: "Infinite", hitThreshold: 3, acqBonus: 0, Explosive: true },
+          { ID: "US-SQ-5", Side: "US", Type: "SQ", TITLE: "69th BOMB", EQ: "B-52H", DESC: "Hvy Bomber", Spd: 1, Qty: 1, Loc: "standoff", VP: 3, AcqR: 2, ShtR: 6, Draftable: true, Tags: ["Bomber"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "US-SQ-6", Side: "US", Type: "SQ", TITLE: "960th AWACS", EQ: "E-3 Sentry", DESC: "AEW | Unarmed", Spd: 1, Qty: 1, Loc: "standoff", VP: 3, AcqR: 3, ShtR: -1, Draftable: true, Tags: ["AEW"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 2, Explosive: false },
+          { ID: "US-SQ-7", Side: "US", Type: "SQ", TITLE: "11th ADA", EQ: "Patriot", DESC: "SAM", Spd: 0, Qty: 2, Loc: "base", VP: 2, AcqR: 3, ShtR: 3, Draftable: true, Tags: ["SAM"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: false },
+          { ID: "US-SQ-8", Side: "US", Type: "SQ", TITLE: "Carrier Wing 9", EQ: "F/A-18 & F-35C", DESC: "Naval", Spd: 2, Qty: 4, Loc: "lane-1", VP: 3, AcqR: 2, ShtR: 3, Draftable: true, Tags: ["Naval", "Carrier", "Fighter", "Gen5"], winchesterType: "Salvo", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "US-SQ-9", Side: "US", Type: "SQ", TITLE: "Surface Action Group", EQ: "Arleigh Burke DDG", DESC: "Naval SAM", Spd: 1, Qty: 2, Loc: "lane-1", VP: 2, AcqR: 3, ShtR: 3, Draftable: true, Tags: ["Naval", "SAG", "SAM"], winchesterType: "Salvo", hitThreshold: 2, acqBonus: 0, Explosive: true },
+
+          // US ENABLERS
+          { ID: "US-EN-1", Side: "US", Type: "EN", TITLE: "Space-Based ISR", EQ: "Intel", DESC: "[Single] Instantly gain +2 Intel.", Use: "Single", Draftable: true },
+          { ID: "US-EN-2", Side: "US", Type: "EN", TITLE: "Cyber Protect Team", EQ: "Cyber", DESC: "[Multi] Enemy loses 1 Cyb, rolls next Cyb at Disadv.", Use: "Multi", Draftable: true },
+          { ID: "US-EN-3", Side: "US", Type: "EN", TITLE: "HARM Missiles", EQ: "Kinetic", DESC: "[Multi] Next attack vs SAM rolls Adv.", Use: "Multi", Draftable: true },
+          { ID: "US-EN-4", Side: "US", Type: "EN", TITLE: "LRASM Strike", EQ: "Kinetic", DESC: "[Single] Deep strike. Gain +2 VP.", Use: "Single", Draftable: true, Explosive: true },
+          { ID: "US-EN-5", Side: "US", Type: "EN", TITLE: "Cyber Command", EQ: "Cyber", DESC: "[Multi] Roll 1d4. On 2+, gain +1 Cyber.", Use: "Multi", Draftable: true },
+          { ID: "US-EN-6", Side: "US", Type: "EN", TITLE: "EA-18G Growler", EQ: "Electronic", DESC: "[Multi] Enemy next attack: Disadv", Use: "Multi", Draftable: true },
+          { ID: "US-EN-7", Side: "US", Type: "EN", TITLE: "Agile Combat Employment", EQ: "Logistics", DESC: "[Multi] Clears Winchester without RTB.", Use: "Multi", Draftable: true },
+          { ID: "US-EN-8", Side: "US", Type: "EN", TITLE: "Surge: Carrier CSG", EQ: "Naval", DESC: "[Single] Deploys Carrier Wing 9 w/o limit.", Use: "Single", Draftable: true, IsSurge: true, SurgeTarget: "US-SQ-8" },
+
+          // PRC SQUADRONS
+          { ID: "PRC-SQ-1", Side: "PRC", Type: "SQ", TITLE: "9th Air Bde", EQ: "J-20 Dragon", DESC: "Gen 5", Spd: 2, Qty: 4, Loc: "base", VP: 2, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen5"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 1, Explosive: false },
+          { ID: "PRC-SQ-2", Side: "PRC", Type: "SQ", TITLE: "2nd Air Bde", EQ: "J-16 Flanker", DESC: "Gen 4 Multi", Spd: 2, Qty: 4, Loc: "base", VP: 1, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen4"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "PRC-SQ-3", Side: "PRC", Type: "SQ", TITLE: "124th Air Bde", EQ: "J-10C Firebird", DESC: "Gen 4 Multi", Spd: 2, Qty: 4, Loc: "base", VP: 1, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["Fighter", "Gen4"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "PRC-SQ-4", Side: "PRC", Type: "SQ", TITLE: "UAS Regiment", EQ: "TB-001", DESC: "UAS", Spd: 1, Qty: 4, Loc: "base", VP: 1, AcqR: 2, ShtR: 1, Draftable: true, Tags: ["UAS"], winchesterType: "Infinite", hitThreshold: 3, acqBonus: 0, Explosive: true },
+          { ID: "PRC-SQ-5", Side: "PRC", Type: "SQ", TITLE: "10th Bomber Reg", EQ: "H-6K", DESC: "Bomber", Spd: 1, Qty: 1, Loc: "standoff", VP: 3, AcqR: 2, ShtR: 6, Draftable: true, Tags: ["Bomber"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "PRC-SQ-6", Side: "PRC", Type: "SQ", TITLE: "AEW Regiment", EQ: "KJ-500", DESC: "AEW | Unarmed", Spd: 1, Qty: 1, Loc: "standoff", VP: 3, AcqR: 3, ShtR: -1, Draftable: true, Tags: ["AEW"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 2, Explosive: false },
+          { ID: "PRC-SQ-7", Side: "PRC", Type: "SQ", TITLE: "5th ADA Bde", EQ: "S-400 Triumf", DESC: "SAM", Spd: 0, Qty: 2, Loc: "base", VP: 2, AcqR: 4, ShtR: 4, Draftable: true, Tags: ["SAM"], winchesterType: "Standard", hitThreshold: 2, acqBonus: 0, Explosive: false },
+          { ID: "PRC-SQ-8", Side: "PRC", Type: "SQ", TITLE: "PLANAF Carrier", EQ: "J-15 Flying Shark", DESC: "Naval", Spd: 2, Qty: 4, Loc: "lane-5", VP: 3, AcqR: 2, ShtR: 3, Draftable: true, Tags: ["Naval", "Carrier", "Fighter", "Gen4"], winchesterType: "Salvo", hitThreshold: 2, acqBonus: 0, Explosive: true },
+          { ID: "PRC-SQ-9", Side: "PRC", Type: "SQ", TITLE: "Type 055 Flotilla", EQ: "Type 055 DDG", DESC: "Naval SAM", Spd: 1, Qty: 2, Loc: "lane-5", VP: 2, AcqR: 3, ShtR: 3, Draftable: true, Tags: ["Naval", "SAG", "SAM"], winchesterType: "Salvo", hitThreshold: 2, acqBonus: 0, Explosive: true },
+
+          // PRC ENABLERS
+          { ID: "PRC-EN-1", Side: "PRC", Type: "EN", TITLE: "IADS Integration", EQ: "Tactics", DESC: "[Multi] Next SAM attack rolls Adv.", Use: "Multi", Draftable: true },
+          { ID: "PRC-EN-2", Side: "PRC", Type: "EN", TITLE: "ASAT Strike", EQ: "Strategic", DESC: "[Single] Destroy US orbital. US loses 2 Intel.", Use: "Single", Draftable: true },
+          { ID: "PRC-EN-3", Side: "PRC", Type: "EN", TITLE: "Cyber Militia", EQ: "Cyber", DESC: "[Multi] Roll 1d4. On 2+, gain +1 Cyber.", Use: "Multi", Draftable: true },
+          { ID: "PRC-EN-4", Side: "PRC", Type: "EN", TITLE: "SRF Strike", EQ: "Kinetic", DESC: "[Single] Ballistic strike. Gain +2 VP.", Use: "Single", Draftable: true, Explosive: true },
+          { ID: "PRC-EN-5", Side: "PRC", Type: "EN", TITLE: "Maritime Militia", EQ: "Intel", DESC: "[Multi] Distributed sensors. Gain +1 Intel.", Use: "Multi", Draftable: true },
+          { ID: "PRC-EN-6", Side: "PRC", Type: "EN", TITLE: "DF-17 Hypersonic", EQ: "Kinetic", DESC: "[Single] Uninterceptable. Gain +3 VP.", Use: "Single", Draftable: true, Explosive: true },
+          { ID: "PRC-EN-7", Side: "PRC", Type: "EN", TITLE: "APT Penetration", EQ: "Cyber", DESC: "[Multi] US loses 1 Cyb, rolls next Cyb at Disadv.", Use: "Multi", Draftable: true },
+          { ID: "PRC-EN-8", Side: "PRC", Type: "EN", TITLE: "Surge: PLANAF", EQ: "Naval", DESC: "[Single] Deploys PLANAF Carrier w/o limit.", Use: "Single", Draftable: true, IsSurge: true, SurgeTarget: "PRC-SQ-8" }
+        ];
+
+
+        /* PHASE 5 AUTHORITATIVE CONTENT REGISTRY */
+        var PHASE5_AUTHORITATIVE_CARDS = [{"ID":"US-AUTH-SQ-01","Side":"US","Type":"SQ","TITLE":"124th ATTACK SQUADRON","EQ":"MQ-9 REAPER","DESC":"Generate: 4x Attack UAS Tokens in any band","Spd":1,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["UAS"],"winchesterType":"Infinite","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-02","Side":"US","Type":"SQ","TITLE":"69th BOMB SQUADRON","EQ":"B-52H Stratofortress","DESC":"Generate: 1x B-52H Token in US band 1 or standoff","Spd":1,"Qty":1,"Loc":"base","VP":3,"AcqR":2,"ShtR":6,"Draftable":true,"Tags":["Bomber"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":true,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-03","Side":"US","Type":"SQ","TITLE":"9th EXPEDITIONARY RECONNAISSANCE SQUADRON","EQ":"RQ-4 Global Hawk","DESC":"Generate: 2x Recon UAS Tokens in any band","Spd":1,"Qty":2,"Loc":"base","VP":1,"AcqR":2,"ShtR":-1,"Draftable":true,"Tags":["UAS"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":1,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-04","Side":"US","Type":"SQ","TITLE":"960th AIRBORNE  AIR CONTROL SQUADRON","EQ":"E-3 Sentry AWACS","DESC":"Generate: 1x AEW Token in US band 1 or standoff","Spd":1,"Qty":1,"Loc":"base","VP":3,"AcqR":3,"ShtR":-1,"Draftable":true,"Tags":["AEW"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":2,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-05","Side":"US","Type":"SQ","TITLE":"90th FIGHTER SQUADRON","EQ":"F-22 Raptor","DESC":"Generate: F-22 Tokens in US band 1","Spd":2,"Qty":4,"Loc":"base","VP":2,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen5"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":1,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-06","Side":"US","Type":"SQ","TITLE":"44th FIGHTER SQUADRON","EQ":"F-15C Eagle","DESC":"Generate: x F-15C Tokens in US band 1","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-07","Side":"US","Type":"SQ","TITLE":"23rd BOMB SQUADRON","EQ":"B-52H Stratofortress","DESC":"Generate: 1x B-52H Token in US band 1 or standoff","Spd":1,"Qty":1,"Loc":"base","VP":3,"AcqR":2,"ShtR":6,"Draftable":true,"Tags":["Bomber"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":true,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-08","Side":"US","Type":"SQ","TITLE":"34th FIGHTER SQUADRON","EQ":"F-35A Lightning II","DESC":"Generate: 4x F-35A Tokens in US band 1","Spd":2,"Qty":4,"Loc":"base","VP":2,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen5"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-09","Side":"US","Type":"SQ","TITLE":"391st FIGHTER SQUADRON","EQ":"F-15E Strike Eagle","DESC":"Generate: 4x F-15E Tokens in US band 1","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-SQ-10","Side":"US","Type":"SQ","TITLE":"480th FIGHTER SQUADRON","EQ":"F-16C Fighting Falcon","DESC":"Generate: 4x F-16C Tokens in US band 1","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":3,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"US-AUTH-EN-01","Side":"US","Type":"EN","TITLE":"AC-130 GUNSHIP ATTACK","EQ":"AFSOC","DESC":"Play immediatly after the PRC plays a Special Operations Forces (SOF) card. Cancel that SOF card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AFSOC","Equipment":"AC-130H Spectre","Explosive":false},{"ID":"US-AUTH-EN-02","Side":"US","Type":"EN","TITLE":"PERSONNEL RECOVERY","EQ":"AFSOC","DESC":"Play immediately after a US aircraft is lost. Recover aircraft in US band 1. It does not count as destroyed.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AFSOC","Equipment":"UH-60 Black Hawk","Explosive":false},{"ID":"US-AUTH-EN-03","Side":"US","Type":"EN","TITLE":"FORWARD BASES","EQ":"AFSOC","DESC":"Play immediately after US declares an air-to-surface strike. The strike automatically hits.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AFSOC","Equipment":"SOF Team Member","Explosive":false},{"ID":"US-AUTH-EN-04","Side":"US","Type":"EN","TITLE":"SOF RECONNAISSANCE","EQ":"Intel","DESC":"Roll 1d4 Acquire PRC tokens equal to the roll. If rolled 4, also increase Cyber Rate by 1.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AFSOC","Equipment":"SOF Team Member","Explosive":false},{"ID":"US-AUTH-EN-05","Side":"US","Type":"EN","TITLE":"SOF CYBER INFILTRATION","EQ":"Cyber","DESC":"Roll 1d4 If roll equal to or greater than cyber access value, improve your US Cyber Rate by 1.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AFSOC","Equipment":"SOF Team Member","Explosive":false},{"ID":"US-AUTH-EN-06","Side":"US","Type":"EN","TITLE":"AERIAL REFUELING (AR)","EQ":"Logistics","DESC":"Place one squadron card in addition to the Posture limit on the airbase ready to generate.","Use":"Multple","Draftable":true,"Authoritative":true,"Family":"MOB/MAIN","Equipment":"KC-135 Fuel Boom F-22 Raptor","Explosive":false},{"ID":"US-AUTH-EN-07","Side":"US","Type":"EN","TITLE":"QUICK-TURN MOBILITY","EQ":"Logistics","DESC":"Play immediately after a US aircraft is lost. Recover aircraft in US band 1. It does not count as destroyed.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"MOB/MAIN","Equipment":"KC-46A Pegasus","Explosive":false},{"ID":"US-AUTH-EN-08","Side":"US","Type":"EN","TITLE":"RAPID RESUPPLY","EQ":"Logistics","DESC":"Recover any discarded Squadron or Enabler Card.  This card may be used immediately.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"MOB/MAIN","Equipment":"Ferry ops during Talisman Sabre 23","Explosive":false},{"ID":"US-AUTH-EN-09","Side":"US","Type":"EN","TITLE":"IMPROVED MUNITIONS","EQ":"MOB/MAIN","DESC":"All US air-to-air rolls are at advantage this ATO cycle.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"MOB/MAIN","Equipment":"AF_Maintainer adjusting munitions","Explosive":false},{"ID":"US-AUTH-EN-10","Side":"US","Type":"EN","TITLE":"FLYING CREW CHIEF","EQ":"Logistics","DESC":"Automatically generate max aircraft for 1 Squadron at a contingency location this ATO cycle. (1d4 roll not used)","Use":"Multple","Draftable":true,"Authoritative":true,"Family":"MOB/MAIN","Equipment":"AF-Crew Chief","Explosive":false},{"ID":"US-AUTH-EN-11","Side":"US","Type":"EN","TITLE":"CYBER RECONNAISSANCE","EQ":"Cyber","DESC":"Acquire PRC Tokens equal to your Cyber Rate.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"AF CYBER","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-12","Side":"US","Type":"EN","TITLE":"CYBER INFILTRATION","EQ":"Cyber","DESC":"Roll 1d4 If roll equal to or greater than cyber access value, improve your US Cyber Rate by 1.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"AF CYBER","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-13","Side":"US","Type":"EN","TITLE":"DEFENSIVE CYBER","EQ":"Cyber","DESC":"EITHER Cancel a PRC Cyber card OR Degrade the PRC Cyber rate by 1.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"AF CYBER","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-14","Side":"US","Type":"EN","TITLE":"OFFENSIVE CYBER","EQ":"Cyber","DESC":"Remove PRC tokens equal to your Cyber Rate  OR  PRC discards Enabler Cards in hand equal to your Cyber Rate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF CYBER","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-15","Side":"US","Type":"EN","TITLE":"CYBER COUNTER-UAS","EQ":"Cyber","DESC":"Destroy PRC Unmanned Aircraft System (UAS) Tokens equal to your Cyber Rate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF CYBER","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-16","Side":"US","Type":"EN","TITLE":"ELECTRONIC WARFARE (EW) SPOOFING","EQ":"Electronic","DESC":"All PRC acquisition rolls for the rest of the ATO cycle are at disadvantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF EW","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-17","Side":"US","Type":"EN","TITLE":"DEFENSIVE ELECTRONIC WARFARE (EW)","EQ":"Electronic","DESC":"All PRC attack rolls for the rest of the ATO cycle are at disadvantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF EW","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-18","Side":"US","Type":"EN","TITLE":"OFFENSIVE ELECTRONIC WARFARE (EW)","EQ":"Electronic","DESC":"All US attack rolls for the rest of the ATO cycle are at advantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF EW","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-19","Side":"US","Type":"EN","TITLE":"AIR LAUNCHED DECOY","EQ":"AF EW","DESC":"Play immediately after PRC rolls a hit or attempts a missile defense. Cancel that hit or defense.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF EW","Equipment":"ADM 160 MALD","Explosive":false},{"ID":"US-AUTH-EN-20","Side":"US","Type":"EN","TITLE":"EC-130 COMPASS CALL","EQ":"AF EW","DESC":"Generate: 1x EC-130 Token in any range band. All PRC attacks in the same range band as the EC-130 Token roll at disadvantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"AF EW","Equipment":"EC-130 Compass Call","Explosive":false},{"ID":"US-AUTH-EN-21","Side":"US","Type":"EN","TITLE":"SPACE RECONNAISSANCE","EQ":"Space","DESC":"Roll 1d4 Acquire PRC tokens equal to the roll.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"JOINT NK","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-22","Side":"US","Type":"EN","TITLE":"COUNTER SPACE","EQ":"Space","DESC":"Play immediately after PRC plays a space card. Cancel the PRC space card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"JOINT NK","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-23","Side":"US","Type":"EN","TITLE":"JOINT DEFENSIVE CYBER","EQ":"Cyber","DESC":"Degrade PRC Cyber Rate by 2.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"JOINT NK","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-24","Side":"US","Type":"EN","TITLE":"JOINT OFFENSIVE CYBER","EQ":"Cyber","DESC":"Remove PRC Tokens equal to 2x your Cyber Rate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"JOINT NK","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-25","Side":"US","Type":"EN","TITLE":"SPACE-BASED ELECTRONIC WARFARE","EQ":"Space","DESC":"PRC base attack rolls are at disadvantage this ATO Cycle","Use":"Single","Draftable":true,"Authoritative":true,"Family":"JOINT NK","Equipment":"N/A","Explosive":false},{"ID":"US-AUTH-EN-26","Side":"US","Type":"EN","TITLE":"LAND-BASED MISSILE DEFENSE","EQ":"Kinetic","DESC":"Generate: 1x ADA token on the US Airbase or Contingency Location.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"BASE DEFENSE","Equipment":"NASAM","Explosive":false},{"ID":"US-AUTH-EN-27","Side":"US","Type":"EN","TITLE":"MARITIME MISSILE DEFENSE","EQ":"Kinetic","DESC":"Generate: DDG 81 Guided Missile Destroyer in any range band.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"BASE DEFENSE","Equipment":"Arleigh Burke Class Destroyer","Explosive":false},{"ID":"US-AUTH-EN-28","Side":"US","Type":"EN","TITLE":"RED HORSE SQUADRON","EQ":"BASE DEFENSE","DESC":"Play immediately after PRC attacks US airbase or contingency location. Cancel all damage from the attack.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"BASE DEFENSE","Equipment":"Vibrating Rollers Compacting Runway","Explosive":false},{"ID":"US-AUTH-EN-29","Side":"US","Type":"EN","TITLE":"RESILIENT BASES","EQ":"BASE DEFENSE","DESC":"Play immediately after PRC attacks US airbase or contingency location. Cancel all damage from the attack.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"BASE DEFENSE","Equipment":"Hardened Hanger at Kadena Air Base","Explosive":false},{"ID":"US-AUTH-EN-30","Side":"US","Type":"EN","TITLE":"INFANTRY BATTALION","EQ":"BASE DEFENSE","DESC":"Place on any base or contingency location. Squadrons on that base may not be attacked by SOF. This card may be target of a base attack.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"BASE DEFENSE","Equipment":"Damage Blocks","Explosive":false},{"ID":"US-AUTH-EN-31","Side":"US","Type":"EN","TITLE":"HIGH MOBILITY ARTILLERY ROCKET SYSTEM (HIMARS)","EQ":"Kinetic","DESC":"Roll 2+ on 1d4. If successful roll 1d4 for damage inflicted to PRC airbase.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"NAVAL","Equipment":"HIMARS","Explosive":true},{"ID":"US-AUTH-EN-32","Side":"US","Type":"EN","TITLE":"TOMAHAWK STRIKE","EQ":"Kinetic","DESC":"Generate: DDG 115 Guided Missile Destroyer in any range band. Roll 2+ on 1d4. If successful, roll 1d4 for damage to PRC airbase.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"NAVAL","Equipment":"Arleigh Burke Class Destroyer","Explosive":true},{"ID":"US-AUTH-EN-33","Side":"US","Type":"EN","TITLE":"SUBMARINE STRIKE","EQ":"Kinetic","DESC":"Play anytime. Attack 1x PRC Surface Combatant (automatically hits) or Cancel 1x PRC Submarine card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"NAVAL","Equipment":"Virginia Class Attack Sub","Explosive":false},{"ID":"US-AUTH-EN-34","Side":"US","Type":"EN","TITLE":"MARITIME LITTORAL REGIMENT","EQ":"Naval","DESC":"Attack 1x PRC Surface Combatant. Automatically hits.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"NAVAL","Equipment":"CH-53E Super Stallion","Explosive":false},{"ID":"PRC-AUTH-SQ-01","Side":"PRC","Type":"SQ","TITLE":"空无人机团","EQ":"TB-001 Twin Tailed Scorpion","DESC":"Generate: 4x Attack UAS Tokens in any band","Spd":1,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["UAS"],"winchesterType":"Infinite","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-02","Side":"PRC","Type":"SQ","TITLE":"防空第三旅","EQ":"HQ-9 Hong","DESC":"Generate: 1x Medium Range ADA token on the PRC Airbase","Spd":1,"Qty":1,"Loc":"base","VP":2,"AcqR":2,"ShtR":-1,"Draftable":true,"Tags":["SAM"],"winchesterType":"None","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-03","Side":"PRC","Type":"SQ","TITLE":"空无人机旅","EQ":"WX-10 Divine Eagle","DESC":"Generate: 2x Recon UAS Tokens in any band","Spd":1,"Qty":2,"Loc":"base","VP":1,"AcqR":2,"ShtR":-1,"Draftable":true,"Tags":["UAS"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":1,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-04","Side":"PRC","Type":"SQ","TITLE":"预警航空团","EQ":"KJ-2000 Mainring","DESC":"Generate: 1x AEW Token in PRC 1 band or Standoff","Spd":1,"Qty":1,"Loc":"base","VP":2,"AcqR":3,"ShtR":-1,"Draftable":true,"Tags":["AEW","Fighter","Gen5"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":2,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-05","Side":"PRC","Type":"SQ","TITLE":"防空第五团","EQ":"SA-21 Growler","DESC":"Generate: 1x Long Range ADA token on the PRC Airbase","Spd":1,"Qty":1,"Loc":"base","VP":2,"AcqR":2,"ShtR":-1,"Draftable":true,"Tags":["SAM"],"winchesterType":"None","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-06","Side":"PRC","Type":"SQ","TITLE":"空一百二十四旅","EQ":"J-10 Firebird","DESC":"Generate: 4x J-10 Tokens in PRC 1 band","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":3,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-07","Side":"PRC","Type":"SQ","TITLE":"第八轰炸机师","EQ":"H-6K Badger","DESC":"Generate: 1x H-6K Token in PRC 1 band or Standoff","Spd":1,"Qty":1,"Loc":"base","VP":3,"AcqR":2,"ShtR":6,"Draftable":true,"Tags":["Bomber"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":true,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-08","Side":"PRC","Type":"SQ","TITLE":"空五旅","EQ":"J-20J Fagin","DESC":"Generate: 4x J-20B Tokens in PRC 1 band","Spd":2,"Qty":4,"Loc":"base","VP":2,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen5"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":1,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-09","Side":"PRC","Type":"SQ","TITLE":"空二十六旅","EQ":"J-16 Flanker-E","DESC":"Generate: 4x J-16 Tokens in PRC 1 band","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":2,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-SQ-10","Side":"PRC","Type":"SQ","TITLE":"空一百二十六旅","EQ":"JH-7 Flounder","DESC":"Generate: 4x JH-7 Tokens in PRC 1 band","Spd":2,"Qty":4,"Loc":"base","VP":1,"AcqR":2,"ShtR":1,"Draftable":true,"Tags":["Fighter","Gen4"],"winchesterType":"Standard","hitThreshold":3,"acqBonus":0,"Explosive":false,"Authoritative":true,"Family":"AIRCRAFT"},{"ID":"PRC-AUTH-EN-01","Side":"PRC","Type":"EN","TITLE":"反使用权/区域排除","EQ":"PLAAF","DESC":"Play after the US has played a Mobility/Maintenance card. Cancel that card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"DF-21","Explosive":false},{"ID":"PRC-AUTH-EN-02","Side":"PRC","Type":"EN","TITLE":"空中加油","EQ":"PLAAF","DESC":"Place one Squadron card in addition to the Posture Card limit on the airbase ready to generate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"YY-20","Explosive":false},{"ID":"PRC-AUTH-EN-03","Side":"PRC","Type":"EN","TITLE":"预备役空军","EQ":"PLAAF","DESC":"Play after a squadron has lost all its aircraft tokens. The squadron is fully regenerated and may be launched.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"J-11 Flanker-L","Explosive":false},{"ID":"PRC-AUTH-EN-04","Side":"PRC","Type":"EN","TITLE":"无人机增殖","EQ":"PLAAF","DESC":"Play after a UAS rolls to acquire. Either re-roll a failed acquisition or roll for an additional acquisition.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"WZ-2","Explosive":false},{"ID":"PRC-AUTH-EN-05","Side":"PRC","Type":"EN","TITLE":"精英飞行员","EQ":"PLAAF","DESC":"Next PRC air-to-air attack is rolled at advantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"Highly Skilled Pilots","Explosive":false},{"ID":"PRC-AUTH-EN-06","Side":"PRC","Type":"EN","TITLE":"基于地面的雷达","EQ":"PLAAF","DESC":"Roll 1d4 Acquire US tokens equal to the roll.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"JY-14","Explosive":false},{"ID":"PRC-AUTH-EN-07","Side":"PRC","Type":"EN","TITLE":"涌的战神","EQ":"PLAAF","DESC":"H-6K rolls at advantage this ATO cycle.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"H-6K Badger","Explosive":false},{"ID":"PRC-AUTH-EN-08","Side":"PRC","Type":"EN","TITLE":"特殊任务飞机","EQ":"PLAAF","DESC":"Choose: Roll 1d4 and acquire US tokens equal to roll OR","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"Y-8T","Explosive":false},{"ID":"PRC-AUTH-EN-09","Side":"PRC","Type":"EN","TITLE":"特种作战部队侦察","EQ":"PLAAF","DESC":"Roll 1d4 Acquire US tokens equal to the roll.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"PLA Air Forces SOF Team","Explosive":false},{"ID":"PRC-AUTH-EN-10","Side":"PRC","Type":"EN","TITLE":"弹药升级","EQ":"PLAAF","DESC":"One fighter squadron may shoot air-to-air at a range of 4 for this ATO cycle.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAAF","Equipment":"Hypersonic missile bodies","Explosive":false},{"ID":"PRC-AUTH-EN-11","Side":"PRC","Type":"EN","TITLE":"弹道导弹打击","EQ":"PLARF","DESC":"Roll 2 or higher on 1d4 If successful, roll 1d4, again to determine the damage inflicted to the US base.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLARF","Equipment":"DF-26 CH-SS-18","Explosive":true},{"ID":"PRC-AUTH-EN-12","Side":"PRC","Type":"EN","TITLE":"陆地攻击巡航导弹","EQ":"PLARF","DESC":"Roll 2 or higher on 1d4 If successful, roll 1d4, again to determine the damage inflicted to the US base.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLARF","Equipment":"YJ-18 CH-CC-NX-13","Explosive":true},{"ID":"PRC-AUTH-EN-13","Side":"PRC","Type":"EN","TITLE":"海上打击巡航导弹","EQ":"PLARF","DESC":"Unblockable. Immediately destroys one US Surface combatant.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLARF","Equipment":"YJ-83J Saccade CSS-N-8","Explosive":false},{"ID":"PRC-AUTH-EN-14","Side":"PRC","Type":"EN","TITLE":"高超音速导弹","EQ":"PLARF","DESC":"Unblockable. Roll 1D4 US base takes damage equal to the roll.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLARF","Equipment":"DF-17 CH-SS-22","Explosive":false},{"ID":"PRC-AUTH-EN-15","Side":"PRC","Type":"EN","TITLE":"诱饵弹头","EQ":"PLARF","DESC":"Play immediately after the US declares a Missile Defense attempt. Cancel that attempt.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLARF","Equipment":"Decoy Warheads","Explosive":false},{"ID":"PRC-AUTH-EN-16","Side":"PRC","Type":"EN","TITLE":"网络渗透","EQ":"Cyber","DESC":"Roll 1d4 If roll equal to or greater than cyber access value, improve your PRC Cyber Rate by 1.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"PLASSF (Cyber)","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-17","Side":"PRC","Type":"EN","TITLE":"挑衅的网络手术","EQ":"Cyber","DESC":"Remove US tokens equal to your Cyber Rate  OR  US discards Enabler Cards in hand equal to your Cyber Rate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Cyber)","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-18","Side":"PRC","Type":"EN","TITLE":"防守型网络手术","EQ":"Cyber","DESC":"EITHER  Cancel a US Cyber card  OR  Degrade the US Cyber rate by 1.","Use":"Mltiple","Draftable":true,"Authoritative":true,"Family":"PLASSF (Cyber)","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-19","Side":"PRC","Type":"EN","TITLE":"网络手术","EQ":"Cyber","DESC":"Acquire US tokens equal to your Cyber Rate.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"PLASSF (Cyber)","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-20","Side":"PRC","Type":"EN","TITLE":"网络反制无人机","EQ":"Cyber","DESC":"Destroy US Unmanned Aircraft System (UAS) Tokens equal to your Cyber Rate.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Cyber)","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-21","Side":"PRC","Type":"EN","TITLE":"天基电子战","EQ":"PLAN","DESC":"All US rolls to attack this ATO (both bases and tokens) are at disadvantage.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAN","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-22","Side":"PRC","Type":"EN","TITLE":"卫星星座重建","EQ":"PLAN","DESC":"Return any spent PLASSF (People's Liberaton Army Strategic Support Forces) Card to the deck to be available for the next ATO cycle.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAN","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-23","Side":"PRC","Type":"EN","TITLE":"反对空间","EQ":"PLAN","DESC":"Play immediately after US plays a space card. Cancel the US Space Card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAN","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-24","Side":"PRC","Type":"EN","TITLE":"反卫星打击","EQ":"PLAN","DESC":"Play immediately after US plays a space card. Cancel the US Space Card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLAN","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-25","Side":"PRC","Type":"EN","TITLE":"太空侦察","EQ":"PLAN","DESC":"Roll 1d4 Acquire US tokens equal to the roll.","Use":"Multiple","Draftable":true,"Authoritative":true,"Family":"PLAN","Equipment":"N/A","Explosive":false},{"ID":"PRC-AUTH-EN-26","Side":"PRC","Type":"EN","TITLE":"山东舰飞行中队","EQ":"Space","DESC":"Generate: 4x J-15 Tokens in any range band","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Space)","Equipment":"J-15 Flanker-X2","Explosive":false},{"ID":"PRC-AUTH-EN-27","Side":"PRC","Type":"EN","TITLE":"型导弹巡洋舰","EQ":"Space","DESC":"Generate: 1x Guided Missile Cruiser (CG) in any range band.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Space)","Equipment":"Type 055 Renhai CG","Explosive":false},{"ID":"PRC-AUTH-EN-28","Side":"PRC","Type":"EN","TITLE":"型导弹驱逐舰","EQ":"Space","DESC":"Generate: 1x Guided Missile Destroyer (DDG)  in any range band.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Space)","Equipment":"Type 052D Luyang III DDG","Explosive":false},{"ID":"PRC-AUTH-EN-29","Side":"PRC","Type":"EN","TITLE":"导弹艇舰队","EQ":"Space","DESC":"Generate: 1x Missile Boat Flotilla in any range band.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Space)","Equipment":"Type 022 Houbei","Explosive":false},{"ID":"PRC-AUTH-EN-30","Side":"PRC","Type":"EN","TITLE":"柴油潜艇攻击","EQ":"Space","DESC":"Play anytime. Attack 1x US Surface Combatant (automatically hits) or Cancel 1x US Submarine card.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"PLASSF (Space)","Equipment":"Ming Type Sub","Explosive":false},{"ID":"PRC-AUTH-EN-31","Side":"PRC","Type":"EN","TITLE":"蛟龙突击队攻击","EQ":"SOF","DESC":"Roll 1d4 Inflict damage to US airbase equal to roll.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"SOF","Equipment":"PLA Navy Elite SOF Team","Explosive":false},{"ID":"PRC-AUTH-EN-32","Side":"PRC","Type":"EN","TITLE":"海军陆战队突袭","EQ":"SOF","DESC":"Roll 1d4 Inflict damage to US airbase equal to roll.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"SOF","Equipment":"PLA Navy Marine SOF Team","Explosive":false},{"ID":"PRC-AUTH-EN-33","Side":"PRC","Type":"EN","TITLE":"特种作战网络渗透","EQ":"SOF","DESC":"Roll 1d4 If roll equal to or greater than cyber access value, improve your PRC Cyber Rate by 1.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"SOF","Equipment":"Strategy & Support Forces SOF Team","Explosive":false},{"ID":"PRC-AUTH-EN-34","Side":"PRC","Type":"EN","TITLE":"特种作战部队侦察","EQ":"SOF","DESC":"Roll 1d4 Acquire US tokens equal to the roll. Increase Cyber Rate on roll of 4.","Use":"Single","Draftable":true,"Authoritative":true,"Family":"SOF","Equipment":"PLA Ground Forces SOF Team","Explosive":false}];
+        (function integrateAuthoritativeContent() {
+            var keep = [];
+            for(var i=0;i<MASTER_DECK.length;i++) {
+                // Legacy naval pseudo-squadrons remain available only to legacy save files, not drafting.
+                MASTER_DECK[i].Draftable = false;
+                keep.push(MASTER_DECK[i]);
+            }
+            for(var j=0;j<PHASE5_AUTHORITATIVE_CARDS.length;j++) keep.push(PHASE5_AUTHORITATIVE_CARDS[j]);
+            MASTER_DECK = keep;
+        })();
+
+        var phase5Metrics = {
+            US: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 },
+            PRC: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 }
+        };
+
+        function phase5AcquireEnemy(side, count) {
+            var enemy = side === 'US' ? 'PRC' : 'US'; var candidates=[];
+            for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && !state.tokens[i].acquired) candidates.push(state.tokens[i]);
+            for(var j=0;j<count && j<candidates.length;j++) candidates[j].acquired=true;
+            logPub(side+' authoritative reconnaissance acquired '+Math.min(count,candidates.length)+' target(s).');
+        }
+        function phase5DestroyEnemyUAS(side,count) {
+            var enemy=side==='US'?'PRC':'US', removed=0;
+            for(var i=state.tokens.length-1;i>=0 && removed<count;i--) { var t=state.tokens[i]; if(t.side===enemy && t.tags && t.tags.indexOf('UAS')>=0) { recordAircraftLoss(t); state.tokens.splice(i,1); removed++; } }
+            logPub(side+' Counter-UAS destroyed '+removed+' UAS token(s).');
+        }
+        function phase5BaseDamage(side,damage) {
+            var enemy=side==='US'?'PRC':'US', p=state[enemy.toLowerCase()], applied=Math.min(damage,Math.max(0,3-p.airbaseStrikes));
+            p.airbaseStrikes += applied; state[side.toLowerCase()].vp += applied;
+            logPub(side+' base strike inflicted '+applied+' scoring strike(s), +'+applied+' VP.');
+        }
+        function enemyTokensFor(side, predicate) {
+            var enemy = side === 'US' ? 'PRC' : 'US', out=[];
+            for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && (!predicate || predicate(state.tokens[i]))) out.push(state.tokens[i]);
+            return out;
+        }
+        function generatedUnitSpec(c) {
+            var d=(c.DESC||'').toLowerCase(), side=c.Side;
+            if(d.indexOf('j-15')>=0) return {qty:4,name:'J-15 Flanker-X2',tags:['Naval','Carrier','Fighter','Gen4'],spd:2,acqR:1,shtR:1,hitThreshold:2,winchesterType:'Standard',salvos:null,asset:'assets/tokens/prc/j15.png'};
+            if(d.indexOf('guided missile cruiser')>=0) return {qty:1,name:'Type 055 Renhai CG',tags:['Naval','SAG','SAM'],spd:1,acqR:3,shtR:3,hitThreshold:2,winchesterType:'Salvo',salvos:9,asset:'assets/tokens/prc/ddg.png'};
+            if(d.indexOf('guided missile destroyer')>=0 || d.indexOf('ddg 81')>=0 || d.indexOf('ddg 115')>=0) return {qty:1,name:side==='US'?'Arleigh Burke DDG': 'Type 052D Luyang III DDG',tags:['Naval','SAG','SAM'],spd:1,acqR:3,shtR:3,hitThreshold:2,winchesterType:'Salvo',salvos:side==='US'?7:7,asset:side==='US'?'assets/tokens/us/ddg.png':'assets/tokens/prc/ddg.png'};
+            if(d.indexOf('missile boat flotilla')>=0) return {qty:1,name:'Type 022 Houbei Flotilla',tags:['Naval','SAG'],spd:1,acqR:2,shtR:2,hitThreshold:3,winchesterType:'Salvo',salvos:2,asset:'assets/tokens/prc/ddg.png'};
+            var m=(c.DESC||'').match(/Generate:\s*(\d+)x\s*([^\n.]+)/i);
+            if(m) {
+                var equipment=(c.Equipment||m[2]||c.TITLE), low=equipment.toLowerCase(), asset='', tags=[];
+                if(/f-22/.test(low)){asset='assets/tokens/us/f22.png';tags=['Fighter','Gen5'];}
+                else if(/f-35/.test(low)){asset='assets/tokens/us/f35.png';tags=['Fighter','Gen5'];}
+                else if(/f-15|f-16/.test(low)){asset='assets/tokens/us/f15.png';tags=['Fighter','Gen4'];}
+                else if(/b-52/.test(low)){asset='assets/tokens/us/b52.png';tags=['Bomber'];}
+                else if(/mq-9|rq-4|uas|drone/.test(low)){asset=side==='US'?'assets/tokens/us/uas.png':'assets/tokens/prc/uas.png';tags=['UAS'];}
+                else if(/j-20/.test(low)){asset='assets/tokens/prc/j20.png';tags=['Fighter','Gen5'];}
+                else if(/j-16|jh-7/.test(low)){asset='assets/tokens/prc/j16.png';tags=['Fighter','Gen4'];}
+                else if(/j-10/.test(low)){asset='assets/tokens/prc/j10.png';tags=['Fighter','Gen4'];}
+                else if(/h-6/.test(low)){asset='assets/tokens/prc/h6.png';tags=['Bomber'];}
+                else if(/aew|awacs|kj-/.test(low)){asset=side==='US'?'assets/tokens/us/aew.png':'assets/tokens/prc/aew.png';tags=['AEW'];}
+                else if(/sam|patriot|hq-9|sa-21/.test(low)){asset=side==='US'?'assets/tokens/us/ada.png':'assets/tokens/prc/ada.png';tags=['SAM'];}
+                if(asset) return {qty:parseInt(m[1],10),name:equipment,tags:tags,spd:tags.indexOf('SAM')>=0?0:1,acqR:2,shtR:tags.indexOf('AEW')>=0?-1:1,hitThreshold:2,winchesterType:tags.indexOf('UAS')>=0?'Infinite':'Standard',salvos:null,asset:asset};
+            }
+            return null;
+        }
+        function validateEnablerEffect(c,side,pState,oppState) {
+            var d=(c.DESC||'').toLowerCase();
+            if(/generate:/i.test(c.DESC||'')) {
+                if(!generatedUnitSpec(c)) return {ok:false, reason:'No registered token or unit profile exists for this generated asset.'};
+                return {ok:true};
+            }
+            if(/destroy .*unmanned aircraft system/i.test(c.DESC||'') && enemyTokensFor(side,function(t){return t.tags&&t.tags.indexOf('UAS')>=0;}).length===0) return {ok:false,reason:'No eligible enemy UAS is deployed.'};
+            if(/acquire /i.test(c.DESC||'') && enemyTokensFor(side,function(t){return !t.acquired;}).length===0) return {ok:false,reason:'No unacquired enemy tokens are available.'};
+            if(/improve your .*cyber rate by 1/i.test(c.DESC||'') && pState.cyber>=4) return {ok:false,reason:'Cyber Rate is already at its maximum.'};
+            if(/degrade .*cyber rate/i.test(c.DESC||'') && oppState.cyber<=0) return {ok:false,reason:'Enemy Cyber Rate cannot be reduced further.'};
+            if(/damage.*airbase|airbase.*damage/i.test(c.DESC||'')) { var enemy=side==='US'?state.prc:state.us; if(enemy.airbaseStrikes>=3) return {ok:false,reason:'Enemy airbase has already reached the three-strike cap.'}; }
+            if(/surface combatant/i.test(c.DESC||'') && enemyTokensFor(side,function(t){return t.tags&&t.tags.indexOf('Naval')>=0;}).length===0) return {ok:false,reason:'No eligible enemy surface combatant is deployed.'};
+            if(/play immediately after|cancel .* card|play anytime/i.test(c.DESC||'')) return {ok:'manual',reason:'This reaction/choice card requires human timing or target adjudication.'};
+            return {ok:true};
+        }
+        function chooseGeneratedLocation(side) {
+            var lane=parseInt(prompt('Deploy generated asset to range band 1-5 (from owning side):','1'),10);
+            if(isNaN(lane)||lane<1||lane>5) return null;
+            return side==='US'?'lane-'+(6-lane):'lane-'+lane;
+        }
+        function spawnGeneratedUnit(c,side) {
+            var spec=generatedUnitSpec(c); if(!spec) return false;
+            var loc=chooseGeneratedLocation(side); if(!loc) return false;
+            var before=state.tokens.length;
+            for(var i=0;i<spec.qty;i++) state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,assetPath:spec.asset,generatedByEnabler:true});
+            var made=state.tokens.length-before;
+            phase5Metrics[side].enablerUnitTokensGenerated+=made; phase5Metrics[side].enablerUnitTokensGeneratedThisTurn+=made;
+            logPub(c.TITLE+': generated '+made+' '+spec.name+' token(s) in '+loc+'.'); return made>0;
+        }
+        function resolvePhase5Enabler(c,side,pState,oppState) {
+            var d=(c.DESC||'').toLowerCase(), title=(c.TITLE||'').toLowerCase();
+            if((c.Family && /(cyber|electronic|information|space)/i.test(c.Family)) || /cyber|electronic|non-kinetic/i.test((c.EQ||'')+' '+(c.DESC||''))) phase5Metrics[side].enablerCategoriesPlayed++;
+            if((c.Family && /nav|maritime|plan/i.test(c.Family)) || /naval|ship|destroyer|cruiser|carrier|missile boat/i.test((c.DESC||'')+' '+(c.Equipment||''))) phase5Metrics[side].navalEnablersPlayed++;
+            if(c.Family && /plarf/i.test(c.Family)) phase5Metrics[side].plarfPlayed++;
+            if(/acquire .*equal to (the roll|your cyber rate)/i.test(c.DESC||'')) { var n=/cyber rate/i.test(c.DESC||'')?pState.cyber:rollD4('normal',0,false).val; phase5AcquireEnemy(side,n); return true; }
+            if(/improve your .*cyber rate by 1/i.test(c.DESC||'')) { var r=rollD4(pState.buffs.nextCyb,0,false); pState.buffs.nextCyb='normal'; if(r.val>=2) pState.cyber++; logPub(c.TITLE+': '+r.log+(r.val>=2?' SUCCESS (+1 Cyber).':' FAILED.')); checkCyberWin(); return true; }
+            if(/degrade .*cyber rate by 2/i.test(c.DESC||'')) { oppState.cyber=Math.max(0,oppState.cyber-2); logPub(c.TITLE+': enemy Cyber -2.'); return true; }
+            if(/degrade .*cyber rate by 1/i.test(c.DESC||'')) { oppState.cyber=Math.max(0,oppState.cyber-1); logPub(c.TITLE+': enemy Cyber -1.'); return true; }
+            if(/destroy .*unmanned aircraft system.*equal to your cyber rate/i.test(c.DESC||'')) { phase5DestroyEnemyUAS(side,pState.cyber); return true; }
+            if(/roll 1d4.*damage.*airbase/i.test(c.DESC||'') || /base takes damage equal to the roll/i.test(c.DESC||'')) { var hit=rollD4('normal',0,false); if(/roll 2\+|roll 2 or higher/i.test(c.DESC||'') && hit.val<2) { logPub(c.TITLE+': strike failed.'); return true; } var dmg=rollD4('normal',0,false).val; phase5BaseDamage(side,dmg); return true; }
+            if(/all .*attack rolls.*advantage/i.test(c.DESC||'')) { pState.buffs.nextAtk='adv'; logPub(c.TITLE+': next attack at Advantage (ATO-wide text retained in log for adjudication).'); return true; }
+            if(/all .*attack rolls.*disadvantage/i.test(c.DESC||'') || /all .*acquisition rolls.*disadvantage/i.test(c.DESC||'')) { oppState.buffs.nextAtk='dis'; logPub(c.TITLE+': next affected roll at Disadvantage (ATO-wide text retained in log for adjudication).'); return true; }
+            if(/generate:/i.test(c.DESC||'')) return spawnGeneratedUnit(c,side);
+            if(c._manualConfirmed) { delete c._manualConfirmed; logPub('Manual authoritative resolution confirmed: '+c.TITLE+' — '+c.DESC); return true; } if(confirm(c.TITLE+'\n\n'+c.DESC+'\n\nThis card requires human adjudication. Select OK only after resolving the effect; Cancel returns it to your hand.')) { logPub('Manual authoritative resolution confirmed: '+c.TITLE+' — '+c.DESC); return true; } return false;
+        }
+
+        // STATE ENGINE
+        var state = { 
+            round: 1, maxRounds: 4, turnSide: 'US', consecutivePasses: 0,
+            phase: 'landing', actionLocked: false, gameOver: false, engineErrors: [],
+            tokens: [], selected: null, sqDeployedThisTurn: 0,
+            acts: { move: 1, acq: 1, sht: 1 }, 
+            intelState: 'Normal', 
+            intelAdvSide: null, 
+            revealedUSenCount: 0, 
+            revealedPRCenCount: 0,
+            usLog: [], prcLog: [], sitrep: [],
+            us: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, sqHand: [], enHand: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false }, posture: null, lastPostureId: null, mission: null },
+            prc: { cyber: 1, intel: 0, vp: 0, navalLosses: 0, airbaseStrikes: 0, squadronLedger: {}, sqHand: [], enHand: [], deployedSquadrons: [], buffs: { nextAtk: 'normal', nextCyb: 'normal', moveDenied: false }, posture: null, lastPostureId: null, mission: null }
+        };
+
+        var pendingAttack = null;
+
+        var setup = { side: "US", step: 1, selPosture: null, selMission: null, picks: [], usSacrifices: [], prcSacrifices: [], bidSide: "US" };
+
+        // Realigned 5 consolidated movement lanes
+        var bandMap = {
+            "prc-standoff": 0, 
+            "prc-airbase": 1, 
+            "lane-1": 2, 
+            "lane-2": 3, 
+            "lane-3": 4, 
+            "lane-4": 5, 
+            "lane-5": 6, 
+            "us-airbase": 7, 
+            "us-contingency": 7,
+            "us-standoff": 8
+        };
+
+
+        /* ================================================================
+           PHASE 3 ARCHITECTURE LAYER
+           Compatibility-first modular boundary. Existing global functions
+           remain as shims for IE11 and inline HTML handlers.
+           ================================================================ */
+        var AFWI = window.AFWI || {};
+        window.AFWI = AFWI;
+
+        AFWI.Build = {
+            engineVersion: "1.1.0",
+            buildVersion: "5.1.0-rc1",
+            contentVersion: "2026.3-authoritative",
+            regressionBaseline: "3.36.2",
+            regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
+        };
+
+        AFWI.Events = (function() {
+            var listeners = {};
+            var history = [];
+            function on(name, handler) {
+                if(!listeners[name]) listeners[name] = [];
+                listeners[name].push(handler);
+            }
+            function emit(name, payload) {
+                var evt = { name:name, round:state.round, phase:state.phase, side:state.turnSide, payload:payload || null };
+                history.push(evt);
+                if(history.length > 200) history.shift();
+                var list = listeners[name] || [];
+                for(var i=0; i<list.length; i++) {
+                    try { list[i](evt); } catch(ex) { engineError("Event handler failed for " + name + ": " + ex.message); }
+                }
+            }
+            function getHistory() { return history.slice(); }
+            return { on:on, emit:emit, getHistory:getHistory };
+        })();
+
+        AFWI.ContentRegistry = {
+            postures: POSTURES,
+            missions: MISSIONS,
+            cards: MASTER_DECK,
+            getCard: function(id) { return getMasterCard(id); },
+            getSquadrons: function(side) {
+                var result = [];
+                for(var i=0; i<MASTER_DECK.length; i++) {
+                    if(MASTER_DECK[i].Type === "SQ" && (!side || MASTER_DECK[i].Side === side)) result.push(MASTER_DECK[i]);
+                }
+                return result;
+            },
+            getEnablers: function(side) {
+                var result = [];
+                for(var i=0; i<MASTER_DECK.length; i++) {
+                    if(MASTER_DECK[i].Type === "EN" && (!side || MASTER_DECK[i].Side === side)) result.push(MASTER_DECK[i]);
+                }
+                return result;
+            }
+        };
+
+        AFWI.CampaignState = {
+            getPlayer: function(side) { return state[String(side).toLowerCase()]; },
+            getSquadronLedger: function(side) { return this.getPlayer(side).squadronLedger; },
+            getSquadronRecord: function(cardOrId) {
+                var card = typeof cardOrId === "string" ? getMasterCard(cardOrId) : cardOrId;
+                return card ? getSquadronRecord(card) : null;
+            },
+            snapshot: function() {
+                return {
+                    round:state.round, maxRounds:state.maxRounds,
+                    US:{vp:state.us.vp, cyber:state.us.cyber, intel:state.us.intel, airbaseStrikes:state.us.airbaseStrikes, ledger:JSON.parse(JSON.stringify(state.us.squadronLedger))},
+                    PRC:{vp:state.prc.vp, cyber:state.prc.cyber, intel:state.prc.intel, airbaseStrikes:state.prc.airbaseStrikes, ledger:JSON.parse(JSON.stringify(state.prc.squadronLedger))}
+                };
+            }
+        };
+
+        AFWI.ATOState = {
+            getTokens: function() { return state.tokens; },
+            getDeployedSquadrons: function(side) { return state[String(side).toLowerCase()].deployedSquadrons; },
+            clear: function() {
+                state.us.sqHand = []; state.us.enHand = []; state.us.deployedSquadrons = [];
+                state.prc.sqHand = []; state.prc.enHand = []; state.prc.deployedSquadrons = [];
+                state.tokens = [];
+            phase5Metrics.US.activatedThisATO={}; phase5Metrics.PRC.activatedThisATO={};
+            phase5Metrics.US.enablerCategoriesPlayed=0; phase5Metrics.PRC.enablerCategoriesPlayed=0; phase5Metrics.US.navalEnablersPlayed=0; phase5Metrics.PRC.navalEnablersPlayed=0; phase5Metrics.US.enablerUnitTokensGenerated=0; phase5Metrics.PRC.enablerUnitTokensGenerated=0; phase5Metrics.US.activatedThisTurn=0; phase5Metrics.PRC.activatedThisTurn=0; phase5Metrics.US.enablerUnitTokensGeneratedThisTurn=0; phase5Metrics.PRC.enablerUnitTokensGeneratedThisTurn=0;
+            phase5Metrics.US.plarfPlayed=0; phase5Metrics.PRC.plarfPlayed=0; state.selected = null; pendingAttack = null;
+                AFWI.Events.emit("ato.cleared");
+            },
+            snapshot: function() {
+                return {
+                    phase:state.phase, activeSide:state.turnSide, actions:JSON.parse(JSON.stringify(state.acts)),
+                    tokenCount:state.tokens.length, selected:state.selected ? state.selected.name : null,
+                    pendingAttack:!!pendingAttack
+                };
+            }
+        };
+
+        AFWI.DeploymentManager = {
+            deploySquadron: function(card, sideState) {
+                var before = state.tokens.length;
+                var ok = deploySquadronCard(card, sideState);
+                if(ok) AFWI.Events.emit("squadron.deployed", { cardId:card.ID, side:card.Side, tokensCreated:state.tokens.length-before });
+                return ok;
+            }
+        };
+
+        AFWI.Renderer = {
+            render: function() {
+                drawUI();
+                AFWI.Events.emit("ui.rendered", { tokenCount:state.tokens.length });
+            },
+            renderSetup: function() { renderSetupUI(); },
+            renderDraft: function() { renderDraft(); }
+        };
+
+        AFWI.Rules = {
+            manifest: {
+                actionEconomy:{ move:1, acquire:1, shoot:1, squadronDeploymentsPerTurn:1 },
+                winchester:{ Standard:"Natural 1-3 Winchester; natural 4 conserves", Infinite:"Natural 1-2 Winchester", Salvo:"Finite naval offensive/defensive salvo" },
+                airbase:{ acquisitionRequired:false, maxStrikes:3, vpPerSuccessfulStrike:1, destructible:false },
+                campaignPersistence:{ boardClearsEachATO:true, squadronHpPersists:true, aircraftLossesPersist:true },
+                cyber:{ instantVictoryRate:4 },
+                rounds:4
+            }
+        };
+
+        AFWI.Validator = (function() {
+            function validateContent() {
+                var errors = [], warnings = [], ids = {};
+                for(var i=0; i<MASTER_DECK.length; i++) {
+                    var c = MASTER_DECK[i];
+                    if(!c.ID) errors.push("Card at index " + i + " has no ID.");
+                    else if(ids[c.ID]) errors.push("Duplicate card ID: " + c.ID);
+                    else ids[c.ID] = true;
+                    if(c.Side !== "US" && c.Side !== "PRC") errors.push("Invalid side for " + c.ID);
+                    if(c.Type !== "SQ" && c.Type !== "EN") errors.push("Invalid type for " + c.ID);
+                    if(c.Type === "SQ") {
+                        if(typeof c.Qty !== "number" || c.Qty < 0) errors.push("Invalid Qty for " + c.ID);
+                        if(typeof c.Spd !== "number" || c.Spd < 0) errors.push("Invalid speed for " + c.ID);
+                        if(!c.winchesterType) warnings.push("Missing Winchester type for " + c.ID);
+                    }
+                    if(c.SurgeTarget && !getMasterCard(c.SurgeTarget)) errors.push("Invalid SurgeTarget " + c.SurgeTarget + " on " + c.ID);
+                }
+                var sides = ["US", "PRC"];
+                for(var sidx=0; sidx<sides.length; sidx++) {
+                    var side = sides[sidx];
+                    var sqCount = AFWI.ContentRegistry.getSquadrons(side).length;
+                    var enCount = AFWI.ContentRegistry.getEnablers(side).length;
+                    var plist = POSTURES[side] || [];
+                    for(var pidx=0; pidx<plist.length; pidx++) {
+                        if(plist[pidx].sq > sqCount) warnings.push(side + " posture " + plist[pidx].title + " requests more Squadrons than currently available.");
+                        if(plist[pidx].en > enCount) warnings.push(side + " posture " + plist[pidx].title + " requests more Enablers than currently available; runtime quota clamp will apply.");
+                    }
+                }
+                return { valid:errors.length===0, errors:errors, warnings:warnings };
+            }
+            function validateState(context) {
+                var issues = validateEngineState(context || "AFWI.Validator");
+                return { valid:!issues || issues.length===0, issues:issues || [] };
+            }
+            return { validateContent:validateContent, validateState:validateState };
+        })();
+
+        AFWI.Diagnostics = {
+            architectureSnapshot: function() {
+                return {
+                    build:AFWI.Build,
+                    campaign:AFWI.CampaignState.snapshot(),
+                    ato:AFWI.ATOState.snapshot(),
+                    contentValidation:AFWI.Validator.validateContent(),
+                    recentEvents:AFWI.Events.getHistory().slice(-25)
+                };
+            }
+        };
+
+        AFWI.Bootstrap = {
+            validation:null,
+            initialize:function() {
+                this.validation = AFWI.Validator.validateContent();
+                if(!this.validation.valid) {
+                    for(var i=0; i<this.validation.errors.length; i++) engineError("CONTENT: " + this.validation.errors[i]);
+                }
+                AFWI.Events.emit("engine.boot", { build:AFWI.Build, validation:this.validation });
+                return this.validation;
+            }
+        };
+
+        /* Phase 2 compatibility and engine integrity helpers */
+        if(!Array.prototype.includes) {
+            Array.prototype.includes = function(searchElement, fromIndex) {
+                var length = this.length >>> 0;
+                if(length === 0) return false;
+                var start = fromIndex | 0;
+                if(start < 0) start = Math.max(length + start, 0);
+                for(var i=start; i<length; i++) {
+                    if(this[i] === searchElement || (this[i] !== this[i] && searchElement !== searchElement)) return true;
+                }
+                return false;
+            };
+        }
+
+        function setPhase(nextPhase) {
+            var previousPhase = state.phase;
+            state.phase = nextPhase;
+            if(window.AFWI && AFWI.Events) AFWI.Events.emit("phase.changed", { from:previousPhase, to:nextPhase });
+        }
+
+        function engineError(message) {
+            state.engineErrors.push({ round:state.round, phase:state.phase, side:state.turnSide, message:message });
+            if(state.engineErrors.length > 100) state.engineErrors.shift();
+            logPriv(state.turnSide, "ENGINE: " + message, true);
+            return false;
+        }
+
+        function canAcceptGameAction(actionName) {
+            if(state.gameOver) return engineError(actionName + " rejected: game is over.");
+            if(state.actionLocked || pendingAttack) return engineError(actionName + " rejected: another action is resolving.");
+            if(state.phase !== 'action') return engineError(actionName + " rejected during phase " + state.phase + ".");
+            return true;
+        }
+
+        function validateTokenReference(tok) {
+            if(!tok) return false;
+            if(tok.isAirbase) return (tok.side === 'US' || tok.side === 'PRC') && state[tok.side.toLowerCase()].airbaseStrikes < 3;
+            if(tok.isSquadronCard) return !!(tok.sqRef && !tok.sqRef.destroyed && tok.sqRef.currentHp > 0);
+            for(var i=0; i<state.tokens.length; i++) if(state.tokens[i] === tok) return true;
+            return false;
+        }
+
+        function validateEngineState(context) {
+            var problems = [];
+            if(state.round < 1 || state.round > state.maxRounds + 1) problems.push('invalid round');
+            if(state.turnSide !== 'US' && state.turnSide !== 'PRC') problems.push('invalid active side');
+            if(state.acts.move < 0 || state.acts.acq < 0 || state.acts.sht < 0) problems.push('negative action count');
+            if(state.selected && !validateTokenReference(state.selected)) { state.selected = null; problems.push('stale selection cleared'); }
+            if(pendingAttack && state.phase !== 'missileDefense') problems.push('pending attack outside missile-defense phase');
+            var sides=['us','prc'];
+            for(var si=0;si<sides.length;si++) {
+                var ledger=state[sides[si]].squadronLedger;
+                for(var id in ledger) if(ledger.hasOwnProperty(id)) {
+                    var r=ledger[id];
+                    if(r.currentHp < 0) r.currentHp=0;
+                    if(r.remainingQty < 0) r.remainingQty=0;
+                    if(r.remainingQty > r.maxQty) { r.remainingQty=r.maxQty; problems.push(id+' quantity clamped'); }
+                    if(r.currentHp > r.maxHp) { r.currentHp=r.maxHp; problems.push(id+' HP clamped'); }
+                    if(r.currentHp === 0) r.destroyed=true;
+                }
+                if(state[sides[si]].airbaseStrikes < 0) state[sides[si]].airbaseStrikes = 0;
+                if(state[sides[si]].airbaseStrikes > 3) { state[sides[si]].airbaseStrikes = 3; problems.push(sides[si]+' airbase strikes clamped'); }
+                /* airbase strike track validated */
+            }
+            if(problems.length) {
+                state.engineErrors.push({round:state.round, phase:state.phase, side:state.turnSide, message:context+': '+problems.join(', ')});
+                return false;
+            }
+            return true;
+        }
+
+        function openDiagnostics() {
+            refreshDiagnostics();
+            toggleModal('diagnostics-overlay');
+        }
+
+        function refreshDiagnostics() {
+            var summary = {
+                version:'3.36.2', round:state.round, phase:state.phase, activeSide:state.turnSide,
+                actions:state.acts, actionLocked:state.actionLocked, pendingAttack:!!pendingAttack,
+                tokenCount:state.tokens.length,
+                US:{vp:state.us.vp, cyber:state.us.cyber, intel:state.us.intel, airbaseStrikes:state.us.airbaseStrikes, handSquadrons:state.us.sqHand.length, handEnablers:state.us.enHand.length, deployed:state.us.deployedSquadrons.length, ledger:state.us.squadronLedger},
+                PRC:{vp:state.prc.vp, cyber:state.prc.cyber, intel:state.prc.intel, airbaseStrikes:state.prc.airbaseStrikes, handSquadrons:state.prc.sqHand.length, handEnablers:state.prc.enHand.length, deployed:state.prc.deployedSquadrons.length, ledger:state.prc.squadronLedger},
+                recentErrors:state.engineErrors.slice(-20)
+            };
+            document.getElementById('diagnostics-content').innerText = JSON.stringify(summary, null, 2);
+        }
+
+        function showUI(id) {
+            document.getElementById('landing-ui').style.display = 'none';
+            document.getElementById('scenario-ui').style.display = 'none';
+            document.getElementById('setup-ui').style.display = 'none';
+            document.getElementById('initiative-ui').style.display = 'none';
+            document.getElementById('intel-reveal-ui').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'none';
+            document.getElementById(id).style.display = 'block';
+            var phaseMap = {'landing-ui':'landing','scenario-ui':'briefing','setup-ui':'draft','initiative-ui':'initiative','intel-reveal-ui':'intel','game-ui':'action'};
+            if(phaseMap[id]) setPhase(phaseMap[id]);
+        }
+
+        function toggleModal(id) {
+            var overlay = document.getElementById(id);
+            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function countAvailableDraftCards(side, type) {
+            var count = 0;
+            for(var i=0; i<MASTER_DECK.length; i++) {
+                if(MASTER_DECK[i].Side === side && MASTER_DECK[i].Type === type && MASTER_DECK[i].Draftable) count++;
+            }
+            return count;
+        }
+
+        function getSquadronRecord(card) {
+            var sideState = state[card.Side.toLowerCase()];
+            var record = sideState.squadronLedger[card.ID];
+            if(!record) {
+                record = {
+                    cardId: card.ID,
+                    name: card.TITLE,
+                    maxHp: 2,
+                    currentHp: 2,
+                    maxQty: card.Qty,
+                    remainingQty: card.Qty,
+                    destroyed: false,
+                    vp: card.VP
+                };
+                sideState.squadronLedger[card.ID] = record;
+            }
+            return record;
+        }
+
+        function isSquadronAvailable(card) {
+            if(card.Type !== "SQ") return true;
+            var record = state[card.Side.toLowerCase()].squadronLedger[card.ID];
+            return !record || (!record.destroyed && record.currentHp > 0 && record.remainingQty > 0);
+        }
+
+        function deploySquadronCard(card, sideState) {
+            var record = getSquadronRecord(card);
+            if(record.destroyed || record.currentHp <= 0 || record.remainingQty <= 0) {
+                logPriv(card.Side, "Squadron is unavailable due to persistent campaign losses.", true);
+                return false;
+            }
+            var deployed = {
+                cardId: record.cardId,
+                name: record.name,
+                maxHp: record.maxHp,
+                currentHp: record.currentHp,
+                remainingQty: record.remainingQty,
+                destroyed: record.destroyed,
+                vp: record.vp,
+                campaignRef: record
+            };
+            sideState.deployedSquadrons.push(deployed);
+            var loc = getDeploymentLocation(card);
+            var generateQty = record.remainingQty;
+            if(loc === "us-contingency" && !(state.us.posture && state.us.posture.title === "ACE")) {
+                generateQty = Math.min(record.remainingQty, singleRoll());
+                logPriv("US", "Contingency austerity generation: " + generateQty + " of " + record.remainingQty + " aircraft generated.", false);
+            }
+            deployed.baseLoc = loc;
+            for(var i=0; i<generateQty; i++) {
+                state.tokens.push({
+                    isBase:false, parentSqId:card.ID, side:card.Side, cardId:card.ID, name:card.EQ, loc:loc, spd:card.Spd, vp:card.VP,
+                    acqR:card.AcqR, shtR:card.ShtR, winchesterType:card.winchesterType, hitThreshold:card.hitThreshold, acqBonus:card.acqBonus,
+                    acquired:false, winchester:false, rogue:false, tags:card.Tags, explosive:card.Explosive || false, isCL:(loc === "us-contingency"),
+                    salvos:(card.Tags && card.Tags.includes("Naval")) ? 4 : null
+                });
+            }
+            return true;
+        }
+
+        function recordTokenLoss(tok) {
+            if(!tok || !tok.parentSqId) return;
+            var ledger = state[tok.side.toLowerCase()].squadronLedger;
+            var record = ledger[tok.parentSqId];
+            if(record && record.remainingQty > 0) record.remainingQty--;
+        }
+
+        function syncSquadronDamage(deployedSq) {
+            if(deployedSq && deployedSq.campaignRef) {
+                deployedSq.campaignRef.currentHp = Math.max(0, deployedSq.currentHp);
+                deployedSq.campaignRef.destroyed = !!deployedSq.destroyed;
+            }
+        }
+
+        function getEffectiveDraftLimit(side, type, posture) {
+            var requested = (type === "SQ") ? posture.sq : posture.en;
+            return Math.min(requested, countAvailableDraftCards(side, type));
+        }
+
+        function getDeploymentLocation(card) {
+            if(card.Tags && card.Tags.includes("Naval")) return (card.Side === "US") ? "lane-5" : "lane-1";
+            if(card.Side === "US" && !(state.us.posture && state.us.posture.title === "SURGE") && card.Tags && !card.Tags.includes("Naval")) {
+                if(confirm("Base " + card.TITLE + " at the US Contingency Location? OK=Contingency, Cancel=Main Airbase/normal deployment.")) return "us-contingency";
+            }
+            if(card.Tags && card.Tags.includes("UAS")) {
+                var lane = parseInt(prompt("Deploy UAS to range band 1-5 (from owning side):", "1"),10);
+                if(isNaN(lane) || lane < 1 || lane > 5) lane = 1;
+                return card.Side === "US" ? "lane-" + (6-lane) : "lane-" + lane;
+            }
+            // Aircraft normally begin grounded at their owning airbase or approved contingency location.
+            // UAS and naval units retain their explicit class deployment rules above.
+            return (card.Side === "US") ? "us-airbase" : "prc-airbase";
+        }
+
+        function recordNavalLoss(tokenOrCard) {
+            if(tokenOrCard && tokenOrCard.Tags && tokenOrCard.Tags.includes("Naval")) {
+                state[tokenOrCard.Side.toLowerCase()].navalLosses++;
+            }
+        }
+
+        // SETUP PHASE ENGINE
+        function beginSetupSequence() {
+            setup.side = "US"; setup.step = 1; setup.selPosture = null; setup.selMission = null; setup.picks = [];
+            renderSetupUI();
+            showUI('setup-ui');
+        }
+
+        function renderSetupUI() {
+            document.getElementById('setup-header').innerText = setup.side + " PLAYER: Strategic Setup";
+            document.getElementById('setup-header').className = (setup.side === "US") ? "header-us" : "header-prc";
+
+            document.getElementById('setup-step-1').style.display = (setup.step === 1) ? 'block' : 'none';
+            document.getElementById('setup-step-2').style.display = (setup.step === 2) ? 'block' : 'none';
+            document.getElementById('setup-step-3').style.display = (setup.step === 3) ? 'block' : 'none';
+
+            if(setup.step === 1) {
+                var pList = POSTURES[setup.side];
+                var html = "";
+                for(var i=0; i<pList.length; i++) {
+                    var isSel = (setup.selPosture && setup.selPosture.id === pList[i].id) ? "card-sel" : "";
+                    html += "<div class='card "+isSel+"' style='width:200px;' onclick='selectPosture("+i+")'><b>" + pList[i].title + "</b><br>VP Mod: " + (pList[i].vp>0?"+":"")+pList[i].vp + "<br><i>" + pList[i].desc + "</i></div>";
+                }
+                document.getElementById('posture-list').innerHTML = html;
+            }
+            else if (setup.step === 2) {
+                if(!setup.missionPool) {
+                    setup.missionPool = MISSIONS[setup.side].slice().sort(function() { return 0.5 - Math.random(); }).slice(0, 3);
+                }
+                var html = "";
+                for(var i=0; i<setup.missionPool.length; i++) {
+                    var m = setup.missionPool[i];
+                    var isSel = (setup.selMission && setup.selMission.id === m.id) ? "card-sel" : "";
+                    html += "<div class='card "+isSel+"' style='width:200px;' onclick='selectMission("+i+")'><b>" + m.title + "</b><br><i>" + m.desc + "</i></div>";
+                }
+                document.getElementById('mission-list').innerHTML = html;
+            }
+            else if (setup.step === 3) {
+                document.getElementById('draft-sq-limit').innerText = getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture);
+                document.getElementById('draft-en-limit').innerText = getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture);
+                document.getElementById('draft-picks-container').className = (setup.side === "US") ? "draft-picks" : "draft-picks draft-prc-theme";
+                renderDraft();
+            }
+        }
+
+        function selectPosture(idx) { setup.selPosture = POSTURES[setup.side][idx]; renderSetupUI(); }
+        function confirmPosture() {
+            if(!setup.selPosture) { alert("Select a Posture."); return; }
+            var postureState = state[setup.side.toLowerCase()];
+            var isStandard = setup.selPosture.title === "STANDARD";
+            if(!isStandard && postureState.lastPostureId === setup.selPosture.id) {
+                alert("A non-Standard posture may not be selected in consecutive ATO cycles."); return;
+            }
+            postureState.posture = setup.selPosture;
+            postureState.lastPostureId = setup.selPosture.id;
+            postureState.vp += setup.selPosture.vp || 0;
+            setup.step = (state.round === 1 && !postureState.mission) ? 2 : 3;
+            if(setup.step === 3) setup.selMission = postureState.mission;
+            renderSetupUI();
+        }
+
+        function selectMission(idx) { setup.selMission = setup.missionPool[idx]; renderSetupUI(); }
+        function confirmMission() {
+            if(!setup.selMission) { alert("Select a Mission."); return; }
+            state[setup.side.toLowerCase()].mission = setup.selMission;
+            setup.step = 3; renderSetupUI();
+        }
+
+        function renderDraft() {
+            var sqHtml = ""; var enHtml = ""; var picksHtml = "";
+            var sqCount = 0; var enCount = 0;
+            var effectiveSqLimit = getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture);
+            var effectiveEnLimit = getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture);
+            document.getElementById('draft-sq-limit').innerText = effectiveSqLimit;
+            document.getElementById('draft-en-limit').innerText = effectiveEnLimit;
+
+            for(var i=0; i<setup.picks.length; i++) {
+                if(setup.picks[i].Type === "SQ") sqCount++; else enCount++;
+                picksHtml += "<div class='card'><b>" + setup.picks[i].TITLE + "</b> [" + setup.picks[i].Type + "]<br><i style='color:#666;'>" + setup.picks[i].EQ + "</i></div>";
+            }
+
+            for(var j=0; j<MASTER_DECK.length; j++) {
+                var c = MASTER_DECK[j];
+                if(c.Side === setup.side && c.Draftable && isSquadronAvailable(c)) {
+                    var picked = false;
+                    for(var p=0; p<setup.picks.length; p++) { if(setup.picks[p].ID === c.ID) picked = true; }
+                    if(!picked) {
+                        var statusTxt = "";
+                        if(c.Type === "SQ") {
+                            var rec = getSquadronRecord(c);
+                            statusTxt = "<br><span style='font-size:10px; font-weight:bold;'>Campaign State: HP " + rec.currentHp + "/" + rec.maxHp + " | Aircraft " + rec.remainingQty + "/" + rec.maxQty + "</span>";
+                        }
+                        var cHtml = "<div class='card' onclick='draftCard("+j+")'><b>" + c.TITLE + "</b><br><i style='color:"+(c.Side==="US"?"#1565c0":"#c62828")+"'>" + c.EQ + "</i><br><span style='font-size:10px; color:#546e7a;'>" + c.DESC + "</span>" + statusTxt + "</div>";
+                        if(c.Type === "SQ") sqHtml += cHtml;
+                        if(c.Type === "EN") enHtml += cHtml;
+                    }
+                }
+            }
+
+            document.getElementById('draft-pool-sq').innerHTML = sqHtml;
+            document.getElementById('draft-pool-en').innerHTML = enHtml;
+            document.getElementById('draft-picks-list').innerHTML = picksHtml;
+            document.getElementById('draft-sq-count').innerText = sqCount;
+            document.getElementById('draft-en-count').innerText = enCount;
+
+            document.getElementById('btn-confirm-draft').style.display = (sqCount === effectiveSqLimit && enCount === effectiveEnLimit) ? "inline-block" : "none";
+        }
+
+        function draftCard(idx) {
+            var c = MASTER_DECK[idx];
+            var sqC = 0, enC = 0;
+            for(var i=0; i<setup.picks.length; i++) { if(setup.picks[i].Type==="SQ") sqC++; else enC++; }
+            if(c.Type === "SQ" && sqC >= getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture)) return;
+            if(c.Type === "EN" && enC >= getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture)) return;
+            setup.picks.push(JSON.parse(JSON.stringify(c)));
+            renderDraft();
+        }
+
+        function resetDraft() { setup.picks = []; renderDraft(); }
+
+        function confirmDraft() {
+            for(var u=0; u<setup.picks.length; u++) {
+                if(setup.picks[u].Type === "SQ") state[setup.side.toLowerCase()].sqHand.push(setup.picks[u]);
+                else state[setup.side.toLowerCase()].enHand.push(setup.picks[u]);
+            }
+
+            if(setup.side === "US") {
+                showInterstitial("SETUP COMPLETE", "PRC", function() {
+                    setup.side = "PRC"; setup.picks = []; setup.missionPool = null;
+                    setup.step = 1; setup.selPosture = null; setup.selMission = state.prc.mission;
+                    renderSetupUI();
+                }, true); // Suppress sitrep
+            } else {
+                showInterstitial("PRE-GAME COMPLETE", "US", function() {
+                    enterInitiativePhase();
+                }, true);
+            }
+        }
+
+        // SECURE SEQUENTIAL INITIATIVE BID SYSTEM (HOT-SEAT ENFORCED)
+        function enterInitiativePhase() {
+            setup.usSacrifices = [];
+            setup.prcSacrifices = [];
+            setup.bidSide = "US"; 
+
+            document.getElementById('bid-handover-box').style.display = 'block';
+            document.getElementById('bid-handover-title').innerText = "PASS DEVICE TO US COMMANDER";
+            document.getElementById('bid-active-box').style.display = 'none';
+
+            showUI('initiative-ui');
+        }
+
+        function revealActiveBidder() {
+            document.getElementById('bid-handover-box').style.display = 'none';
+            document.getElementById('bid-active-box').style.display = 'block';
+
+            var side = setup.bidSide;
+            var headerEl = document.getElementById('active-bidder-header');
+            headerEl.innerText = side + " BIDDER";
+            headerEl.className = (side === "US") ? "header-us" : "header-prc";
+
+            buildActiveSacList();
+        }
+
+        function buildActiveSacList() {
+            var side = setup.bidSide;
+            var hand = state[side.toLowerCase()].enHand;
+            var sacList = setup[side.toLowerCase() + "Sacrifices"];
+            var html = "";
+            for(var i=0; i<hand.length; i++) {
+                var isSac = sacList.includes(i);
+                var style = isSac ? "border-color: #c62828; background: #ffebee;" : "";
+                html += "<div class='card' style='"+style+"' onclick='toggleSacrificeActive("+i+")'><b>" + hand[i].TITLE + "</b> [" + hand[i].EQ + "]<br><i>" + (isSac ? "SACRIFICED (+1 Roll)" : "In Hand") + "</i></div>";
+            }
+            document.getElementById('active-sac-pool').innerHTML = html || "<i>No Enablers in Hand.</i>";
+            document.getElementById('active-sac-status').innerText = side + " Bid Modifier: +" + sacList.length;
+            document.getElementById('btn-submit-bid').innerText = (side === "US") ? "Confirm US Bid & Pass Device" : "Confirm PRC Bid & Resolve Bids";
+        }
+
+        function toggleSacrificeActive(idx) {
+            var side = setup.bidSide;
+            var sacList = setup[side.toLowerCase() + "Sacrifices"];
+            var indexInSac = sacList.indexOf(idx);
+            if(indexInSac > -1) {
+                sacList.splice(indexInSac, 1);
+            } else {
+                sacList.push(idx);
+            }
+            buildActiveSacList();
+        }
+
+        function submitActiveBid() {
+            if(setup.bidSide === "US") {
+                setup.bidSide = "PRC";
+                document.getElementById('bid-handover-box').style.display = 'block';
+                document.getElementById('bid-handover-title').innerText = "PASS DEVICE TO PRC COMMANDER";
+                document.getElementById('bid-active-box').style.display = 'none';
+            } else {
+                resolveInitiativeBid();
+            }
+        }
+
+        function resolveInitiativeBid() {
+            var usMod = setup.usSacrifices.length;
+            var prcMod = setup.prcSacrifices.length;
+
+            var usRoll, prcRoll, usTotal, prcTotal;
+            do {
+                usRoll = singleRoll(); prcRoll = singleRoll();
+                usTotal = usRoll + usMod; prcTotal = prcRoll + prcMod;
+            } while(usTotal === prcTotal);
+            var winner = prcTotal > usTotal ? 'PRC' : 'US';
+            var chosenFirst = confirm(winner + " won initiative. Should US act first? OK=US, Cancel=PRC") ? "US" : "PRC";
+            state.initiativeFirstSide = chosenFirst;
+
+            function deleteSacrificedCards(sideStr) {
+                var hand = state[sideStr.toLowerCase()].enHand;
+                var sacList = setup[sideStr.toLowerCase() + "Sacrifices"].slice().sort(function(a, b) { return b - a; });
+                for(var i=0; i<sacList.length; i++) {
+                    hand.splice(sacList[i], 1);
+                }
+            }
+            deleteSacrificedCards("US");
+            deleteSacrificedCards("PRC");
+
+            state.intelAdvSide = winner;
+            // Intel values persist and are not spendable. Initiative advantage is tracked separately.
+            state.intelState = 'Advantage'; 
+
+            logPriv("US", "<b>Initiative Resolved:</b> US rolled d4+" + usMod + " (" + usTotal + ") | PRC rolled d4+" + prcMod + " (" + prcTotal + ").");
+            logPriv("PRC", "<b>Initiative Resolved:</b> US rolled d4+" + usMod + " (" + usTotal + ") | PRC rolled d4+" + prcMod + " (" + prcTotal + ").");
+
+            var winnerState = state[winner.toLowerCase()];
+            var currentRate = winnerState.cyber;
+            var neededRoll = currentRate + 1;
+            if(neededRoll > 4) neededRoll = 4;
+
+            var cRoll = singleRoll();
+            var isCybSuccess = cRoll >= neededRoll;
+            var cybLog = "Initiative Winner " + winner + " attempts Cyber Rate increase on Track (Current: " + currentRate + "). Rolled " + cRoll + " (Needed: " + neededRoll + "+). ";
+
+            if(isCybSuccess) {
+                winnerState.cyber = Math.min(4, winnerState.cyber + 1);
+                cybLog += "SUCCESS! Cyber Rate is now " + winnerState.cyber + ".";
+                logPriv(winner, "<b>Cyber Roll SUCCESS:</b> " + cybLog);
+                if(checkCyberWin()) return;
+            } else {
+                cybLog += "FAILED.";
+                logPriv(winner, "<b>Cyber Roll FAILED:</b> " + cybLog);
+            }
+
+            var usIntelRoll = singleRoll();
+            var prcIntelRoll = singleRoll();
+
+            state.usIntelRollResult = usIntelRoll;
+            state.prcIntelRollResult = prcIntelRoll;
+
+            function calculateActualRevealed(sideStr, rollVal) {
+                var oppSide = (sideStr === "US") ? "PRC" : "US";
+                var oppHand = state[oppSide.toLowerCase()].enHand;
+                if(oppHand.length === 0) return 0;
+
+                if(state.intelAdvSide === sideStr) {
+                    var r2 = singleRoll();
+                    rollVal = Math.max(rollVal, r2);
+                }
+                var maxAllowedReveal = oppHand.length - 1;
+                var count = Math.min(rollVal, maxAllowedReveal);
+                return Math.max(0, count);
+            }
+
+            state.revealedPRCenCount = calculateActualRevealed("US", usIntelRoll);
+            state.revealedUSenCount = calculateActualRevealed("PRC", prcIntelRoll);
+
+            showInterstitial("INTEL ROLLUP DECIDED", winner, function() {
+                renderPrivateIntelScreen(winner);
+            }, true);
+        }
+
+        // PHASE 2 SYSTEM IMPLEMENTATION: PLAY PRIVATE INTEL ENGINE (INFOSEC ENFORCED)
+        function renderPrivateIntelScreen(sideStr) {
+            var oppSide = (sideStr === "US") ? "PRC" : "US";
+            var oppHandCount = state[oppSide.toLowerCase()].enHand.length;
+            var revealedCount = (sideStr === "US") ? state.revealedPRCenCount : state.revealedUSenCount;
+            var isWinner = (state.intelAdvSide === sideStr);
+
+            var html = "<h3>" + sideStr + " PRIVATE INTEL SUMMARY</h3>";
+            if(isWinner) {
+                html += "<p style='color: #2e7d32; font-weight: bold;'>You won the Initiative Bid! You hold Intel Advantage and go first.</p>";
+            } else {
+                html += "<p style='color: #c62828; font-weight: bold;'>The adversary won the Initiative Bid and holds Intel Advantage and goes first.</p>";
+            }
+
+            if(oppHandCount > 0) {
+                html += "<p>Your scanner sweeps unmasked <b>" + revealedCount + "</b> of the adversary's " + oppHandCount + " Enabler cards.</p>";
+                html += "<p>Any unmasked cards will be displayed as 'REVEALED' in their panel during your active turns.</p>";
+            } else {
+                html += "<p>The adversary has no Enabler cards remaining in their hand to inspect.</p>";
+            }
+
+            document.getElementById('intel-result-box').innerHTML = html;
+
+            var btn = document.getElementById('btn-intel-next');
+            btn.innerText = "Acknowledge & Proceed to Combat Action Phase";
+            btn.onclick = function() {
+                startActionPhase();
+            };
+
+            showUI('intel-reveal-ui');
+        }
+
+        function startActionPhase() {
+            state.consecutivePasses = 0;
+            state.actionLocked = false;
+            setPhase('action');
+            state.turnSide = state.initiativeFirstSide || state.intelAdvSide || 'US'; 
+
+            initGame();
+
+            logPub("=========================================");
+            logPub("--- MAS TURN ROTATION: STARTING ROUND " + state.round + " ---");
+            logPub("Active commander: " + state.turnSide);
+
+            showInterstitial("STANDBY FOR COMBAT START", state.turnSide, function() {
+                showUI('game-ui');
+            }, true);
+        }
+
+        // ADVANCED d4 DICE SYSTEM
+        function singleRoll() { return Math.floor(Math.random() * 4) + 1; }
+
+        function rollD4(mode, bonus, canExplode) {
+            var r1 = singleRoll(); var r2 = singleRoll();
+            var baseRoll = r1; var modeTxt = "";
+            var exploded = false; var explTotal = 0;
+
+            if(mode === 'adv') { baseRoll = Math.max(r1, r2); modeTxt = " (Adv)"; }
+            if(mode === 'dis') { baseRoll = Math.min(r1, r2); modeTxt = " (Dis)"; }
+
+            var naturalRoll = baseRoll;
+
+            if(canExplode && baseRoll === 4) {
+                exploded = true;
+                explTotal = singleRoll();
+            }
+
+            var total = baseRoll + (bonus || 0);
+            var damage = exploded ? (1 + explTotal) : 1;
+            var bTxt = bonus ? (" +"+bonus) : "";
+            var explTxt = exploded ? (" -> 4 (Explodes; bonus damage 1d4=" + explTotal + ")") : (" -> " + baseRoll);
+
+            return { val: total, nat: naturalRoll, damage: damage, exploded: exploded, log: "1d4" + modeTxt + explTxt + bTxt + " = " + total };
+        }
+
+        // LOGGING
+        function logPriv(side, msg, isError) {
+            var a = side==='US'?state.usLog:state.prcLog;
+            a.push((isError?"<span style='color:#f57f17;'>":"") + "&gt; " + msg + (isError?"</span>":""));
+            refreshLog();
+        }
+        function logSitrep(msg) { state.sitrep.push(msg); }
+        function logAction(pMsg, oppMsg) {
+            var a = state.turnSide==='US'?state.usLog:state.prcLog;
+            a.push("&gt; " + pMsg);
+            if(oppMsg) logSitrep(oppMsg);
+            refreshLog();
+        }
+        function logPub(msg) {
+            state.usLog.push("&gt; " + msg); state.prcLog.push("&gt; " + msg); refreshLog();
+        }
+        function refreshLog() {
+            var box = document.getElementById('log-box');
+            var arr = (state.turnSide === 'US') ? state.usLog : state.prcLog;
+            box.innerHTML = arr.slice(-25).join("<br>"); box.scrollTop = box.scrollHeight;
+        }
+        function clearAction() { state.consecutivePasses = 0; }
+
+        // INTERSTITIAL
+        function showSitrep() {
+            var sitrepBox = document.getElementById('sitrep-content');
+            if(state.sitrep.length === 0) { sitrepBox.innerHTML = "<i>No adversary actions detected.</i>"; } 
+            else { sitrepBox.innerHTML = state.sitrep.map(function(m) { return "<div class='sitrep-item'>&gt; " + m + "</div>"; }).join(""); }
+            document.getElementById('sitrep-ui').style.display = "block";
+            document.querySelector('#interstitial-ui > .btn').style.display = 'none';
+        }
+        function dismissInterstitial() {
+            state.sitrep = [];
+            document.getElementById('interstitial-ui').style.display = "none";
+            document.getElementById('sitrep-ui').style.display = "none";
+            document.querySelector('#interstitial-ui > .btn').style.display = 'inline-block';
+            if(window.interstitialCallback) window.interstitialCallback();
+        }
+        function showInterstitial(message, side, callback, suppressSitrep) {
+            document.getElementById('inter-title').innerText = message;
+            document.getElementById('inter-side').innerText = side;
+            document.getElementById('interstitial-ui').style.display = "block";
+            window.interstitialCallback = callback;
+
+            var btn = document.querySelector('#interstitial-ui > .btn');
+            if(suppressSitrep) {
+                btn.onclick = function() { dismissInterstitial(); };
+            } else {
+                btn.onclick = function() { showSitrep(); };
+            }
+        }
+
+        // GAME LOOP
+        function initGame() {
+            updateBoardVisuals();
+            state.intelAdvActive = false;
+            if(state.us.intel > state.prc.intel && state.turnSide === 'US') { state.intelAdvActive = true; }
+            if(state.prc.intel > state.us.intel && state.turnSide === 'PRC') { state.intelAdvActive = true; }
+            drawUI();
+        }
+
+        // Static board setup: No viewpoint rotation
+        function updateBoardVisuals() {
+            var container = document.getElementById('bands-container');
+            if (container.children.length === 5) {
+                return;
+            }
+            container.innerHTML = ""; 
+
+            // Neutral steel-grey operational palette
+            var colors = ["#2d3033", "#373b40", "#41474d", "#4c525a", "#565e66"]; 
+
+            for (var i = 1; i <= 5; i++) {
+                var div = document.createElement('div');
+                div.className = "band";
+                div.id = "lane-" + i;
+                div.style.background = colors[i - 1];
+
+                var prcLabelVal = i;
+                var usLabelVal = 6 - i;
+
+                var prcSpan = document.createElement('span');
+                prcSpan.className = "prc-label";
+                prcSpan.innerText = "PRC " + prcLabelVal;
+
+                var usSpan = document.createElement('span');
+                usSpan.className = "us-label";
+                usSpan.innerText = "US " + usLabelVal;
+
+                div.appendChild(prcSpan);
+                div.appendChild(usSpan);
+
+                (function(laneId) {
+                    div.onclick = function() { move(laneId); };
+                })("lane-" + i);
+
+                container.appendChild(div);
+            }
+        }
+
+        var TOKEN_ASSETS = {
+            "US-SQ-1":"assets/tokens/us/f22.png", "US-SQ-2":"assets/tokens/us/f35.png", "US-SQ-3":"assets/tokens/us/f15.png",
+            "US-SQ-4":"assets/tokens/us/uas.png", "US-SQ-5":"assets/tokens/us/b52.png", "US-SQ-6":"assets/tokens/us/aew.png",
+            "US-SQ-7":"assets/tokens/us/ada.png", "US-SQ-8":"assets/tokens/us/f35.png", "US-SQ-9":"assets/tokens/us/ddg.png",
+            "PRC-SQ-1":"assets/tokens/prc/j20.png", "PRC-SQ-2":"assets/tokens/prc/j16.png", "PRC-SQ-3":"assets/tokens/prc/j10.png",
+            "PRC-SQ-4":"assets/tokens/prc/uas.png", "PRC-SQ-5":"assets/tokens/prc/h6.png", "PRC-SQ-6":"assets/tokens/prc/aew.png",
+            "PRC-SQ-7":"assets/tokens/prc/ada.png", "PRC-SQ-8":"assets/tokens/prc/j15.png", "PRC-SQ-9":"assets/tokens/prc/ddg.png"
+            ,"US-AUTH-SQ-01":"assets/tokens/us/uas.png","US-AUTH-SQ-02":"assets/tokens/us/b52.png","US-AUTH-SQ-03":"assets/tokens/us/uas.png","US-AUTH-SQ-04":"assets/tokens/us/aew.png","US-AUTH-SQ-05":"assets/tokens/us/f22.png","US-AUTH-SQ-06":"assets/tokens/us/f15.png","US-AUTH-SQ-07":"assets/tokens/us/b52.png","US-AUTH-SQ-08":"assets/tokens/us/f35.png","US-AUTH-SQ-09":"assets/tokens/us/f15.png","US-AUTH-SQ-10":"assets/tokens/us/f15.png"
+            ,"PRC-AUTH-SQ-01":"assets/tokens/prc/uas.png","PRC-AUTH-SQ-02":"assets/tokens/prc/ada.png","PRC-AUTH-SQ-03":"assets/tokens/prc/uas.png","PRC-AUTH-SQ-04":"assets/tokens/prc/aew.png","PRC-AUTH-SQ-05":"assets/tokens/prc/ada.png","PRC-AUTH-SQ-06":"assets/tokens/prc/j10.png","PRC-AUTH-SQ-07":"assets/tokens/prc/h6.png","PRC-AUTH-SQ-08":"assets/tokens/prc/j20.png","PRC-AUTH-SQ-09":"assets/tokens/prc/j16.png","PRC-AUTH-SQ-10":"assets/tokens/prc/j16.png"
+        };
+        function tokenAsset(cardId) { return TOKEN_ASSETS[cardId] || ""; }
+        function tokenImageHtml(cardId, cls, directPath) { var p=directPath||tokenAsset(cardId); return p ? "<img class='"+(cls||"token-art")+"' src='"+p+"' alt=''>" : ""; }
+
+        function drawUI() {
+            validateEngineState('drawUI');
+            document.getElementById('turn-txt').innerText = state.turnSide + " TURN";
+            document.getElementById('turn-txt').style.color = (state.turnSide === "US") ? "#1565c0" : "#c62828";
+            document.getElementById('round-txt').innerText = state.round;
+
+            document.getElementById('us-cyb').innerText = state.us.cyber;
+            document.getElementById('us-int').innerText = state.us.intel;
+            document.getElementById('us-vp').innerText = state.us.vp + " VP";
+            document.getElementById('prc-cyb').innerText = state.prc.cyber;
+            document.getElementById('prc-int').innerText = state.prc.intel;
+            document.getElementById('prc-vp').innerText = state.prc.vp + " VP";
+
+            var pState = state[state.turnSide.toLowerCase()];
+
+            // Mission Display
+            if(state.turnSide === "US") {
+                document.getElementById('us-mission').innerHTML = "<b>" + state.us.mission.title + "</b><br><i style='font-size:10px;'>"+state.us.mission.desc+"</i>";
+                document.getElementById('prc-mission').innerHTML = "<b>UNDISCLOSED MISSION</b>";
+            } else {
+                document.getElementById('prc-mission').innerHTML = "<b>" + state.prc.mission.title + "</b><br><i style='font-size:10px;'>"+state.prc.mission.desc+"</i>";
+                document.getElementById('us-mission').innerHTML = "<b>UNDISCLOSED MISSION</b>";
+            }
+
+            var bArr = [];
+            if(state.us.cyber > state.prc.cyber && state.turnSide === 'US') bArr.push("CYBER ADV (+1 Acq)");
+            if(state.prc.cyber > state.us.cyber && state.turnSide === 'PRC') bArr.push("CYBER ADV (+1 Acq)");
+            if(pState.buffs.nextAtk !== 'normal') bArr.push("Atk: " + pState.buffs.nextAtk);
+            if(pState.buffs.moveDenied) bArr.push("MOVE DENIED");
+
+            var bStr = bArr.length > 0 ? bArr.join(" | ") : "No Active Buffs";
+            if(state.turnSide === "US") { document.getElementById('us-buffs').innerText = bStr; document.getElementById('prc-buffs').innerText = "MASKED"; } 
+            else { document.getElementById('prc-buffs').innerText = bStr; document.getElementById('us-buffs').innerText = "MASKED"; }
+
+            var statEl = document.getElementById('unit-status');
+            var actText = "<strong>Actions:</strong> M:" + state.acts.move + " | A:" + state.acts.acq + " | S:" + state.acts.sht;
+            if(state.selected) {
+                var wText = state.selected.winchester ? " <span style='color:#f57f17; font-weight:bold'>[W]</span>" : "";
+                var rText = state.selected.rogue ? " <span style='color:#c62828; font-weight:bold'>[ROGUE]</span>" : "";
+                var sqTxt = state.selected.isSquadronCard ? (" [SQ HP:" + state.selected.currentHp + "]") : "";
+                statEl.innerHTML = actText + " &nbsp;|&nbsp; <i>Sel: " + state.selected.name + wText + rText + sqTxt + "</i>";
+            } else { statEl.innerHTML = actText; }
+
+            // Dynamic Hand masking with Intel sweep reveals
+            function renderHand(handArray, elementId, isSq, side) {
+                var html = "";
+                var revealedLimit = state["revealed" + side + "enCount"] || 0;
+                for(var i=0; i<handArray.length; i++) {
+                    var c = handArray[i];
+                    if(side !== state.turnSide) {
+                        if(!isSq && i < revealedLimit) {
+                            html += "<div class='card' style='background:#ffe082;'><b>REVEALED</b><br><b>"+c.TITLE+"</b><br><i style='color:#c62828;'>"+c.EQ+"</i></div>";
+                        } else {
+                            html += "<div class='card' style='background:#cfd8dc; text-align:center; padding:15px 0;'><b>MASKED</b></div>";
+                        }
+                    } else {
+                        var vpTag = isSq ? "<span class='card-vp'>" + c.VP + " VP</span>" : "";
+                        html += "<div class='card' onclick='playCard(\""+c.Side+"\", "+isSq+", "+i+")'>" + vpTag + "<b>"+c.TITLE+"</b><br><i style='color:"+(c.Side==="US"?"#1565c0":"#c62828")+"'>"+c.EQ+"</i><br><span style='font-size:10px; color:#546e7a;'>"+c.DESC+"</span></div>";
+                    }
+                }
+                document.getElementById(elementId).innerHTML = html;
+            }
+
+            renderHand(state.us.sqHand, 'us-sq', true, "US");
+            renderHand(state.us.enHand, 'us-en', false, "US");
+            renderHand(state.prc.sqHand, 'prc-sq', true, "PRC");
+            renderHand(state.prc.enHand, 'prc-en', false, "PRC");
+            // Render targetable airbases and deployed Squadron cards on the board.
+            function renderAirbase(sideStr) {
+                var sideKey = sideStr.toLowerCase();
+                var baseId = sideKey + '-airbase';
+                var baseEl = document.getElementById(baseId);
+                var strikes = state[sideKey].airbaseStrikes || 0;
+                var cappedClass = strikes >= 3 ? ' capped' : '';
+                var html = "<div class='airbase-header'><span>" + sideStr + " AIRBASE</span><span class='airbase-strikes" + cappedClass + "'>STRIKES " + strikes + "/3</span></div>";
+                var arr = state[sideKey].deployedSquadrons || [];
+                var contingencyHtml = "<div class='airbase-header'><span>US CONTINGENCY</span></div>";
+                for(var i=0; i<arr.length; i++) {
+                    if(arr[i].destroyed || arr[i].currentHp <= 0) continue;
+                    var ledger = state[sideKey].squadronLedger[arr[i].cardId] || null;
+                    var qtyText = ledger ? (ledger.remainingQty + '/' + ledger.maxQty) : '?';
+                    var cardHtml = "<div class='squadron-board-card " + sideKey + "' onclick='event.cancelBubble=true; targetDeployedSquadron(\"" + sideStr + "\", " + i + ")'>" + "<b>" + arr[i].name + "</b><br>HP: " + arr[i].currentHp + "/" + arr[i].maxHp + "<br>Aircraft: " + qtyText + "</div>";
+                    if(sideStr === "US" && arr[i].baseLoc === "us-contingency") contingencyHtml += cardHtml;
+                    else html += cardHtml;
+                }
+                baseEl.innerHTML = html;
+                if(sideStr === "US") {
+                    var clEl = document.getElementById('us-contingency');
+                    if(clEl) clEl.innerHTML = contingencyHtml;
+                }
+                baseEl.style.cursor = strikes >= 3 ? 'default' : 'crosshair';
+            }
+            renderAirbase("US");
+            renderAirbase("PRC");
+
+            // Re-render Tokens on Board - Built static structure safely first
+            updateBoardVisuals();
+
+            var existing = document.querySelectorAll('.token');
+            for(var k=0; k<existing.length; k++) existing[k].remove();
+
+            for(var t=0; t<state.tokens.length; t++) {
+                var tok = state.tokens[t];
+                var div = document.createElement('div');
+                div.className = "token " + tok.side.toLowerCase();
+
+                var displayTxt = ""; var statHtml = "";
+
+                if(tok.side !== state.turnSide && !tok.acquired) {
+                    div.className += " unknown"; displayTxt = "<b>UNIDENTIFIED</b>"; statHtml = "M:?|A:?";
+                } else {
+                    if(state.selected === tok) div.style.border = "3px solid #ffeb3b";
+                    if(tok.winchester) div.style.borderColor = "#f57f17";
+
+                    displayTxt = tokenImageHtml(tok.cardId, "token-art", tok.assetPath) + "<b>" + tok.name + "</b>";
+                    if(tok.acquired) displayTxt += "<br>[A]";
+                    if(tok.rogue) displayTxt += "<br>[R]";
+
+                    var wTypeCode = tok.winchesterType ? tok.winchesterType.charAt(0) : "S";
+                    statHtml = "WT:" + wTypeCode + "|HT:" + (tok.hitThreshold || 2);
+                }
+                div.innerHTML = displayTxt;
+
+                var statBar = document.createElement('div');
+                statBar.className = "token-stats"; statBar.innerHTML = statHtml; div.appendChild(statBar);
+
+                (function(tokenRef) { div.onclick = function(e) { e.stopPropagation(); select(tokenRef); }; })(tok);
+                var loc = document.getElementById(tok.loc);
+                if(loc) loc.appendChild(div);
+            }
+            refreshLog();
+        }
+
+        function checkCyberWin() {
+            if(state.us.cyber >= 4) { endGame("US Forces Dominance (Cyber Maxed)", "US"); return true; }
+            if(state.prc.cyber >= 4) { endGame("PRC Forces Dominance (Cyber Maxed)", "PRC"); return true; }
+            return false;
+        }
+
+        function getMasterCard(id) {
+            for(var m=0; m<MASTER_DECK.length; m++) if(MASTER_DECK[m].ID === id) return MASTER_DECK[m];
+            return null;
+        }
+
+        function getDistance(loc1, loc2) {
+            if ((loc1 === "us-standoff" && loc2 === "prc-airbase") || (loc1 === "prc-standoff" && loc2 === "us-airbase")) {
+                return 6;
+            }
+            if (loc1 === "prc-standoff" && loc2 === "us-standoff") {
+                return 8; 
+            }
+            var idx1 = bandMap[loc1];
+            var idx2 = bandMap[loc2];
+            return Math.abs(idx1 - idx2);
+        }
+
+        function playCard(side, isSq, idx) {
+            if(!canAcceptGameAction('Play card')) return;
+            if(side !== state.turnSide) { engineError('Play card rejected: wrong side.'); return; }
+            clearAction();
+            var pState = state[side.toLowerCase()];
+            var oppSide = side === "US" ? "PRC" : "US";
+            var oppState = state[oppSide.toLowerCase()];
+            var hand = isSq ? pState.sqHand : pState.enHand;
+            var c = hand[idx];
+            if(!c) { engineError('Play card rejected: invalid hand index.'); return; }
+
+            if(isSq) {
+                if(state.sqDeployedThisTurn >= 1 && !c.IsSurge) { logPriv(side, "Squadron limit reached (Need Surge).", true); return; }
+                pState.deployedSquadrons = pState.deployedSquadrons || [];
+                if(!AFWI.DeploymentManager.deploySquadron(c, pState)) return;
+                phase5Metrics[side].activatedThisATO[c.ID]=true; phase5Metrics[side].activatedThisTurn++;
+                logAction("Deployed " + c.TITLE, "Adversary deployed a Squadron.");
+                if(!c.IsSurge) state.sqDeployedThisTurn++;
+            } else {
+                var effectValidation = c.Authoritative ? validateEnablerEffect(c,side,pState,oppState) : {ok:true};
+                if(effectValidation.ok===false) { logPriv(side,"Cannot play "+c.TITLE+": "+effectValidation.reason,true); return; }
+                if(effectValidation.ok==='manual') { if(!confirm(c.TITLE+"\n\n"+c.DESC+"\n\n"+effectValidation.reason+" Select OK only after resolving it; Cancel keeps the card.")) return; c._manualConfirmed=true; }
+                var resolved = true;
+                logAction("Enabler Played: " + c.TITLE, "Adversary activated an Enabler.");
+
+                if(c.Authoritative) {
+                    resolved = resolvePhase5Enabler(c, side, pState, oppState);
+                } else if(c.IsSurge) {
+                    var mTarget = getMasterCard(c.SurgeTarget);
+                    if(mTarget) {
+                        pState.deployedSquadrons = pState.deployedSquadrons || [];
+                        if(deploySquadronCard(mTarget, pState)) logPub(c.Side + " Surged Squadron: " + mTarget.EQ);
+                    }
+                } else if(c.TITLE === "ASAT Strike") {
+                    oppState.intel = Math.max(0, oppState.intel - 2);
+                    logPub("ASAT Strike: Opponent lost 2 Intel.");
+                } else if(c.EQ === "Cyber") {
+                    if(c.TITLE === "Cyber Protect Team" || c.TITLE === "APT Penetration") {
+                        oppState.cyber = Math.max(0, oppState.cyber - 1); oppState.buffs.nextCyb = 'dis';
+                        logPub("Offensive Cyber: Opponent lost 1 Cyb, rolls next Cyb at Disadv.");
+                    } else if(c.TITLE === "Cyber Command") { 
+                        var cRoll = rollD4(pState.buffs.nextCyb, 0, false); pState.buffs.nextCyb = 'normal';
+                        if(cRoll.val >= 2) { pState.cyber++; logAction("Cyber Cmd: "+cRoll.log+" SUCCESS (+1 Cyber).", "Adversary Cyber Op Success."); } else { logAction("Cyber Cmd: "+cRoll.log+" FAILED.", null); }
+                    } else {
+                        var cRoll2 = rollD4(pState.buffs.nextCyb, 0, false); pState.buffs.nextCyb = 'normal';
+                        if(cRoll2.val >= 2) { pState.cyber++; logAction(cRoll2.log + " SUCCESS.", "Adversary Cyber Op Success."); } else { logAction(cRoll2.log + " FAILED.", null); }
+                    }
+                    if(checkCyberWin()) return;
+                } else if(c.EQ === "Intel") {
+                    var iBonus = (c.TITLE==="Space-Based ISR")?2:1; pState.intel += iBonus; logAction("+"+iBonus+" Intel.", null);
+                } else if(c.EQ === "Kinetic") {
+                    if(c.TITLE === "DF-21D Carrier Killer" || c.TITLE === "PLARF Barrage") {
+                        logPub(c.TITLE + " Fired. Commander must manually execute target.");
+                    } else {
+                        var vpBonus = (c.TITLE==="DF-17 Hypersonic" || c.TITLE==="B-21 Raider Strike")?3:2;
+                        pState.vp += vpBonus; logPub("KINETIC STRIKE! "+side+" gains +"+vpBonus+" VP."); 
+                    }
+                } else if(c.EQ === "C2") {
+                    if(c.TITLE === "JADC2 Network") { state.acts = {move:1, acq:1, sht:1}; logAction("Actions Reset.", null); }
+                    else { pState.intel++; pState.cyber++; logAction("C2 Link: +1 Cyb, +1 Int.", null); if(checkCyberWin()) return; }
+                } else if(c.EQ === "Logistics") {
+                    for(var t=0; t<state.tokens.length; t++) { if(state.tokens[t].side===side && !state.tokens[t].rogue) state.tokens[t].winchester=false; }
+                    logAction("ACE Used. Units rearmed in place.", "Adversary rearmed forces remotely.");
+                } else if(c.EQ === "Electronic" || c.EQ === "Deception") {
+                    oppState.buffs.nextAtk = 'dis'; logAction("Enemy next attack at Dis.", "Adversary EW active: your next attack is at Disadvantage.");
+                } else if(c.EQ === "Tactics" || c.EQ === "Training") {
+                    pState.buffs.nextAtk = 'adv'; logAction("Your next attack at Adv.", null);
+                } else if(c.TITLE === "A2/AD Denial") {
+                    oppState.buffs.moveDenied = true; logPub("A2/AD Active: Next move cancelled.");
+                }
+            }
+            if(!isSq && resolved===false) { logPriv(side,'Card effect was not completed; card remains in hand.',true); drawUI(); return; }
+            if(!isSq && c.Use === 'Single') { var consumedMaster=getMasterCard(c.ID); if(consumedMaster) consumedMaster.Draftable=false; }
+            hand.splice(idx, 1);
+            drawUI();
+            if(isSq) {
+                state.acts = { move: 0, acq: 0, sht: 0 };
+                state.selected = null;
+                logPub(side + " deployed a Squadron. MAS actions are unavailable for the remainder of this turn; legal Enabler play remains available.");
+                drawUI();
+            }
+        }
+
+        function targetAirbase(sideStr) {
+            if(!canAcceptGameAction('Target airbase')) return;
+            var sideKey = sideStr.toLowerCase();
+            if(sideStr === state.turnSide) { logPriv(state.turnSide, 'Friendly airbase cannot be targeted.', true); return; }
+            if(state[sideKey].airbaseStrikes >= 3) {
+                logPriv(state.turnSide, sideStr + " Airbase has already sustained the maximum 3 strikes.", true);
+                return;
+            }
+            var pseudoTok = {
+                isAirbase: true,
+                side: sideStr,
+                name: sideStr + " Airbase",
+                loc: sideKey + "-airbase",
+                acquired: true,
+                vp: 1
+            };
+            select(pseudoTok);
+        }
+
+        function targetDeployedSquadron(sideStr, idx) {
+            if(!canAcceptGameAction('Target squadron')) return;
+            if(sideStr === state.turnSide) { logPriv(state.turnSide, 'Friendly Squadron card cannot be targeted.', true); return; }
+            var targetSq = state[sideStr.toLowerCase()].deployedSquadrons[idx];
+            if(targetSq && !targetSq.destroyed) {
+                var pseudoTok = {
+                    isSquadronCard: true, side: sideStr, name: targetSq.name + " (SQ)", currentHp: targetSq.currentHp, vp: targetSq.vp, acquired: true, sqRef: targetSq
+                };
+                select(pseudoTok);
+            }
+        }
+
+        function beginMissileDefenseHandoff(atk, tok, pState, defenders) {
+            state.actionLocked = true;
+            setPhase('missileDefense');
+            pendingAttack = { attacker:atk, target:tok, playerState:pState, defenders:defenders, defenderIndex:-1 };
+            state.selected = null;
+            document.getElementById('md-instruction').innerText = "PASS DEVICE TO " + ((state.turnSide === "US") ? "PRC" : "US") + " COMMANDER";
+            document.getElementById('md-handoff').style.display = 'block';
+            document.getElementById('md-options').style.display = 'none';
+            document.getElementById('md-return').style.display = 'none';
+            document.getElementById('missile-defense-overlay').style.display = 'block';
+        }
+
+        function revealMissileDefenseOptions() {
+            if(!pendingAttack) return;
+            var html = "";
+            for(var i=0; i<pendingAttack.defenders.length; i++) {
+                var d = pendingAttack.defenders[i];
+                html += "<div class='card' onclick='chooseMissileDefense(" + i + ")'><b>" + d.name + "</b><br>Location: " + d.loc + " | Range: " + d.shtR + "</div>";
+            }
+            document.getElementById('md-defender-list').innerHTML = html;
+            document.getElementById('md-handoff').style.display = 'none';
+            document.getElementById('md-options').style.display = 'block';
+        }
+
+        function chooseMissileDefense(index) {
+            if(!pendingAttack) return;
+            pendingAttack.defenderIndex = index;
+            document.getElementById('md-options').style.display = 'none';
+            document.getElementById('md-return').style.display = 'block';
+        }
+
+        function completeMissileDefenseHandoff() {
+            if(!pendingAttack) { engineError('Missile-defense completion rejected: no pending attack.'); return; }
+            var pa = pendingAttack;
+            pendingAttack = null;
+            state.actionLocked = false;
+            setPhase('action');
+            document.getElementById('missile-defense-overlay').style.display = 'none';
+            var defender = pa.defenderIndex >= 0 ? pa.defenders[pa.defenderIndex] : null;
+            resolveCommittedAttack(pa.attacker, pa.target, pa.playerState, !!defender, defender);
+            drawUI();
+        }
+
+        function resolveCommittedAttack(atk, tok, pState, useMD, defenderUsed) {
+            var mod = pState.buffs.nextAtk;
+            if (useMD) {
+                mod = 'dis';
+                if (defenderUsed.winchesterType === "Salvo") {
+                    defenderUsed.salvos = Math.max(0, (defenderUsed.salvos == null ? 4 : defenderUsed.salvos) - 1);
+                    logPub("Naval SAM " + defenderUsed.name + " expended one air-defense salvo (" + defenderUsed.salvos + " remaining).");
+                    logSitrep("Your " + defenderUsed.name + " spent one interceptor salvo defending against enemy strike.");
+                } else {
+                    logPub("Ground-based SAM " + defenderUsed.name + " intercepted attack path (retained infinite defense ammo).");
+                    logSitrep("Your " + defenderUsed.name + " at " + defenderUsed.loc + " active missile defense fired against incoming enemy strike.");
+                }
+            }
+
+            var isExplosive = atk.explosive;
+            var shtRoll = rollD4(mod, 0, isExplosive);
+            var resolvedShootRoll = shtRoll;
+            pState.buffs.nextAtk = 'normal'; 
+
+            var requiredSht = (atk.hitThreshold || 2);
+            var isHit = resolvedShootRoll.val >= requiredSht;
+            var nat4 = resolvedShootRoll.nat === 4;
+
+            if(!isHit) {
+                logAction("Shoot: " + resolvedShootRoll.log + ". MISS.", "Adversary fired at your " + tok.name + " and missed.");
+            }
+
+            if(isHit) {
+                if(tok.isAirbase) {
+                    var baseState = state[tok.side.toLowerCase()];
+                    if(baseState.airbaseStrikes < 3) {
+                        baseState.airbaseStrikes++;
+                        state[state.turnSide.toLowerCase()].vp += 1;
+                        logPub("Shoot: " + resolvedShootRoll.log + ". " + tok.name + " STRUCK (+1 VP, " + baseState.airbaseStrikes + "/3 strikes).");
+                        logSitrep("STRATEGIC STRIKE: Your " + tok.name + " sustained strike " + baseState.airbaseStrikes + " of 3.");
+                    }
+                } else if(tok.isSquadronCard) {
+                    tok.sqRef.currentHp -= resolvedShootRoll.damage;
+                    syncSquadronDamage(tok.sqRef);
+                    if(tok.sqRef.currentHp <= 0 && !tok.sqRef.destroyed) {
+                        tok.sqRef.destroyed = true;
+                        syncSquadronDamage(tok.sqRef);
+                        logPub("Shoot: " + resolvedShootRoll.log + ". SQUADRON DESTROYED (+" + tok.vp + " VP)!");
+                        logSitrep("CRITICAL LOSS: Deployed squadron " + tok.sqRef.name + " was DESTROYED by enemy fire!");
+                        state[state.turnSide.toLowerCase()].vp += tok.vp;
+                        var destroyedMaster = getMasterCard(tok.sqRef.cardId);
+                        if(destroyedMaster) recordNavalLoss(destroyedMaster);
+                        resolveDestroyedSquadronTokens(tok.sqRef.cardId, tok.side);
+                        var defendingSquadrons = state[tok.side.toLowerCase()].deployedSquadrons;
+                        for(var ds=defendingSquadrons.length-1; ds>=0; ds--) {
+                            if(defendingSquadrons[ds] === tok.sqRef) defendingSquadrons.splice(ds, 1);
+                        }
+                    } else if(!tok.sqRef.destroyed) {
+                        logPub("Shoot: " + resolvedShootRoll.log + ". SQUADRON DAMAGED (" + tok.sqRef.currentHp + " HP remaining).");
+                        logSitrep("ALERT: Deployed squadron " + tok.sqRef.name + " was damaged (" + tok.sqRef.currentHp + " HP remaining).");
+                    }
+                } else {
+                    logPub("Shoot: " + resolvedShootRoll.log + ". HIT! " + tok.name + " destroyed (+" + tok.vp + " VP).");
+                    logSitrep("LOSS: Active " + tok.name + " token at " + tok.loc + " was DESTROYED by enemy fire!");
+                    state[state.turnSide.toLowerCase()].vp += tok.vp;
+                    checkMissionVP(tok);
+                    recordNavalLoss({ Side: tok.side, Tags: tok.tags });
+                    destroyTarget(tok);
+                }
+            }
+
+            var goneWinchester = false;
+            var isStaticADA = atk.tags && atk.tags.includes("SAM") && !atk.tags.includes("Naval");
+            if(isStaticADA) {
+                logAction(atk.name + " is ADA and does not go Winchester.", null);
+            } else if(atk.winchesterType === "Salvo") {
+                atk.salvos = Math.max(0, (atk.salvos == null ? 4 : atk.salvos) - 1);
+                logAction(atk.name + " expended one salvo (" + atk.salvos + " remaining).", null);
+                if(atk.salvos <= 0) atk.winchester = true;
+            } else if(atk.winchesterType === "Infinite") {
+                if(resolvedShootRoll.nat <= 2) { goneWinchester = true; logAction(atk.name + " goes Winchester.", null); }
+                else logAction(atk.name + " conserved ammo (UAS rule).", null);
+            } else {
+                if(!nat4) goneWinchester = true;
+                else logAction("Natural 4: Munitions conserved.", null);
+            }
+            if(goneWinchester) atk.winchester = true;
+
+            state.acts.sht--;
+            state.selected = null;
+            drawUI();
+        }
+
+        function select(tok) {
+            if(!canAcceptGameAction('Select/engage unit')) return;
+            if(!validateTokenReference(tok)) { engineError('Selection rejected: stale or invalid unit.'); return; }
+            if(tok.side === state.turnSide) {
+                state.selected = tok; logPriv(state.turnSide, "Selected " + tok.name, false);
+            } else if (state.selected) {
+                clearAction();
+                var atk = state.selected;
+                var pState = state[state.turnSide.toLowerCase()];
+                var hasCyberAdv = (state.turnSide === 'US' && state.us.cyber > state.prc.cyber) || (state.turnSide === 'PRC' && state.prc.cyber > state.us.cyber);
+
+                if(atk.winchester) { logPriv(state.turnSide, "Unit is Winchester.", true); return; }
+
+                var tLoc = (tok.isSquadronCard || tok.isAirbase) ? (tok.side === 'US' ? 'us-airbase' : 'prc-airbase') : tok.loc;
+                var dist = getDistance(atk.loc, tLoc);
+
+                if(!tok.acquired) {
+                    if(state.acts.acq <= 0 && !state.intelAdvActive) { logPriv(state.turnSide, "No ACQUIRE actions left.", true); return; }
+                    if(dist > atk.acqR) { logPriv(state.turnSide, "Target out of Sensor Range.", true); return; }
+
+                    if(state.intelAdvActive) {
+                        tok.acquired = true; state.intelAdvActive = false; logAction("INTEL ADV: Target Auto-Acquired.", "Adversary auto-painted an unknown track.");
+                    } else {
+                        var acqMod = hasCyberAdv ? 'adv' : 'normal';
+                        var bonusVal = (hasCyberAdv ? 1 : 0) + (atk.acqBonus || 0); 
+                        var acqRoll = rollD4(acqMod, bonusVal, false);
+
+                        if(acqRoll.val >= 2) { 
+                            tok.acquired = true; logAction("Acquisition: " + acqRoll.log + ". SUCCESS!", "Adversary painted your " + tok.name + "."); 
+                        } else { 
+                            logPriv(state.turnSide, "Acq Failed: " + acqRoll.log, false);
+                        }
+
+                        if(atk.tags && atk.tags.includes("AEW")) {
+                            if(!atk.firstAcqDone) {
+                                atk.firstAcqDone = true;
+                                logPriv(state.turnSide, "AEW radar swept (1 of 2 attempts complete). Select next target.", false);
+                            } else {
+                                atk.firstAcqDone = false;
+                                state.acts.acq--; 
+                            }
+                        } else {
+                            state.acts.acq--; 
+                        }
+                    }
+                } else {
+                    if(state.acts.sht <= 0) { logPriv(state.turnSide, "No SHOOT actions left.", true); return; }
+                    if(atk.shtR === -1) { logPriv(state.turnSide, "Unit has no weapons.", true); return; }
+                    if(dist > atk.shtR) { logPriv(state.turnSide, "Target out of Weapon Range.", true); return; }
+
+                    // Phase 4: Symmetrical Missile Defense (WEZ path crossing check)
+                    var oppSide = (state.turnSide === 'US') ? 'PRC' : 'US';
+                    var defenders = [];
+                    var minB = Math.min(bandMap[atk.loc], bandMap[tLoc]);
+                    var maxB = Math.max(bandMap[atk.loc], bandMap[tLoc]);
+
+                    for (var d = 0; d < state.tokens.length; d++) {
+                        var dt = state.tokens[d];
+                        if (dt.side === oppSide && !dt.winchester && (dt.winchesterType !== "Salvo" || dt.salvos > 0) && dt.tags) {
+                            var isSAM = dt.tags.includes("SAM");
+                            var isNavalSAM = dt.tags.includes("Naval") && dt.tags.includes("SAG");
+                            if (isSAM || isNavalSAM) {
+                                var defIdx = bandMap[dt.loc];
+                                var pathDist = 999;
+                                for (var b = minB; b <= maxB; b++) {
+                                    var distToPath = Math.abs(defIdx - b);
+                                    if (distToPath < pathDist) pathDist = distToPath;
+                                }
+                                if (pathDist <= dt.shtR) {
+                                    defenders.push(dt);
+                                }
+                            }
+                        }
+                    }
+
+                    if(defenders.length > 0) {
+                        beginMissileDefenseHandoff(atk, tok, pState, defenders);
+                        return;
+                    }
+                    resolveCommittedAttack(atk, tok, pState, false, null);
+                    return;
+                }
+            }
+            drawUI();
+        }
+
+        function destroyTarget(tok) {
+            recordTokenLoss(tok);
+            var newTokens = [];
+            for(var i=0; i<state.tokens.length; i++) if(state.tokens[i] !== tok) newTokens.push(state.tokens[i]);
+            state.tokens = newTokens;
+        }
+
+        function resolveDestroyedSquadronTokens(cardId, sideStr) {
+            var baseLocations = [sideStr === "US" ? "us-airbase" : "prc-airbase", "us-contingency"];
+            for(var i=state.tokens.length-1; i>=0; i--) {
+                var t=state.tokens[i];
+                if(t.parentSqId !== cardId) continue;
+                if(baseLocations.indexOf(t.loc) >= 0) {
+                    recordTokenLoss(t); state.tokens.splice(i,1);
+                    logPub(t.name + " destroyed on the ground with its Squadron Card.");
+                } else t.rogue = true;
+            }
+        }
+
+        function makeRogue(cId) {
+            for(var i=0; i<state.tokens.length; i++) {
+                if(state.tokens[i].parentSqId === cId) {
+                    state.tokens[i].rogue = true;
+                }
+            }
+            logPub("Associated airborne units are now Rogue.");
+        }
+
+        function checkMissionVP(destroyedTok) {
+            var victimSide=destroyedTok.side, scorer=victimSide==='US'?'PRC':'US', ps=state[scorer.toLowerCase()], m=ps.mission;
+            if(!m) return; var tags=destroyedTok.tags||[], points=0, title=m.title;
+            if(title==='ATTRITION') {
+                if(tags.indexOf('Naval')>=0 || tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0) points=3;
+                else if(destroyedTok.sqRef) points=2; else points=1;
+            } else if(title==='INTERDICTION') {
+                if(tags.indexOf('Bomber')>=0 || tags.indexOf('AEW')>=0 || destroyedTok.sqRef) points=4;
+                else if(tags.indexOf('Naval')>=0 || tags.indexOf('SAM')>=0) points=3; else points=2;
+            } else if(title==='COUNTER-INTERVENTION' && destroyedTok.loc && (destroyedTok.loc.indexOf('airbase')>=0 || destroyedTok.loc.indexOf('contingency')>=0)) points=3;
+            if(points) { ps.vp+=points; logPub(scorer+' Mission ('+title+'): +'+points+' VP'); }
+        }
+
+        function checkRoundEndMissions() {
+            var sides=['US','PRC'];
+            for(var s=0;s<sides.length;s++) {
+                var side=sides[s], ps=state[side.toLowerCase()], m=ps.mission; if(!m) continue; var pts=0;
+                if(m.title==='ECONOMY OF FORCE') {
+                    pts += (ps.sqHand ? ps.sqHand.length*2 : 0);
+                    for(var i=0;i<(ps.enHand||[]).length;i++) if(ps.enHand[i].Equipment && ps.enHand[i].Equipment!=='N/A') pts+=2;
+                } else if(m.title==='N-K DOMINANCE') pts += 3*ps.cyber + phase5Metrics[side].enablerCategoriesPlayed;
+                else if(m.title==='THREE DOMINANCES') {
+                    var naval=0,intact=0; for(var t=0;t<state.tokens.length;t++) if(state.tokens[t].side===side && state.tokens[t].tags && state.tokens[t].tags.indexOf('Naval')>=0) naval++;
+                    for(var id in ps.squadronLedger) if(ps.squadronLedger[id].currentHp>0) intact++;
+                    pts += 2*ps.cyber + 3*naval + phase5Metrics[side].navalEnablersPlayed + intact;
+                } else if(m.title==='COUNTER-INTERVENTION') pts += phase5Metrics[side].plarfPlayed;
+                if(pts) { ps.vp+=pts; logPub(side+' Mission ('+m.title+') end-of-ATO score: +'+pts+' VP'); }
+            }
+        }
+
+        function move(targetLoc) {
+            if(!canAcceptGameAction('Move')) return;
+            if(state.selected) {
+                clearAction();
+                var tok = state.selected;
+                var pState = state[state.turnSide.toLowerCase()];
+                if(tok.side !== state.turnSide || tok.isSquadronCard) { engineError('Move rejected: selected object cannot move.'); return; }
+                if(typeof bandMap[targetLoc] === 'undefined') { engineError('Move rejected: invalid destination.'); return; }
+
+                if(state.acts.move <= 0) { logPriv(state.turnSide, "No MOVE actions left.", true); return; }
+                if(pState.buffs.moveDenied) {
+                    logAction("MOVE DENIED BY A2/AD ENABLER!", "Adversary A2/AD triggered, cancelling their movement."); pState.buffs.moveDenied = false; state.acts.move--; state.selected = null; drawUI(); return;
+                }
+
+                var dist = getDistance(tok.loc, targetLoc);
+                if(tok.spd === 0) { logPriv(state.turnSide, "Static unit.", true); return; }
+                if(dist > tok.spd) { logPriv(state.turnSide, "Out of Range (Max: "+tok.spd+").", true); return; }
+
+                tok.loc = targetLoc; logAction("Moved " + tok.name + " to " + targetLoc, "Adversary moved a unit to " + targetLoc + ".");
+                state.acts.move--; state.selected = null; drawUI();
+            }
+        }
+
+        function rollCyber() {
+            logPriv(state.turnSide, "Generic Cyber Rolling is handled automatically during the Initiative phase.", true);
+        }
+
+        function rtbWinchester() {
+            if(!canAcceptGameAction('RTB Winchester')) return;
+            clearAction();
+            var count = 0; var rDeaths = 0;
+            for(var i=state.tokens.length-1; i>=0; i--) {
+                var t = state.tokens[i];
+                if(t.side === state.turnSide && t.winchester) {
+                    if(t.rogue) {
+                        rDeaths++;
+                        state[state.turnSide === 'US' ? 'prc' : 'us'].vp += t.vp;
+                        recordNavalLoss({ Side: t.side, Tags: t.tags });
+                        recordTokenLoss(state.tokens[i]);
+                        state.tokens.splice(i, 1);
+                    } else {
+                        var isNavalShip = t.tags && t.tags.includes("SAG");
+                        if(!isNavalShip) t.loc = (state.turnSide === "US") ? "us-airbase" : "prc-airbase";
+                        t.winchester = false; 
+                        count++;
+                    }
+                }
+            }
+            if(count > 0) logAction(count + " units RTB'd and rearmed.", "Adversary rearmed " + count + " units.");
+            if(rDeaths > 0) logPub("CRITICAL: " + rDeaths + " Rogue units crashed attempting to RTB (+VP to opponent).");
+            drawUI();
+        }
+
+        function passTurn() {
+            if(!canAcceptGameAction('Pass')) return;
+            state.consecutivePasses++;
+            logAction("PASSED.", "Adversary PASSED their turn.");
+            if(state.consecutivePasses >= 2) { checkEndTurnMission(state.turnSide); endRound(); } else { endTurn(); }
+        }
+
+        function checkEndTurnMission(side) {
+            var ps=state[side.toLowerCase()], m=ps.mission; if(!m || m.title!=='ENFORCE RULE OF LAW') return;
+            var pts=2*phase5Metrics[side].activatedThisTurn + phase5Metrics[side].enablerUnitTokensGeneratedThisTurn;
+            if(pts){ps.vp+=pts;logPub(side+' Mission (ENFORCE RULE OF LAW) end-of-turn score: +'+pts+' VP');}
+        }
+
+        function endTurn() {
+            if(!canAcceptGameAction('End turn')) return;
+            checkEndTurnMission(state.turnSide);
+            state.actionLocked = true;
+            setPhase('handoff');
+            var nextSide = (state.turnSide === "US") ? "PRC" : "US";
+            showInterstitial("TURN COMPLETE", nextSide, function() {
+                state.turnSide = nextSide;
+                state.actionLocked = false;
+                setPhase('action');
+                state.selected = null; state.sqDeployedThisTurn = 0; phase5Metrics[state.turnSide].activatedThisTurn=0; phase5Metrics[state.turnSide].enablerUnitTokensGeneratedThisTurn=0;
+                state.acts = { move: 1, acq: 1, sht: 1 };
+                state.intelAdvActive = false; 
+                if(state.us.intel > state.prc.intel && state.turnSide === 'US') { state.intelAdvActive = true; }
+                if(state.prc.intel > state.us.intel && state.turnSide === 'PRC') { state.intelAdvActive = true; }
+
+                logPub("=========================================");
+                logPub("--- " + state.turnSide + " TURN ---");
+                drawUI();
+            });
+        }
+
+        function endRound() {
+            if(state.gameOver || state.actionLocked || pendingAttack) return;
+            state.actionLocked = true;
+            setPhase('roundResolution');
+            checkRoundEndMissions();
+
+            // Phase 4 Attrition Check: Airborne units whose base is destroyed crash when attempting to land
+            var crashCount = 0;
+            for(var i=state.tokens.length-1; i>=0; i--) {
+                var tok = state.tokens[i];
+                if (!tok.isBase && tok.parentSqId) {
+                    var side = tok.side.toLowerCase();
+                    var parentSq = null;
+                    for(var ps=0; ps<state[side].deployedSquadrons.length; ps++) {
+                        if(state[side].deployedSquadrons[ps].cardId === tok.parentSqId) { parentSq = state[side].deployedSquadrons[ps]; break; }
+                    }
+                    if (parentSq && parentSq.currentHp <= 0) {
+                        crashCount++;
+                        var oppSide = (tok.side === 'US') ? 'prc' : 'us';
+                        state[oppSide].vp += tok.vp;
+                        recordNavalLoss({ Side: tok.side, Tags: tok.tags });
+                        logSitrep("CRITICAL LOSS: Your " + tok.name + " crashed because its parent squadron card was destroyed.");
+                        recordTokenLoss(tok);
+                        state.tokens.splice(i, 1);
+                    }
+                }
+            }
+            if (crashCount > 0) {
+                logPub("Round End Attrition: " + crashCount + " airborne tokens crashed attempting to land on destroyed bases.");
+            }
+
+            var rogueEnd = 0;
+            for(var i=state.tokens.length-1; i>=0; i--) {
+                if(state.tokens[i].rogue) {
+                    rogueEnd++;
+                    state[state.tokens[i].side === 'US' ? 'prc' : 'us'].vp += state.tokens[i].vp;
+                    recordNavalLoss({ Side: state.tokens[i].side, Tags: state.tokens[i].tags });
+                    recordTokenLoss(state.tokens[i]);
+                    state.tokens.splice(i, 1);
+                }
+            }
+            if(rogueEnd > 0) logPub("Round End: " + rogueEnd + " Rogue units ran out of fuel and crashed.");
+
+            for(var su=0; su<state.us.deployedSquadrons.length; su++) syncSquadronDamage(state.us.deployedSquadrons[su]);
+            for(var sp=0; sp<state.prc.deployedSquadrons.length; sp++) syncSquadronDamage(state.prc.deployedSquadrons[sp]);
+
+            validateEngineState('endRound');
+            state.round++;
+            if(state.round > state.maxRounds) {
+                var winnerTxt = "DRAW (STALEMATE)";
+                if(state.us.vp > state.prc.vp) winnerTxt = "US FORCES WIN";
+                else if (state.prc.vp > state.us.vp) winnerTxt = "PRC FORCES WIN";
+                endGame(winnerTxt);
+            } else {
+                showInterstitial("ROUND " + (state.round - 1) + " CONCLUDED", "US", function() {
+                    state.turnSide = "US"; state.acts = { move: 1, acq: 1, sht: 1 };
+                    state.actionLocked = false;
+                    setPhase('draft');
+                    state.sqDeployedThisTurn = 0; state.consecutivePasses = 0;
+
+                    /* Clear transient ATO state only through the Phase 3 ATO manager. */
+                    AFWI.ATOState.clear();
+                    setup.side = "US"; setup.step = 1; setup.picks = []; setup.selPosture = null; setup.selMission = state.us.mission; 
+
+                    document.getElementById('game-ui').style.display = 'none';
+                    document.getElementById('setup-ui').style.display = 'block';
+                    renderSetupUI();
+
+                    document.getElementById('setup-header').innerText = "US PLAYER: Select Posture for ATO " + state.round;
+                    document.getElementById('setup-header').className = "header-us";
+                    document.getElementById('setup-round-txt').innerText = state.round;
+                }, true); 
+            }
+        }
+
+        function endGame(reason) {
+            state.gameOver = true;
+            state.actionLocked = true;
+            setPhase('gameOver');
+            pendingAttack = null;
+            state.selected = null;
+            document.getElementById('missile-defense-overlay').style.display = 'none';
+            document.getElementById('go-reason').innerText = reason;
+            document.getElementById('go-us-vp').innerText = state.us.vp;
+            document.getElementById('go-prc-vp').innerText = state.prc.vp;
+            document.getElementById('game-over-overlay').style.display = "block";
+            if(window.AFWI && AFWI.Events) AFWI.Events.emit("game.over", { reason:reason, usVP:state.us.vp, prcVP:state.prc.vp });
+        }
+
+        /* Boot after all legacy function declarations are available. */
+        AFWI.Bootstrap.initialize();
+    </script>
+</body>
+</html>

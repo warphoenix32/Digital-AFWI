@@ -1,0 +1,20 @@
+{
+  "version_label_rc1": true,
+  "no_phase_flow_panel": true,
+  "no_status_panel": true,
+  "no_discard_piles": true,
+  "no_duplicate_hand_panels": true,
+  "no_css_animations": true,
+  "squadron_art_hidden": true,
+  "squadron_deploy_keeps_turn": true,
+  "aircraft_default_grounded": true,
+  "uas_explicit_deployment": true,
+  "naval_explicit_deployment": true,
+  "equal_zone_height_css": true,
+  "board_background_in_bands": true,
+  "uniform_base_background_rule": true,
+  "token_wrap_guard": true,
+  "no_remote_http_assets": true,
+  "all_local_assets_resolve": true,
+  "missing_assets": []
+}

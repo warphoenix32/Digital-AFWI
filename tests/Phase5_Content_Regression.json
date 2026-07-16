@@ -1,0 +1,13 @@
+{
+  "build": "AFWI 1.0 Candidate Phase 5",
+  "authoritative_card_count": 88,
+  "US_squadrons": 10,
+  "PRC_squadrons": 10,
+  "US_enablers": 34,
+  "PRC_enablers": 34,
+  "US_missions": 5,
+  "PRC_missions": 5,
+  "continuous_theater_background": true,
+  "remote_dependencies": false,
+  "manual_adjudication_for_complex_reactions": true
+}
