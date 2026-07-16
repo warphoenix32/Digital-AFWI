@@ -1,0 +1,11 @@
+{
+  "build": "1.1.0-phase2-executive",
+  "viewport": "1680x1050",
+  "checks": 18,
+  "status": "PASS",
+  "screenshots": [
+    "phase2-executive-landing-1680x1050.png",
+    "phase2-executive-us-command-1680x1050.png",
+    "phase2-executive-prc-command-1680x1050.png"
+  ]
+}

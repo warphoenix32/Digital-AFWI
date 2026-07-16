@@ -61,8 +61,8 @@ async function main() {
       prcAew: getMasterCard('PRC-AUTH-SQ-04'),
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
-    assert(result.title === 'AFWI 1.0 Final', 'final title missing');
-    assert(result.version === '1.0.1-final-phase1', 'final build version missing');
+    assert(result.title === 'AFWI Executive Edition', 'executive title missing');
+    assert(result.version === '1.1.0-phase2-executive', 'phase two build version missing');
     assert(result.campaigns.length === 5, 'five campaigns were not registered');
     assert(result.campaigns.map(c => c.rounds).join(',') === '1,2,5,2,2', 'campaign ATO lengths are incorrect');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');

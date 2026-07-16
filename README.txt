@@ -1,5 +1,5 @@
-AFWI 1.0 FINAL - PHASE ONE COMPLETE
-===================================
+AFWI 1.1 EXECUTIVE EDITION - PHASE TWO COMPLETE
+================================================
 
 RUN
 1. Keep AFWI.html and the assets folder together.
@@ -22,6 +22,12 @@ RELEASE SCOPE
   option and explicit Enabler-card location exceptions
 - Deployed Squadron cards use fog of war with AQ 1
 - Full selected-token profile panel without changing physical token scale
+- Executive command-glass UI with equal-size US and PRC play areas
+- Prominent M-A-S availability/spent indicator
+- Exact supplied token silhouettes and equipment-type labels; unsupported
+  silhouettes use a correct type label instead of a misleading substitute
+- Supplied photographic imagery for the landing page, airbases, US contingency
+  location, standoff zones, and associated Squadron/Enabler side cards
 - Deterministic automation for card effects; explicit commander prompts for
   reactions, choices, targets, and hidden-information handoffs
 
@@ -30,10 +36,10 @@ VALIDATION
   package-integrity checks (development validation requires Node.js).
 - Run tests/phase1_playtest.cjs in a development environment with Playwright
   and Chrome for the full automated browser playtest suite.
-- See tests/Phase1_Final_Regression.json and
-  docs/Phase1_Finalization_Report.md for the verified release record.
+- Run tests/phase2_visual_regression.cjs for executive-layout validation and
+  reproducible 1680x1050 browser screenshots.
+- See docs/Phase2_Executive_UI_Report.md for the Phase Two release record.
 
-OUT OF PHASE-ONE SCOPE
-- Senior-leader UI polish is Phase Two.
+OUT OF PHASE-TWO SCOPE
 - Quick Start is Phase Three.
 - Networked multiplayer is Phase Four.

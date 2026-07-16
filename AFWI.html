@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>AFWI 1.0 Final</title>
+    <title>AFWI Executive Edition</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #263238; padding: 0; color: #000; margin: 0; overflow-x: hidden; }
 
@@ -108,15 +108,121 @@
         .sq-art { display:none !important; }
         #us-contingency { border-color:#1565c0; }
         *, *:before, *:after { animation:none !important; transition:none !important; }
+
+        /* Phase Two: Executive / Command Glass visual system. */
+        :root {
+            --ink:#eef4f8; --muted:#8fa4b5; --navy:#07111c; --surface:#0d1a27;
+            --surface-2:#122333; --line:#294050; --us:#40a9ff; --prc:#ff5f67;
+            --amber:#f0b94a; --green:#55d6a0; --zone-image-opacity:.22;
+        }
+        body { background:#050b12; color:var(--ink); }
+        .btn { border:1px solid #36566c; border-radius:7px; background:#163a55; color:#f7fbff; box-shadow:0 4px 14px rgba(0,0,0,.18); letter-spacing:.02em; }
+        .btn:hover { background:#205477; border-color:#75c4ff; }
+        .btn-danger { background:#6e2730; } .btn-warn { background:#76551a; } .btn-pass { background:#2c4050; }
+        #landing-ui {
+            min-height:100vh; height:auto; box-sizing:border-box; position:relative; overflow:hidden;
+            background-image:linear-gradient(90deg,rgba(4,10,17,.98) 0%,rgba(4,10,17,.82) 48%,rgba(4,10,17,.46) 100%),url('assets/ui/backgrounds/landing-f35-executive-v3.jpg');
+            background-size:cover; background-position:center; align-items:flex-start; text-align:left; padding:10vh 8vw;
+        }
+        #landing-ui:after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,rgba(64,169,255,.07),transparent 35%,rgba(0,0,0,.45)); }
+        .landing-content { position:relative; z-index:1; max-width:680px; }
+        .landing-eyebrow { color:#79c5ff; font-size:12px; letter-spacing:.28em; font-weight:700; text-transform:uppercase; margin-bottom:24px; }
+        .landing-logo { width:310px; max-height:140px; object-fit:contain; object-position:left center; filter:drop-shadow(0 8px 20px rgba(0,0,0,.45)); }
+        .landing-title { margin:20px 0 12px; font-size:clamp(44px,5vw,76px) !important; line-height:.98; letter-spacing:-.025em; }
+        .landing-subtitle { max-width:590px; color:#b5c4d1; font-size:18px; line-height:1.55; font-style:normal; margin:0 0 30px; }
+        .landing-cta { font-size:15px !important; padding:14px 24px !important; margin-left:0; background:#1b6897; }
+        .landing-footer { left:8vw; right:8vw; bottom:28px; z-index:1; color:#7790a3; letter-spacing:.05em; }
+
+        #game-ui { background:radial-gradient(circle at 50% -10%,#172a3a 0,#08121c 58%,#050b12 100%); padding:12px; }
+        .top-nav { background:rgba(9,21,32,.96); border:1px solid #263e50; border-radius:9px; margin-bottom:8px; padding:8px 14px; box-shadow:0 8px 24px rgba(0,0,0,.28); }
+        .brand-lockup { display:flex; align-items:center; gap:10px; }
+        .brand-lockup img { width:50px; height:34px; object-fit:contain; }
+        .brand-lockup strong { display:block; letter-spacing:.14em; font-size:14px; }
+        .brand-lockup span { display:block; color:#6f8799; font-size:9px; letter-spacing:.18em; margin-top:2px; }
+        .status-bar { background:rgba(13,26,39,.97); border:1px solid #294050; border-radius:9px; color:var(--ink); padding:8px 12px; margin-bottom:8px; min-height:54px; box-sizing:border-box; gap:12px; }
+        .turn-block { min-width:130px; }
+        .turn-block small { display:block; color:#71899b; font-size:9px; letter-spacing:.15em; text-transform:uppercase; margin-bottom:2px; }
+        #unit-status { flex:1; min-width:0; color:#9fb1bf !important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .mas-indicator { display:grid; grid-template-columns:repeat(3,54px); gap:5px; flex-shrink:0; }
+        .mas-cell { height:38px; box-sizing:border-box; border:1px solid #355268; border-radius:6px; background:#102637; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#bcd4e5; }
+        .mas-cell b { font-size:16px; line-height:1; } .mas-cell small { font-size:7px; letter-spacing:.12em; margin-top:3px; }
+        .mas-cell.available { border-color:#58bcff; color:#fff; background:#16496a; box-shadow:inset 0 0 18px rgba(64,169,255,.14); }
+        .mas-cell.spent { opacity:.38; text-decoration:line-through; background:#121c24; }
+        .command-actions { display:flex; align-items:center; flex-shrink:0; }
+
+        .selected-unit-panel { background:rgba(13,26,39,.97); color:var(--ink); border:1px solid #294050; border-left:6px solid #4a6172; border-radius:9px; min-height:76px; margin:0 0 8px; box-shadow:0 8px 24px rgba(0,0,0,.22); }
+        .selected-unit-panel.us { background:#0d2234; border-left-color:var(--us); }
+        .selected-unit-panel.prc { background:#29171c; border-left-color:var(--prc); }
+        .selected-unit-panel.empty { color:#8298a8; background:rgba(13,26,39,.97); }
+        .selected-unit-panel .selected-sub { color:#91a7b7; }
+        .selected-unit-panel .selected-stat { border-color:#2b4253; }
+        .selected-unit-panel .selected-stat b { color:#dce8f0; }
+        .selected-art { object-fit:contain !important; filter:drop-shadow(0 3px 5px rgba(0,0,0,.4)); }
+
+        .flex-container { gap:9px; height:calc(100vh - 342px); min-height:600px; }
+        .panel { width:292px; box-sizing:border-box; background:rgba(10,22,33,.96); border:1px solid #294050; border-radius:9px; padding:12px; color:var(--ink); box-shadow:0 10px 30px rgba(0,0,0,.25); }
+        #panel-us { border-top-color:var(--us) !important; } #panel-prc { border-top-color:var(--prc) !important; }
+        .panel h4 { color:#91a7b7; border-color:#294050 !important; font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
+        .track-box { background:#102130 !important; border:1px solid #2b4559 !important; color:#b8c9d5; border-radius:6px; }
+        .track-box:hover { background:#142a3c !important; border-color:#4e7895 !important; }
+        .card { overflow:hidden; isolation:isolate; min-height:66px; box-sizing:border-box; border:1px solid #29485d; background:#102130; color:#eaf2f7; border-radius:7px; padding:9px; text-shadow:0 1px 3px rgba(0,0,0,.95); }
+        .card:before { content:''; position:absolute; z-index:-2; inset:0; background-image:var(--card-art); background-size:cover; background-position:center; opacity:.23; }
+        .card:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,rgba(7,17,28,.97) 12%,rgba(7,17,28,.78) 70%,rgba(7,17,28,.90)); }
+        .card:hover { background:#142a3c; border-color:var(--amber); }
+        .card .card-equipment { color:#88cfff; font-style:normal; font-size:10px; }
+        .card .card-description { display:block; color:#b5c5d0; font-size:10px; line-height:1.35; margin-top:3px; }
+        .card-vp { color:#78deb0; }
+        .card.masked { min-height:48px; display:flex; align-items:center; justify-content:center; color:#688091; letter-spacing:.16em; background:#0a151f; }
+
+        .board { border:1px solid #344e60; border-radius:9px; background:#07111b; box-shadow:0 10px 30px rgba(0,0,0,.3); }
+        .zone { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; height:144px; min-height:144px; flex-basis:144px; padding:7px; background:#0b1823 !important; border-color:#294050 !important; }
+        .zone-prc #prc-airbase { grid-column:span 2; }
+        .zone-us #us-standoff, .zone-us #us-airbase, .zone-us #us-contingency { grid-column:span 1; }
+        .base { position:relative; isolation:isolate; overflow:hidden; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; }
+        .base:before { content:''; position:absolute; z-index:-2; inset:0; background-size:cover; background-position:center; opacity:var(--zone-image-opacity); }
+        .base:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(180deg,rgba(7,16,25,.42),rgba(7,16,25,.82)); }
+        #prc-standoff:before { background-image:url('assets/ui/backgrounds/prc-standoff-photo.jpg'); }
+        #us-standoff:before { background-image:url('assets/ui/backgrounds/us-standoff-photo.jpg'); }
+        #prc-airbase:before, #us-airbase:before { background-image:url('assets/ui/backgrounds/airbase-runway-photo.jpg'); }
+        #us-contingency:before { background-image:url('assets/ui/backgrounds/us-contingency-photo.jpg'); }
+        #prc-standoff, #prc-airbase { border-color:rgba(255,95,103,.5); }
+        #us-standoff, #us-airbase, #us-contingency { border-color:rgba(64,169,255,.5); }
+        .airbase-header { border-color:#3b5262; background:rgba(6,15,23,.64); margin:-2px -2px 4px; width:calc(100% + 4px); padding:4px 6px; }
+        .airbase-strikes { background:#132331; border-color:#466071; color:#d3e1e9; }
+        .squadron-board-card { background:rgba(13,28,41,.94); color:#e7f0f6; border-color:#496275; text-shadow:0 1px 2px #000; }
+        .squadron-board-card:hover { background:#183246; }
+        .bands-container { background-image:linear-gradient(rgba(5,14,22,.68),rgba(5,14,22,.68)),url('assets/board/board.jpg') !important; }
+        .band { border-color:rgba(125,159,180,.18); }
+
+        .token { border-width:1px; border-color:rgba(255,255,255,.8); border-radius:7px; background-image:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.18)); box-shadow:0 4px 10px rgba(0,0,0,.35); padding:2px 2px 15px; }
+        .token.us { background-color:#164f78; } .token.prc { background-color:#7b2b34; }
+        .token-art { width:48px; height:29px; object-fit:contain; margin:0 auto; filter:drop-shadow(0 2px 2px rgba(0,0,0,.55)); }
+        .token-type { display:block; font-size:9px; line-height:11px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .token.unknown .token-type { color:#d2dde5; }
+        .token-stats { background:rgba(2,8,13,.88); color:#ffd66b; }
+        .log-container { height:112px; margin-top:9px; background:#050d14; border:1px solid #294050; color:#74dcaa; border-radius:9px; }
+
+        .modal, .setup-container { background:#f7f9fa; color:#17232c; }
+        @media (max-width:1400px) {
+            .panel { width:250px; } .selected-unit-panel { grid-template-columns:64px minmax(150px,1fr) repeat(3,minmax(110px,1fr)); gap:8px; }
+            .mas-indicator { grid-template-columns:repeat(3,46px); } .status-bar .btn { padding:8px 9px; }
+        }
+        @media (max-width:1120px) {
+            #game-ui { min-width:1060px; } .panel { width:230px; } .flex-container { gap:6px; }
+        }
     </style>
 </head>
 <body>
 
     <!-- PHASE 0: LANDING -->
     <div id="landing-ui">
-        <img src="assets/logos/AFWI_game_logo.png" alt="AFWI" style="max-width:360px;max-height:180px;margin-bottom:20px;"><h1 class="landing-title" style="font-size:54px;">Digital AFWI</h1>
-        <div class="landing-subtitle"><br>A Tactical Simulation of the Basics of Airpower, Air Combat, and Air Superiority</div>
-        <button class="btn" style="font-size: 18px; padding: 15px 30px;" onclick="showUI('scenario-ui')">Initialize Simulation</button>
+        <div class="landing-content">
+            <div class="landing-eyebrow">Air Force Wargaming Institute</div>
+            <img class="landing-logo" src="assets/logos/AFWI_game_logo.png" alt="AFWI">
+            <h1 class="landing-title">Digital AFWI</h1>
+            <div class="landing-subtitle">A tactical command simulation of airpower, air combat, and air superiority.</div>
+            <button class="btn landing-cta" onclick="showUI('scenario-ui')">Initialize Simulation</button>
+        </div>
         <div class="landing-footer">A product of the Air Force Wargaming Institute</div>
     </div>
 
@@ -396,7 +502,10 @@
     <!-- PHASE 3: GAME -->
     <div id="game-ui">
         <div class="top-nav">
-            <h3 style="margin:0;">AFWI 1.0 FINAL</h3>
+            <div class="brand-lockup">
+                <img src="assets/logos/AFWI_GAME_WEB_PAGE_LOGO.png" alt="AFWI">
+                <div><strong>DIGITAL AFWI</strong><span>EXECUTIVE EDITION · PHASE TWO</span></div>
+            </div>
             <div>
                 <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
                 <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
@@ -405,9 +514,14 @@
         </div>
 
         <div class="status-bar">
-            <div><span style="color:#0288d1" id="turn-txt">US TURN</span> &nbsp;|&nbsp; <span style="color:#546e7a;">Round <span id="round-txt">1</span></span></div>
-            <div id="unit-status" style="color: #37474f; font-weight:normal;">Actions: M:1 | A:1 | S:1</div>
-            <div>
+            <div class="turn-block"><small>Active command</small><span style="color:#40a9ff;font-weight:700" id="turn-txt">US TURN</span> · <span style="color:#9db0be;">ATO <span id="round-txt">1</span></span></div>
+            <div id="mas-indicator" class="mas-indicator" aria-label="Move Acquire Shoot actions">
+                <span class="mas-cell available" data-action="move"><b>M</b><small>MOVE</small></span>
+                <span class="mas-cell available" data-action="acq"><b>A</b><small>ACQUIRE</small></span>
+                <span class="mas-cell available" data-action="sht"><b>S</b><small>SHOOT</small></span>
+            </div>
+            <div id="unit-status" style="font-weight:normal;">No unit selected</div>
+            <div class="command-actions">
                 <button class="btn btn-warn" onclick="rtbWinchester()" style="margin:0;">RTB Winchester</button>
                 <button class="btn btn-pass" onclick="passTurn()" style="margin:0 5px;">PASS</button>
                 <button class="btn btn-danger" onclick="endTurn()" style="margin:0;">END TURN</button>
@@ -435,12 +549,12 @@
 
             <!-- Board -->
             <div class="board">
-                <div class="zone" style="background:#ffcdd2; border-bottom: 3px solid #c62828;">
+                <div class="zone zone-prc">
                     <div class="base" id="prc-standoff">PRC STANDOFF</div>
                     <div class="base airbase-target" id="prc-airbase" onclick="targetAirbase('PRC')">PRC AIRBASE</div>
                 </div>
                 <div class="bands-container" id="bands-container"></div>
-                <div class="zone" style="background:#bbdefb; border-bottom:none; border-top: 3px solid #1565c0;">
+                <div class="zone zone-us">
                     <div class="base" id="us-standoff">US STANDOFF</div>
                     <div class="base airbase-target" id="us-airbase" onclick="targetAirbase('US')">US AIRBASE</div>
                     <div class="base" id="us-contingency">US CONTINGENCY LOCATION</div>
@@ -664,11 +778,13 @@
                 var equipment=(c.Equipment||m[2]||c.TITLE), low=equipment.toLowerCase(), asset='', tags=[];
                 if(/f-22/.test(low)){asset='assets/tokens/us/f22.png';tags=['Fighter','Gen5'];}
                 else if(/f-35/.test(low)){asset='assets/tokens/us/f35.png';tags=['Fighter','Gen5'];}
-                else if(/f-15|f-16/.test(low)){asset='assets/tokens/us/f15.png';tags=['Fighter','Gen4'];}
+                else if(/f-16/.test(low)){asset='assets/source-art/f16-plan.svg';tags=['Fighter','Gen4'];}
+                else if(/f-15/.test(low)){asset='assets/tokens/us/f15.png';tags=['Fighter','Gen4'];}
                 else if(/b-52/.test(low)){asset='assets/tokens/us/b52.png';tags=['Bomber'];}
                 else if(/mq-9|rq-4|uas|drone/.test(low)){asset=side==='US'?'assets/tokens/us/uas.png':'assets/tokens/prc/uas.png';tags=['UAS'];}
                 else if(/j-20/.test(low)){asset='assets/tokens/prc/j20.png';tags=['Fighter','Gen5'];}
-                else if(/j-16|jh-7/.test(low)){asset='assets/tokens/prc/j16.png';tags=['Fighter','Gen4'];}
+                else if(/j-16/.test(low)){asset='assets/tokens/prc/j16.png';tags=['Fighter','Gen4'];}
+                else if(/jh-7/.test(low)){asset='';tags=['Fighter','Gen4'];}
                 else if(/j-10/.test(low)){asset='assets/tokens/prc/j10.png';tags=['Fighter','Gen4'];}
                 else if(/h-6/.test(low)){asset='assets/tokens/prc/h6.png';tags=['Bomber'];}
                 else if(/aew|awacs|kj-/.test(low)){asset=side==='US'?'assets/tokens/us/aew.png':'assets/tokens/prc/aew.png';tags=['AEW'];}
@@ -917,7 +1033,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.0.1-final-phase1",
+            buildVersion: "1.1.0-phase2-executive",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
@@ -1876,17 +1992,64 @@
         }
 
         var TOKEN_ASSETS = {
-            "US-SQ-1":"assets/tokens/us/f22.png", "US-SQ-2":"assets/tokens/us/f35.png", "US-SQ-3":"assets/tokens/us/f15.png",
-            "US-SQ-4":"assets/tokens/us/uas.png", "US-SQ-5":"assets/tokens/us/b52.png", "US-SQ-6":"assets/tokens/us/aew.png",
-            "US-SQ-7":"assets/tokens/us/ada.png", "US-SQ-8":"assets/tokens/us/f35.png", "US-SQ-9":"assets/tokens/us/ddg.png",
-            "PRC-SQ-1":"assets/tokens/prc/j20.png", "PRC-SQ-2":"assets/tokens/prc/j16.png", "PRC-SQ-3":"assets/tokens/prc/j10.png",
-            "PRC-SQ-4":"assets/tokens/prc/uas.png", "PRC-SQ-5":"assets/tokens/prc/h6.png", "PRC-SQ-6":"assets/tokens/prc/aew.png",
-            "PRC-SQ-7":"assets/tokens/prc/ada.png", "PRC-SQ-8":"assets/tokens/prc/j15.png", "PRC-SQ-9":"assets/tokens/prc/ddg.png"
-            ,"US-AUTH-SQ-01":"assets/tokens/us/uas.png","US-AUTH-SQ-02":"assets/tokens/us/b52.png","US-AUTH-SQ-03":"assets/tokens/us/uas.png","US-AUTH-SQ-04":"assets/tokens/us/aew.png","US-AUTH-SQ-05":"assets/tokens/us/f22.png","US-AUTH-SQ-06":"assets/tokens/us/f15.png","US-AUTH-SQ-07":"assets/tokens/us/b52.png","US-AUTH-SQ-08":"assets/tokens/us/f35.png","US-AUTH-SQ-09":"assets/tokens/us/f15.png","US-AUTH-SQ-10":"assets/tokens/us/f15.png"
-            ,"PRC-AUTH-SQ-01":"assets/tokens/prc/uas.png","PRC-AUTH-SQ-02":"assets/tokens/prc/ada.png","PRC-AUTH-SQ-03":"assets/tokens/prc/uas.png","PRC-AUTH-SQ-04":"assets/tokens/prc/aew.png","PRC-AUTH-SQ-05":"assets/tokens/prc/ada.png","PRC-AUTH-SQ-06":"assets/tokens/prc/j10.png","PRC-AUTH-SQ-07":"assets/tokens/prc/h6.png","PRC-AUTH-SQ-08":"assets/tokens/prc/j20.png","PRC-AUTH-SQ-09":"assets/tokens/prc/j16.png","PRC-AUTH-SQ-10":"assets/tokens/prc/j16.png"
+            "US-SQ-1":"assets/ui/icons/us/f22-cutout.png", "US-SQ-2":"assets/ui/icons/us/f35-cutout.png", "US-SQ-3":"assets/ui/icons/us/f15-cutout.png",
+            "US-SQ-4":"assets/ui/icons/us/uas-cutout.png", "US-SQ-5":"assets/ui/icons/us/b52-cutout.png", "US-SQ-6":"assets/ui/icons/us/aew-cutout.png",
+            "US-SQ-7":"assets/ui/icons/us/ada-cutout.png", "US-SQ-8":"assets/ui/icons/us/f35-cutout.png", "US-SQ-9":"assets/ui/icons/us/ddg-cutout.png",
+            "PRC-SQ-1":"assets/ui/icons/prc/j20-cutout.png", "PRC-SQ-2":"assets/ui/icons/prc/j16-cutout.png", "PRC-SQ-3":"assets/ui/icons/prc/j10-cutout.png",
+            "PRC-SQ-4":"assets/ui/icons/prc/uas-cutout.png", "PRC-SQ-5":"assets/ui/icons/prc/h6-cutout.png", "PRC-SQ-6":"assets/ui/icons/prc/aew-cutout.png",
+            "PRC-SQ-7":"assets/ui/icons/prc/ada-cutout.png", "PRC-SQ-8":"assets/ui/icons/prc/j15-cutout.png", "PRC-SQ-9":"assets/ui/icons/prc/ddg-cutout.png",
+            "US-AUTH-SQ-01":"assets/ui/icons/us/uas-cutout.png", "US-AUTH-SQ-02":"assets/ui/icons/us/b52-cutout.png", "US-AUTH-SQ-03":"assets/ui/icons/us/uas-cutout.png",
+            "US-AUTH-SQ-04":"assets/ui/icons/us/aew-cutout.png", "US-AUTH-SQ-05":"assets/ui/icons/us/f22-cutout.png", "US-AUTH-SQ-06":"assets/ui/icons/us/f15-cutout.png",
+            "US-AUTH-SQ-07":"assets/ui/icons/us/b52-cutout.png", "US-AUTH-SQ-08":"assets/ui/icons/us/f35-cutout.png", "US-AUTH-SQ-09":"assets/ui/icons/us/f15-cutout.png",
+            "US-AUTH-SQ-10":"assets/source-art/f16-plan.svg",
+            "PRC-AUTH-SQ-01":"assets/ui/icons/prc/uas-cutout.png", "PRC-AUTH-SQ-02":"assets/ui/icons/prc/ada-cutout.png", "PRC-AUTH-SQ-03":"assets/ui/icons/prc/uas-cutout.png",
+            "PRC-AUTH-SQ-04":"assets/ui/icons/prc/aew-cutout.png", "PRC-AUTH-SQ-05":"assets/ui/icons/prc/ada-cutout.png", "PRC-AUTH-SQ-06":"assets/ui/icons/prc/j10-cutout.png",
+            "PRC-AUTH-SQ-07":"assets/ui/icons/prc/h6-cutout.png", "PRC-AUTH-SQ-08":"assets/ui/icons/prc/j20-cutout.png", "PRC-AUTH-SQ-09":"assets/ui/icons/prc/j16-cutout.png",
+            "PRC-AUTH-SQ-10":""
+        };
+        var TOKEN_PATH_UPGRADES = {
+            "assets/tokens/us/f15.png":"assets/ui/icons/us/f15-cutout.png", "assets/tokens/us/f22.png":"assets/ui/icons/us/f22-cutout.png",
+            "assets/tokens/us/f35.png":"assets/ui/icons/us/f35-cutout.png", "assets/tokens/us/b52.png":"assets/ui/icons/us/b52-cutout.png",
+            "assets/tokens/us/aew.png":"assets/ui/icons/us/aew-cutout.png", "assets/tokens/us/uas.png":"assets/ui/icons/us/uas-cutout.png",
+            "assets/tokens/us/ada.png":"assets/ui/icons/us/ada-cutout.png", "assets/tokens/us/ddg.png":"assets/ui/icons/us/ddg-cutout.png",
+            "assets/tokens/prc/j10.png":"assets/ui/icons/prc/j10-cutout.png", "assets/tokens/prc/j15.png":"assets/ui/icons/prc/j15-cutout.png",
+            "assets/tokens/prc/j16.png":"assets/ui/icons/prc/j16-cutout.png", "assets/tokens/prc/j20.png":"assets/ui/icons/prc/j20-cutout.png",
+            "assets/tokens/prc/h6.png":"assets/ui/icons/prc/h6-cutout.png", "assets/tokens/prc/aew.png":"assets/ui/icons/prc/aew-cutout.png",
+            "assets/tokens/prc/uas.png":"assets/ui/icons/prc/uas-cutout.png", "assets/tokens/prc/ada.png":"assets/ui/icons/prc/ada-cutout.png",
+            "assets/tokens/prc/ddg.png":"assets/ui/icons/prc/ddg-cutout.png"
+        };
+        var TOKEN_CARD_ASSETS = {
+            "US-AUTH-SQ-01":"assets/tokens/us/uas.png", "US-AUTH-SQ-02":"assets/tokens/us/b52.png", "US-AUTH-SQ-03":"assets/tokens/us/uas.png", "US-AUTH-SQ-04":"assets/tokens/us/aew.png",
+            "US-AUTH-SQ-05":"assets/tokens/us/f22.png", "US-AUTH-SQ-06":"assets/tokens/us/f15.png", "US-AUTH-SQ-07":"assets/tokens/us/b52.png", "US-AUTH-SQ-08":"assets/tokens/us/f35.png",
+            "US-AUTH-SQ-09":"assets/tokens/us/f15.png", "US-AUTH-SQ-10":"assets/source-art/f16-plan.svg",
+            "PRC-AUTH-SQ-01":"assets/tokens/prc/uas.png", "PRC-AUTH-SQ-02":"assets/tokens/prc/ada.png", "PRC-AUTH-SQ-03":"assets/tokens/prc/uas.png", "PRC-AUTH-SQ-04":"assets/tokens/prc/aew.png",
+            "PRC-AUTH-SQ-05":"assets/tokens/prc/ada.png", "PRC-AUTH-SQ-06":"assets/tokens/prc/j10.png", "PRC-AUTH-SQ-07":"assets/tokens/prc/h6.png", "PRC-AUTH-SQ-08":"assets/tokens/prc/j20.png",
+            "PRC-AUTH-SQ-09":"assets/tokens/prc/j16.png"
         };
         function tokenAsset(cardId) { return TOKEN_ASSETS[cardId] || ""; }
-        function tokenImageHtml(cardId, cls, directPath) { var p=directPath||tokenAsset(cardId); return p ? "<img class='"+(cls||"token-art")+"' src='"+p+"' alt=''>" : ""; }
+        function tokenImageHtml(cardId, cls, directPath, altText) {
+            var p=directPath||tokenAsset(cardId); p=TOKEN_PATH_UPGRADES[p]||p;
+            return p ? "<img class='"+(cls||"token-art")+"' src='"+p+"' alt='"+(altText||'Unit type')+"'>" : "";
+        }
+        function tokenTypeLabel(name) {
+            var n=String(name||'UNIT').toUpperCase();
+            var patterns=['F-16C','F-15E','F-15C','F-35A','F-22','B-52H','MQ-9','RQ-4','E-3','EC-130','J-20B','J-20J','JH-7','J-16','J-15','J-10','H-6K','KJ-2000','TB-001','WX-10','HQ-9','SA-21','NASAMS','DDG','CG','ADA','UAS'];
+            for(var i=0;i<patterns.length;i++) if(n.indexOf(patterns[i])>=0) return patterns[i];
+            if(n.indexOf('GUIDED MISSILE DESTROYER')>=0) return 'DDG';
+            if(n.indexOf('GUIDED MISSILE CRUISER')>=0) return 'CG';
+            if(n.indexOf('MISSILE BOAT')>=0) return 'MISSILE BOAT';
+            return n.length>14?n.slice(0,14):n;
+        }
+        function cardArtAsset(card) {
+            if(TOKEN_CARD_ASSETS[card.ID]) return TOKEN_CARD_ASSETS[card.ID];
+            var text=((card.EQ||'')+' '+(card.Equipment||'')+' '+(card.TITLE||'')).toLowerCase();
+            if(/f-35/.test(text)) return 'assets/ui/backgrounds/_deck-media/f35-card.png';
+            if(/b-52/.test(text)) return 'assets/ui/backgrounds/_deck-media/b52-card.png';
+            if(/h-6/.test(text)) return 'assets/ui/backgrounds/_deck-media/h6-card.png';
+            if(/e-3|awacs/.test(text)) return 'assets/ui/backgrounds/_deck-media/us-aew-card.png';
+            if(/kj-2000/.test(text)) return 'assets/ui/backgrounds/_deck-media/prc-aew-card.png';
+            return '';
+        }
         function readableLocation(loc) {
             if(!loc) return 'Unknown';
             if(/^lane-/.test(loc)) return 'Range Band ' + loc.split('-')[1];
@@ -1901,7 +2064,8 @@
                 panel.innerText='Select one of your aircraft or unit tokens to view its complete in-play profile.';
                 return;
             }
-            var image=tokenImageHtml(tok.cardId,'selected-art',tok.assetPath) || "<div class='selected-art' style='display:flex;align-items:center;justify-content:center;background:#eceff1;color:#607d8b;font-weight:bold;'>UNIT</div>";
+            var typeLabel=tokenTypeLabel(tok.name);
+            var image=tokenImageHtml(tok.cardId,'selected-art',tok.assetPath,typeLabel) || "<div class='selected-art' style='display:flex;align-items:center;justify-content:center;background:#102637;color:#9ab1c1;font-weight:bold;'>"+typeLabel+"</div>";
             var tags=(tok.tags&&tok.tags.length)?tok.tags.join(' / '):'General';
             var weapon=tok.shtR===-1?'Unarmed':tok.shtR;
             var ammunition=tok.winchesterType||'Standard';
@@ -1914,7 +2078,7 @@
             if(tok.generatedByEnabler) conditions.push('Enabler generated');
             panel.className='selected-unit-panel '+tok.side.toLowerCase();
             panel.innerHTML=image+
-                "<div><div class='selected-name'>"+tok.name+"</div><div class='selected-sub'>"+tok.side+" • "+readableLocation(tok.loc)+"<br>"+tags+"</div></div>"+
+                "<div><div class='selected-name'>"+tok.name+"</div><div class='selected-sub'>TYPE "+typeLabel+" · "+tok.side+" · "+readableLocation(tok.loc)+"<br>"+tags+"</div></div>"+
                 "<div class='selected-stat'><b>Movement</b><br>Move: "+tok.spd+" band(s)<br>Current: "+readableLocation(tok.loc)+"</div>"+
                 "<div class='selected-stat'><b>Sensors &amp; Weapons</b><br>Sensor Range: "+tok.acqR+"<br>Weapon Range: "+weapon+"</div>"+
                 "<div class='selected-stat'><b>Combat Profile</b><br>Target AQ: "+(tok.targetAcq||2)+" | Hit: "+(tok.attackThreshold||tok.hitThreshold||2)+"+<br>Ammo: "+ammunition+"<br>"+conditions.join(' • ')+"</div>";
@@ -1923,7 +2087,7 @@
         function drawUI() {
             validateEngineState('drawUI');
             document.getElementById('turn-txt').innerText = state.turnSide + " TURN";
-            document.getElementById('turn-txt').style.color = (state.turnSide === "US") ? "#1565c0" : "#c62828";
+            document.getElementById('turn-txt').style.color = (state.turnSide === "US") ? "#40a9ff" : "#ff5f67";
             document.getElementById('round-txt').innerText = state.round;
 
             document.getElementById('us-cyb').innerText = state.us.cyber;
@@ -1959,7 +2123,15 @@
             else { document.getElementById('prc-buffs').innerText = bStr; document.getElementById('us-buffs').innerText = "MASKED"; }
 
             var statEl = document.getElementById('unit-status');
-            var actText = "<strong>Actions:</strong> M:" + state.acts.move + " | A:" + state.acts.acq + " | S:" + state.acts.sht;
+            var actionNames={move:'Move',acq:'Acquire',sht:'Shoot'};
+            var masCells=document.querySelectorAll('#mas-indicator .mas-cell');
+            for(var mi=0;mi<masCells.length;mi++) {
+                var actionKey=masCells[mi].getAttribute('data-action');
+                var available=state.acts[actionKey]>0;
+                masCells[mi].className='mas-cell '+(available?'available':'spent');
+                masCells[mi].setAttribute('aria-label',actionNames[actionKey]+' action '+(available?'available':'spent'));
+            }
+            var actText = "M-A-S action pool active";
             if(state.selected) {
                 var wText = state.selected.winchester ? " <span style='color:#f57f17; font-weight:bold'>[W]</span>" : "";
                 var rText = state.selected.rogue ? " <span style='color:#c62828; font-weight:bold'>[ROGUE]</span>" : "";
@@ -1976,13 +2148,15 @@
                     var c = handArray[i];
                     if(side !== state.turnSide) {
                         if(!isSq && i < revealedLimit) {
-                            html += "<div class='card' style='background:#ffe082;'><b>REVEALED</b><br><b>"+c.TITLE+"</b><br><i style='color:#c62828;'>"+c.EQ+"</i></div>";
+                            var revealedArt=cardArtAsset(c);
+                            html += "<div class='card' style=\"--card-art:url('"+revealedArt+"')\"><b>REVEALED · "+c.TITLE+"</b><br><span class='card-equipment'>"+c.EQ+"</span><span class='card-description'>"+c.DESC+"</span></div>";
                         } else {
-                            html += "<div class='card' style='background:#cfd8dc; text-align:center; padding:15px 0;'><b>MASKED</b></div>";
+                            html += "<div class='card masked'><b>MASKED</b></div>";
                         }
                     } else {
                         var vpTag = isSq ? "<span class='card-vp'>" + c.VP + " VP</span>" : "";
-                        html += "<div class='card' onclick='playCard(\""+c.Side+"\", "+isSq+", "+i+")'>" + vpTag + "<b>"+c.TITLE+"</b><br><i style='color:"+(c.Side==="US"?"#1565c0":"#c62828")+"'>"+c.EQ+"</i><br><span style='font-size:10px; color:#546e7a;'>"+c.DESC+"</span></div>";
+                        var art=cardArtAsset(c);
+                        html += "<div class='card' style=\"--card-art:url('"+art+"')\" onclick='playCard(\""+c.Side+"\", "+isSq+", "+i+")'>" + vpTag + "<b>"+c.TITLE+"</b><br><span class='card-equipment'>"+c.EQ+"</span><span class='card-description'>"+c.DESC+"</span></div>";
                     }
                 }
                 document.getElementById(elementId).innerHTML = html;
@@ -2041,7 +2215,8 @@
                     if(state.selected === tok) div.style.border = "3px solid #ffeb3b";
                     if(tok.winchester) div.style.borderColor = "#f57f17";
 
-                    displayTxt = tokenImageHtml(tok.cardId, "token-art", tok.assetPath) + "<b>" + tok.name + "</b>";
+                    var typeLabel=tokenTypeLabel(tok.name);
+                    displayTxt = tokenImageHtml(tok.cardId, "token-art", tok.assetPath, typeLabel) + "<b class='token-type'>" + typeLabel + "</b>";
                     if(tok.acquired) displayTxt += "<br>[A]";
                     if(tok.rogue) displayTxt += "<br>[R]";
 
