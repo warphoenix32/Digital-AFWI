@@ -62,7 +62,7 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI 1.0 Final', 'final title missing');
-    assert(result.version === '1.0.0-final-phase1', 'final build version missing');
+    assert(result.version === '1.0.1-final-phase1', 'final build version missing');
     assert(result.campaigns.length === 5, 'five campaigns were not registered');
     assert(result.campaigns.map(c => c.rounds).join(',') === '1,2,5,2,2', 'campaign ATO lengths are incorrect');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
@@ -116,30 +116,51 @@ async function main() {
     assert(result.standoffBomberCost === 0, 'Standoff posture did not make bomber squadron zero-cost');
   });
 
-  await test('published deployment locations for fighters, UAS, bomber, AEW, and ADA', async page => {
+  await test('aircraft generate at owning airbases with the US contingency option', async page => {
     const result = await page.evaluate(() => {
       const cards = {
         fighter: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Fighter')>=0),
         uas: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('UAS')>=0),
         bomber: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Bomber')>=0),
         aew: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('AEW')>=0),
-        ada: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('SAM')>=0)
+        ada: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('SAM')>=0),
+        prcFighter: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Fighter')>=0),
+        prcUas: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('UAS')>=0),
+        prcBomber: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Bomber')>=0),
+        prcAew: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('AEW')>=0)
       };
-      const confirmations=[false,false,false,true,false,true,false];
-      window.confirm = () => confirmations.shift();
-      window.prompt = () => '3';
-      return {
+      state.us.posture=POSTURES.US.find(p=>p.title==='STANDARD');
+      window.confirm = () => false;
+      const normal = {
         fighter: getDeploymentLocation(cards.fighter),
         uas: getDeploymentLocation(cards.uas),
         bomber: getDeploymentLocation(cards.bomber),
         aew: getDeploymentLocation(cards.aew),
-        ada: getDeploymentLocation(cards.ada)
+        ada: cards.ada ? getDeploymentLocation(cards.ada) : 'us-airbase',
+        prcFighter: getDeploymentLocation(cards.prcFighter),
+        prcUas: getDeploymentLocation(cards.prcUas),
+        prcBomber: getDeploymentLocation(cards.prcBomber),
+        prcAew: getDeploymentLocation(cards.prcAew)
       };
+      window.confirm = () => true;
+      return {normal,contingency:getDeploymentLocation(cards.fighter)};
     });
-    assert(result.fighter === 'lane-5', 'US fighter did not start in its first range band');
-    assert(result.uas === 'lane-3', 'UAS did not honor any-band deployment');
-    assert(result.bomber === 'us-standoff' && result.aew === 'us-standoff', 'bomber/AEW standoff deployment failed');
-    assert(result.ada === 'us-airbase', 'ADA did not deploy to its base');
+    assert(Object.values(result.normal).slice(0,5).every(loc=>loc==='us-airbase'), 'a US squadron did not generate at the US airbase');
+    assert(Object.values(result.normal).slice(5).every(loc=>loc==='prc-airbase'), 'a PRC squadron did not generate at the PRC airbase');
+    assert(result.contingency === 'us-contingency', 'US contingency selection was not honored');
+  });
+
+  await test('Enabler cards retain their explicit generation locations', async page => {
+    const result = await page.evaluate(() => {
+      const ada=getMasterCard('US-AUTH-EN-26'), ec130=getMasterCard('US-AUTH-EN-20'), j15=getMasterCard('PRC-AUTH-EN-26');
+      window.confirm=()=>false; window.prompt=()=> '3';
+      const adaBase=chooseGeneratedLocation(ada,'US');
+      window.confirm=()=>true;
+      const adaContingency=chooseGeneratedLocation(ada,'US');
+      return {adaBase,adaContingency,ec130:chooseGeneratedLocation(ec130,'US'),j15:chooseGeneratedLocation(j15,'PRC')};
+    });
+    assert(result.adaBase === 'us-airbase' && result.adaContingency === 'us-contingency', 'Enabler base/contingency choice failed');
+    assert(result.ec130 === 'lane-3' && result.j15 === 'lane-3', 'Enabler any-band exception failed');
   });
 
   await test('target acquisition thresholds and cyber Advantage', async page => {
@@ -159,6 +180,51 @@ async function main() {
     });
     assert(result.cyberAdvSucceeded, 'cyber superiority did not grant Advantage');
     assert(!result.normalUsedFirstDie, 'normal acquisition incorrectly selected the unused second die');
+  });
+
+  await test('Squadron cards stay masked until AQ 1 targeting reveals them', async page => {
+    const result = await page.evaluate(() => {
+      state.phase='action'; state.actionLocked=false; state.turnSide='US'; state.acts={move:1,acq:1,sht:1};
+      state.us.cyber=1; state.prc.cyber=1; state.us.mission=null; state.prc.mission=null;
+      state.us.deployedSquadrons=[]; state.prc.squadronLedger={};
+      const squad={cardId:'SECRET-SQ',name:'SECRET WING',maxHp:2,currentHp:2,remainingQty:4,destroyed:false,vp:2,acquired:false,baseLoc:'prc-airbase'};
+      state.prc.deployedSquadrons=[squad]; state.prc.squadronLedger['SECRET-SQ']={maxQty:4,remainingQty:4};
+      const sensor={side:'US',cardId:'US-AUTH-SQ-05',name:'F-22 Raptor',loc:'lane-1',spd:2,acqR:3,shtR:1,acqBonus:0,targetAcq:2,attackThreshold:2,winchester:false,acquired:false,tags:['Fighter']};
+      state.tokens=[sensor]; state.selected=null; drawUI();
+      const before=document.querySelector('#prc-airbase .squadron-board-card').innerText;
+      state.selected=sensor; AFWI.Random.setSequence([1]); targetDeployedSquadron('PRC',0);
+      const after=document.querySelector('#prc-airbase .squadron-board-card').innerText;
+      const tokenAcquired=squad.acquired, actions=state.acts.acq;
+      squad.acquired=false; state.tokens=[]; phase5AcquireEnemy('US',1); drawUI();
+      const enablerAfter=document.querySelector('#prc-airbase .squadron-board-card').innerText;
+      return {before,after,tokenAcquired,actions,enablerAcquired:squad.acquired,enablerAfter};
+    });
+    assert(/UNIDENTIFIED SQUADRON/.test(result.before) && !/SECRET WING/.test(result.before), 'enemy Squadron identity leaked through fog of war');
+    assert(result.tokenAcquired && /SECRET WING/.test(result.after), 'AQ 1 Squadron targeting did not persistently reveal the card');
+    assert(result.actions === 0, 'Squadron acquisition did not consume the acquisition action');
+    assert(result.enablerAcquired && /SECRET WING/.test(result.enablerAfter), 'Enabler acquisition did not reveal the targeted Squadron card');
+  });
+
+  await test('US row order and selected-token profile panel remain readable', async page => {
+    const result = await page.evaluate(() => {
+      state.phase='action'; state.actionLocked=false; state.turnSide='US'; state.acts={move:1,acq:1,sht:1};
+      const tok={side:'US',cardId:'US-AUTH-SQ-05',name:'F-22 Raptor',loc:'us-airbase',spd:2,acqR:2,shtR:1,targetAcq:3,attackThreshold:2,winchesterType:'Standard',winchester:false,acquired:false,rogue:false,tags:['Fighter','Gen5']};
+      state.tokens=[tok]; state.selected=tok; drawUI();
+      const panel=document.getElementById('selected-unit-panel');
+      const rendered=document.querySelector('#us-airbase .token');
+      const style=getComputedStyle(rendered);
+      return {
+        row:Array.from(document.querySelector('#us-airbase').parentElement.children).map(el=>el.id),
+        panelText:panel.innerText,
+        panelClass:panel.className,
+        width:style.width,
+        height:style.height
+      };
+    });
+    assert(result.row.join(',') === 'us-standoff,us-airbase,us-contingency', 'US airbase and contingency containers are not in the clarified order');
+    assert(/F-22 Raptor/.test(result.panelText) && /Move: 2/.test(result.panelText) && /Sensor Range: 2/.test(result.panelText) && /Weapon Range: 1/.test(result.panelText) && /Target AQ: 3/.test(result.panelText) && /Hit: 2\+/.test(result.panelText), 'selected-token panel omitted required profile data');
+    assert(/selected-unit-panel us/.test(result.panelClass), 'selected-token panel did not activate for the selected unit');
+    assert(result.width === '72px' && result.height === '66px', 'existing token size changed');
   });
 
   await test('explosive attacks roll separate damage and cap base strikes', async page => {
@@ -417,8 +483,13 @@ async function main() {
       const second=state.turnSide;
       endTurn(); dismissInterstitial();
 
-      // Move the first fighter force to center, then the second.
+      // Aircraft begin at their airbases. Stage both fighter forces forward,
+      // then move each force to the center on its next turn.
       let mover=state.tokens.find(t=>t.side===state.turnSide);
+      state.selected=mover; move(state.turnSide==='PRC'?'lane-2':'lane-4'); endTurn(); dismissInterstitial();
+      mover=state.tokens.find(t=>t.side===state.turnSide);
+      state.selected=mover; move(state.turnSide==='PRC'?'lane-2':'lane-4'); endTurn(); dismissInterstitial();
+      mover=state.tokens.find(t=>t.side===state.turnSide);
       state.selected=mover; move('lane-3'); endTurn(); dismissInterstitial();
       mover=state.tokens.find(t=>t.side===state.turnSide);
       state.selected=mover; move('lane-3'); endTurn(); dismissInterstitial();

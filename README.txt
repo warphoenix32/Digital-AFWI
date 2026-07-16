@@ -18,6 +18,10 @@ RELEASE SCOPE
   missile-defense, mission-scoring, attrition, and victory mechanics
 - 20 authoritative Squadron cards and 68 authoritative Enabler cards
 - Hot-seat play for two commanders
+- Aircraft generate at the owning airbase by default, with the US contingency
+  option and explicit Enabler-card location exceptions
+- Deployed Squadron cards use fog of war with AQ 1
+- Full selected-token profile panel without changing physical token scale
 - Deterministic automation for card effects; explicit commander prompts for
   reactions, choices, targets, and hidden-information handoffs
 

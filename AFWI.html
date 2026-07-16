@@ -52,7 +52,7 @@
         #game-ui { display: none; padding: 15px; background: #cfd8dc; min-height: 100vh; box-sizing: border-box;}
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #37474f; padding: 10px 20px; color: #fff; border-radius: 6px;}
         .status-bar { background: #fff; padding: 10px 20px; border: 2px solid #90a4ae; margin-bottom: 10px; font-weight: bold; display: flex; align-items: center; justify-content: space-between; border-radius: 6px;}
-        .flex-container { display: flex; gap: 12px; height: calc(100vh - 285px); min-height: 680px;}
+        .flex-container { display: flex; gap: 12px; height: calc(100vh - 390px); min-height: 610px;}
 
         .panel { width: 280px; min-height:0; background: #fff; border: 2px solid #90a4ae; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; border-radius: 6px;}
         .track-box { font-size: 12px; background: #eceff1; padding: 6px; border: 1px solid #cfd8dc; margin-bottom: 8px; text-align: center; font-weight: bold; border-radius: 4px; cursor: pointer;}
@@ -83,6 +83,15 @@
         .token.prc { background: #c62828; }
         .token.unknown { background: #546e7a; border: 2px dashed #cfd8dc; color: #eceff1; }
         .token-stats { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.78); font-size: 8px; line-height:12px; height:12px; padding: 0; color: #ffeb3b; letter-spacing: -0.2px; white-space:nowrap; overflow:hidden; }
+        .selected-unit-panel { min-height: 82px; margin: 8px 0 10px; padding: 10px 14px; box-sizing: border-box; border: 2px solid #78909c; border-left: 7px solid #455a64; border-radius: 6px; background: #fff; color: #263238; display: grid; grid-template-columns: 80px minmax(190px, 1.1fr) repeat(3, minmax(145px, 1fr)); gap: 12px; align-items: center; box-shadow: 0 2px 5px rgba(38,50,56,.18); }
+        .selected-unit-panel.us { border-left-color:#1565c0; background:#f4f9ff; }
+        .selected-unit-panel.prc { border-left-color:#c62828; background:#fff7f7; }
+        .selected-unit-panel.empty { display:flex; min-height:58px; color:#607d8b; font-size:13px; }
+        .selected-unit-panel .selected-art { width:72px; height:52px; object-fit:contain; }
+        .selected-unit-panel .selected-name { font-size:16px; font-weight:bold; line-height:1.2; }
+        .selected-unit-panel .selected-sub { margin-top:4px; font-size:11px; color:#546e7a; }
+        .selected-unit-panel .selected-stat { min-height:48px; padding-left:12px; border-left:1px solid #cfd8dc; font-size:12px; line-height:1.55; }
+        .selected-unit-panel .selected-stat b { color:#263238; }
 
         .log-container { height: 140px; background: #1c2833; color: #00e676; font-family: monospace; padding: 10px; overflow-y: auto; margin-top: 15px; font-size: 12px; border-radius: 6px; border: 2px solid #90a4ae;}
 
@@ -136,7 +145,7 @@
             </div>
             <div class="rules-section">
                 <strong>4. Intel Domain, Active ID &amp; Fog of War</strong><br>
-                Opponents' squadron and enabler hands are MASKED. Assets spawned on the map begin as unacquired <strong>UNIDENTIFIED TRACKS</strong> with locked details. You must paint them via Acquisition before they can be shot. If you hold Intel Advantage at round start, you roll the d4 with Advantage. <strong>Intel Rating:</strong> Intel is a persistent, non-spendable rating used by scenario effects and information-advantage mechanics. AWACS and bases automatically reveal certain targets on sensory contact.
+                Opponents' squadron and enabler hands are MASKED. Assets spawned on the map begin as unacquired <strong>UNIDENTIFIED TRACKS</strong> with locked details. Deployed enemy Squadron cards also remain masked under Fog of War until targeted; Squadron cards have an Acquisition Threshold of <strong>1</strong>, so any legal token or Enabler acquisition reveals them. You must paint unidentified targets via Acquisition before they can be shot. If you hold Intel Advantage at round start, you roll the d4 with Advantage. <strong>Intel Rating:</strong> Intel is a persistent, non-spendable rating used by scenario effects and information-advantage mechanics. AWACS and bases automatically reveal certain targets on sensory contact.
             </div>
             <div class="rules-section">
                 <strong>5. Static Board Geography &amp; Movement</strong><br>
@@ -158,7 +167,7 @@
             </div>
             <div class="rules-section">
                 <strong>8. Deployed Squadron Damage &amp; Attrition</strong><br>
-                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their side's airbase. Their health and surviving aircraft count are displayed on the card. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the campaign. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
+                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their side's airbase. Aircraft generated by a Squadron begin on their owning player's airbase; the US commander may instead choose the Contingency Location when that option is available. Enabler cards and other explicit rules may specify a different generation location. A Squadron's health and surviving aircraft count are visible to its owner and to an opponent only after acquisition. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the campaign. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
             </div>
             <button class="btn btn-danger" style="float:right;" onclick="toggleModal('rules-overlay')">Close</button>
             <div style="clear:both;"></div>
@@ -405,6 +414,10 @@
             </div>
         </div>
 
+        <div id="selected-unit-panel" class="selected-unit-panel empty" aria-live="polite">
+            Select one of your aircraft or unit tokens to view its complete in-play profile.
+        </div>
+
         <div class="flex-container">
             <!-- US Panel -->
             <div class="panel" id="panel-us" style="border-top-width: 6px; border-top-color:#1565c0;">
@@ -429,8 +442,8 @@
                 <div class="bands-container" id="bands-container"></div>
                 <div class="zone" style="background:#bbdefb; border-bottom:none; border-top: 3px solid #1565c0;">
                     <div class="base" id="us-standoff">US STANDOFF</div>
-                    <div class="base" id="us-contingency">US CONTINGENCY LOCATION</div>
                     <div class="base airbase-target" id="us-airbase" onclick="targetAirbase('US')">US AIRBASE</div>
+                    <div class="base" id="us-contingency">US CONTINGENCY LOCATION</div>
                 </div>
             </div>
 
@@ -606,14 +619,23 @@
         }
 
         function phase5AcquireEnemy(side, count) {
-            var enemy = side === 'US' ? 'PRC' : 'US'; var candidates=[];
-            for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && !state.tokens[i].acquired) candidates.push(state.tokens[i]);
+            var candidates=enemyAcquisitionTargets(side);
             var acquired=0;
             while(acquired<count && candidates.length) {
                 var chosen=chooseFromList(candidates,side+' COMMANDER: choose a track to acquire.',tokenChoiceLabel);
-                chosen.acquired=true; candidates.splice(candidates.indexOf(chosen),1); acquired++;
+                markTargetAcquired(chosen); candidates.splice(candidates.indexOf(chosen),1); acquired++;
             }
             logPub(side+' authoritative reconnaissance acquired '+acquired+' target(s).');
+        }
+        function enemyAcquisitionTargets(side) {
+            var enemy=side==='US'?'PRC':'US', candidates=[];
+            for(var i=0;i<state.tokens.length;i++) if(state.tokens[i].side===enemy && !state.tokens[i].acquired) candidates.push(state.tokens[i]);
+            var squadrons=state[enemy.toLowerCase()].deployedSquadrons||[];
+            for(var s=0;s<squadrons.length;s++) {
+                var sq=squadrons[s];
+                if(!sq.destroyed && sq.currentHp>0 && !sq.acquired) candidates.push({isSquadronCard:true,side:enemy,name:'Unidentified Squadron',trueName:sq.name+' (SQ)',loc:sq.baseLoc||(enemy==='US'?'us-airbase':'prc-airbase'),acquired:false,targetAcq:1,sqRef:sq});
+            }
+            return candidates;
         }
         function phase5DestroyEnemyUAS(side,count) {
             return removeEnemyTokens(side,count,function(t){return t.tags&&t.tags.indexOf('UAS')>=0;},'Counter-UAS');
@@ -760,7 +782,7 @@
                 return {ok:true};
             }
             if(/destroy .*unmanned aircraft system/i.test(c.DESC||'') && enemyTokensFor(side,function(t){return t.tags&&t.tags.indexOf('UAS')>=0;}).length===0) return {ok:false,reason:'No eligible enemy UAS is deployed.'};
-            if(/acquire /i.test(c.DESC||'') && enemyTokensFor(side,function(t){return !t.acquired;}).length===0) return {ok:false,reason:'No unacquired enemy tokens are available.'};
+            if(/acquire /i.test(c.DESC||'') && enemyAcquisitionTargets(side).length===0) return {ok:false,reason:'No unacquired enemy tokens or Squadron cards are available.'};
             if(/improve your .*cyber rate by 1/i.test(c.DESC||'') && pState.cyber>=4) return {ok:false,reason:'Cyber Rate is already at its maximum.'};
             if(/degrade .*cyber rate/i.test(c.DESC||'') && oppState.cyber<=0) return {ok:false,reason:'Enemy Cyber Rate cannot be reduced further.'};
             if(/damage.*airbase|airbase.*damage/i.test(c.DESC||'')) { var enemy=side==='US'?state.prc:state.us; if(enemy.airbaseStrikes>=3) return {ok:false,reason:'Enemy airbase has already reached the three-strike cap.'}; }
@@ -768,14 +790,19 @@
             if(/play immediately after|cancel .* card|play anytime/i.test(c.DESC||'')) return {ok:'manual',reason:'This reaction/choice card requires human timing or target adjudication.'};
             return {ok:true};
         }
-        function chooseGeneratedLocation(side) {
+        function chooseGeneratedLocation(card, side) {
+            var description=(card && card.DESC) || '';
+            if(/airbase or contingency location/i.test(description)) {
+                return confirm('Place ' + card.TITLE + ' at the US Contingency Location? OK=Contingency, Cancel=US Airbase.') ? 'us-contingency' : 'us-airbase';
+            }
+            if(/(?:on|at) the (?:US|PRC) airbase/i.test(description)) return side==='US'?'us-airbase':'prc-airbase';
             var lane=parseInt(prompt('Deploy generated asset to range band 1-5 (from owning side):','1'),10);
             if(isNaN(lane)||lane<1||lane>5) return null;
             return side==='US'?'lane-'+(6-lane):'lane-'+lane;
         }
         function spawnGeneratedUnit(c,side) {
             var spec=generatedUnitSpec(c); if(!spec) return false;
-            var loc=chooseGeneratedLocation(side); if(!loc) return false;
+            var loc=chooseGeneratedLocation(c,side); if(!loc) return false;
             var before=state.tokens.length;
             for(var i=0;i<spec.qty;i++) state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,targetAcq:spec.targetAcq||2,attackThreshold:spec.attackThreshold||spec.hitThreshold||2,canAttackAir:spec.canAttackAir!==false,canAttackSurface:spec.canAttackSurface!==false,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,assetPath:spec.asset,generatedByEnabler:true});
             var made=state.tokens.length-before;
@@ -890,7 +917,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.0.0-final-phase1",
+            buildVersion: "1.0.1-final-phase1",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
@@ -1291,6 +1318,7 @@
                 remainingQty: record.remainingQty,
                 destroyed: record.destroyed,
                 vp: record.vp,
+                acquired: false,
                 campaignRef: record
             };
             sideState.deployedSquadrons.push(deployed);
@@ -1341,19 +1369,9 @@
         function getDeploymentLocation(card) {
             if(card.Tags && card.Tags.includes("Naval")) return (card.Side === "US") ? "lane-5" : "lane-1";
             if(card.Side === "US" && !(state.us.posture && state.us.posture.title === "SURGE") && card.Tags && !card.Tags.includes("Naval")) {
-                if(confirm("Base " + card.TITLE + " at the US Contingency Location? OK=Contingency, Cancel=Main Airbase/normal deployment.")) return "us-contingency";
+                if(confirm("Base " + card.TITLE + " at the US Contingency Location? OK=Contingency, Cancel=US Airbase.")) return "us-contingency";
             }
-            if(card.Tags && card.Tags.includes("UAS")) {
-                var lane = parseInt(prompt("Deploy UAS to range band 1-5 (from owning side):", "1"),10);
-                if(isNaN(lane) || lane < 1 || lane > 5) lane = 1;
-                return card.Side === "US" ? "lane-" + (6-lane) : "lane-" + lane;
-            }
-            if(card.Tags && (card.Tags.includes("Bomber") || card.Tags.includes("AEW"))) {
-                if(confirm("Deploy " + card.EQ + " to the Standoff area? OK=Standoff, Cancel=first range band.")) return card.Side === "US" ? "us-standoff" : "prc-standoff";
-                return card.Side === "US" ? "lane-5" : "lane-1";
-            }
-            if(card.Tags && card.Tags.includes("SAM")) return card.Side === "US" ? "us-airbase" : "prc-airbase";
-            return card.Side === "US" ? "lane-5" : "lane-1";
+            return card.Side === "US" ? "us-airbase" : "prc-airbase";
         }
 
         function recordNavalLoss(tokenOrCard) {
@@ -1869,6 +1887,38 @@
         };
         function tokenAsset(cardId) { return TOKEN_ASSETS[cardId] || ""; }
         function tokenImageHtml(cardId, cls, directPath) { var p=directPath||tokenAsset(cardId); return p ? "<img class='"+(cls||"token-art")+"' src='"+p+"' alt=''>" : ""; }
+        function readableLocation(loc) {
+            if(!loc) return 'Unknown';
+            if(/^lane-/.test(loc)) return 'Range Band ' + loc.split('-')[1];
+            return loc.split('-').join(' ').replace(/\b\w/g,function(ch){return ch.toUpperCase();});
+        }
+        function renderSelectedUnitPanel() {
+            var panel=document.getElementById('selected-unit-panel');
+            if(!panel) return;
+            var tok=state.selected;
+            if(!tok || tok.side!==state.turnSide || tok.isAirbase || tok.isSquadronCard) {
+                panel.className='selected-unit-panel empty';
+                panel.innerText='Select one of your aircraft or unit tokens to view its complete in-play profile.';
+                return;
+            }
+            var image=tokenImageHtml(tok.cardId,'selected-art',tok.assetPath) || "<div class='selected-art' style='display:flex;align-items:center;justify-content:center;background:#eceff1;color:#607d8b;font-weight:bold;'>UNIT</div>";
+            var tags=(tok.tags&&tok.tags.length)?tok.tags.join(' / '):'General';
+            var weapon=tok.shtR===-1?'Unarmed':tok.shtR;
+            var ammunition=tok.winchesterType||'Standard';
+            if(tok.winchesterType==='Salvo' && tok.salvos!==null && typeof tok.salvos!=='undefined') ammunition+=' ('+tok.salvos+' remaining)';
+            if(tok.winchester) ammunition+=' — WINCHESTER';
+            var conditions=[];
+            conditions.push(tok.acquired?'Acquired by enemy':'Not acquired by enemy');
+            if(tok.rogue) conditions.push('Rogue');
+            if(tok.isCL) conditions.push('Contingency based');
+            if(tok.generatedByEnabler) conditions.push('Enabler generated');
+            panel.className='selected-unit-panel '+tok.side.toLowerCase();
+            panel.innerHTML=image+
+                "<div><div class='selected-name'>"+tok.name+"</div><div class='selected-sub'>"+tok.side+" • "+readableLocation(tok.loc)+"<br>"+tags+"</div></div>"+
+                "<div class='selected-stat'><b>Movement</b><br>Move: "+tok.spd+" band(s)<br>Current: "+readableLocation(tok.loc)+"</div>"+
+                "<div class='selected-stat'><b>Sensors &amp; Weapons</b><br>Sensor Range: "+tok.acqR+"<br>Weapon Range: "+weapon+"</div>"+
+                "<div class='selected-stat'><b>Combat Profile</b><br>Target AQ: "+(tok.targetAcq||2)+" | Hit: "+(tok.attackThreshold||tok.hitThreshold||2)+"+<br>Ammo: "+ammunition+"<br>"+conditions.join(' • ')+"</div>";
+        }
 
         function drawUI() {
             validateEngineState('drawUI');
@@ -1916,6 +1966,7 @@
                 var sqTxt = state.selected.isSquadronCard ? (" [SQ HP:" + state.selected.currentHp + "]") : "";
                 statEl.innerHTML = actText + " &nbsp;|&nbsp; <i>Sel: " + state.selected.name + wText + rText + sqTxt + "</i>";
             } else { statEl.innerHTML = actText; }
+            renderSelectedUnitPanel();
 
             // Dynamic Hand masking with Intel sweep reveals
             function renderHand(handArray, elementId, isSq, side) {
@@ -1955,7 +2006,9 @@
                     if(arr[i].destroyed || arr[i].currentHp <= 0) continue;
                     var ledger = state[sideKey].squadronLedger[arr[i].cardId] || null;
                     var qtyText = ledger ? (ledger.remainingQty + '/' + ledger.maxQty) : '?';
-                    var cardHtml = "<div class='squadron-board-card " + sideKey + "' onclick='event.cancelBubble=true; targetDeployedSquadron(\"" + sideStr + "\", " + i + ")'>" + "<b>" + arr[i].name + "</b><br>HP: " + arr[i].currentHp + "/" + arr[i].maxHp + "<br>Aircraft: " + qtyText + "</div>";
+                    var isKnown = sideStr === state.turnSide || !!arr[i].acquired;
+                    var cardContent = isKnown ? ("<b>" + arr[i].name + "</b><br>HP: " + arr[i].currentHp + "/" + arr[i].maxHp + "<br>Aircraft: " + qtyText) : "<b>UNIDENTIFIED SQUADRON</b><br>FOG OF WAR<br>AQ: 1";
+                    var cardHtml = "<div class='squadron-board-card " + sideKey + "' onclick='event.cancelBubble=true; targetDeployedSquadron(\"" + sideStr + "\", " + i + ")'>" + cardContent + "</div>";
                     if(sideStr === "US" && arr[i].baseLoc === "us-contingency") contingencyHtml += cardHtml;
                     else html += cardHtml;
                 }
@@ -2235,9 +2288,20 @@
             var targetSq = state[sideStr.toLowerCase()].deployedSquadrons[idx];
             if(targetSq && !targetSq.destroyed) {
                 var pseudoTok = {
-                    isSquadronCard: true, side: sideStr, name: targetSq.name + " (SQ)", currentHp: targetSq.currentHp, vp: targetSq.vp, acquired: true, sqRef: targetSq
+                    isSquadronCard: true, side: sideStr, name: targetSq.acquired ? targetSq.name + " (SQ)" : "Unidentified Squadron", trueName:targetSq.name + " (SQ)",
+                    loc:targetSq.baseLoc || (sideStr === 'US' ? 'us-airbase' : 'prc-airbase'), currentHp: targetSq.currentHp, vp: targetSq.vp,
+                    acquired: !!targetSq.acquired, targetAcq:1, sqRef: targetSq
                 };
                 select(pseudoTok);
+            }
+        }
+
+        function markTargetAcquired(tok) {
+            if(!tok) return;
+            tok.acquired=true;
+            if(tok.isSquadronCard && tok.sqRef) {
+                tok.sqRef.acquired=true;
+                tok.name=tok.trueName || (tok.sqRef.name + ' (SQ)');
             }
         }
 
@@ -2405,7 +2469,7 @@
 
                 if(atk.winchester) { logPriv(state.turnSide, "Unit is Winchester.", true); return; }
 
-                var tLoc = (tok.isSquadronCard || tok.isAirbase) ? (tok.side === 'US' ? 'us-airbase' : 'prc-airbase') : tok.loc;
+                var tLoc = (tok.isSquadronCard || tok.isAirbase) ? (tok.loc || (tok.side === 'US' ? 'us-airbase' : 'prc-airbase')) : tok.loc;
                 var dist = getDistance(atk.loc, tLoc);
 
                 if(!tok.acquired) {
@@ -2413,7 +2477,7 @@
                     if(dist > atk.acqR) { logPriv(state.turnSide, "Target out of Sensor Range.", true); return; }
 
                     if(state.intelAdvActive) {
-                        tok.acquired = true; state.intelAdvActive = false; logAction("INTEL ADV: Target Auto-Acquired.", "Adversary auto-painted an unknown track.");
+                        markTargetAcquired(tok); state.intelAdvActive = false; logAction("INTEL ADV: Target Auto-Acquired.", "Adversary auto-painted an unknown track.");
                     } else {
                         var acqMod = mergeRollModes(hasCyberAdv ? 'adv' : 'normal',pState.buffs.acquisitionMode);
                         var bonusVal = (atk.acqBonus || 0);
@@ -2428,7 +2492,7 @@
                         }
 
                         if(acqRoll.val >= targetAcq) {
-                            tok.acquired = true; logAction("Acquisition: " + acqRoll.log + ". SUCCESS!", "Adversary painted your " + tok.name + "."); 
+                            markTargetAcquired(tok); logAction("Acquisition: " + acqRoll.log + ". SUCCESS!", "Adversary painted your " + tok.name + ".");
                         } else { 
                             logPriv(state.turnSide, "Acq Failed: " + acqRoll.log + " (needed " + targetAcq + "+)", false);
                         }

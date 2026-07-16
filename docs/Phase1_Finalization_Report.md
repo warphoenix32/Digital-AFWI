@@ -4,7 +4,7 @@
 
 Phase One gameplay implementation is complete. `AFWI.html` is the final
 offline, browser-based, hot-seat build for the gameplay phase. The build
-identifies itself as `1.0.0-final-phase1`.
+identifies itself as `1.0.1-final-phase1`.
 
 ## Rules authority
 
@@ -20,8 +20,13 @@ implementation reports, and the complete baseline code and asset set.
 - Enforced posture draft limits and exceptions, including Standoff bombers,
   ADA squadrons, PLAAF Enablers, Joint Operations flying-force limits,
   nonconsecutive posture selection, and Meeting Engagement fixed forces.
-- Restored published deployment behavior for fighters, UAS, bombers, AEW,
-  ADA, naval units, airbases, standoff areas, and the US contingency location.
+- Applied the clarified generation rule: Squadron aircraft begin on their
+  owning airbase, the US commander may select the contingency location when
+  available, and explicit Enabler-card location exceptions remain in force.
+- Added persistent Fog of War for deployed Squadron cards with AQ 1 and
+  reveal-on-acquisition behavior.
+- Reordered the US board row to Standoff, Airbase, and Contingency, and added
+  a full selected-token information panel while preserving the 72x66 token size.
 - Corrected acquisition thresholds, Cyber Advantage, attack capability,
   weapon range, explosive damage, missile-defense Disadvantage, naval salvos,
   static ADA ammunition, UAS Winchester, and natural-4 conservation.
@@ -41,12 +46,15 @@ implementation reports, and the complete baseline code and asset set.
 
 ## Playtest evidence
 
-The automated browser suite executes 20 named regression scenarios and passes
-all 20. Coverage includes:
+The automated browser suite executes 23 named regression scenarios and passes
+all 23. Coverage includes:
 
 - Boot, content validation, five campaign selection, and setup navigation.
 - Campaign and posture legality.
-- Unit deployment for every major class.
+- Unit deployment for every major class, owning-airbase defaults, the US
+  contingency choice, and Enabler-specific generation exceptions.
+- Squadron-card Fog of War and AQ 1 reveal behavior, US-row ordering, and the
+  selected-token profile panel with unchanged token dimensions.
 - Acquisition, Cyber Advantage, hit/damage rolls, missile defense, and
   Winchester behavior, including hit-cancellation and submarine reactions.
 - Counter-UAS, mission scoring, World Watches, Reserves, and ATO persistence.
