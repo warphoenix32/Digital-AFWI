@@ -44,6 +44,54 @@ async function main() {
   assert(/landing-command-center-v2/.test(landing.hero), 'New command-center landing image is not active.');
   assert(landing.logoLoaded, 'Landing logo did not load.');
 
+  const rulesReference = await page.evaluate(() => {
+    toggleModal('rules-overlay');
+    const overlay=document.getElementById('rules-overlay'), modal=document.getElementById('rules-modal'), body=overlay.querySelector('.reference-body');
+    const rect=modal.getBoundingClientRect(), sectionStyle=getComputedStyle(overlay.querySelector('.reference-section'));
+    body.scrollTop=body.scrollHeight;
+    return {
+      ariaHidden:overlay.getAttribute('aria-hidden'), display:getComputedStyle(overlay).display,
+      rect:{x:rect.x,y:rect.y,right:rect.right,bottom:rect.bottom,width:rect.width,height:rect.height},
+      titleSize:parseFloat(getComputedStyle(document.getElementById('rules-title')).fontSize),
+      sectionSize:parseFloat(sectionStyle.fontSize), lineHeight:parseFloat(sectionStyle.lineHeight),
+      sticky:getComputedStyle(overlay.querySelector('.reference-nav')).position,
+      scrollable:body.scrollHeight>body.clientHeight && body.scrollTop>0,
+      postureRows:document.querySelectorAll('#rules-posture-body tr').length,
+      missionRows:document.querySelectorAll('#rules-mission-body tr').length
+    };
+  });
+  assert(rulesReference.ariaHidden==='false' && rulesReference.display==='flex', 'Rules reference is not presented as a visible dialog.');
+  assert(rulesReference.rect.x>=0 && rulesReference.rect.y>=0 && rulesReference.rect.right<=1680 && rulesReference.rect.bottom<=1050 && rulesReference.rect.width>=900, 'Rules reference does not fit the executive viewport.');
+  assert(rulesReference.titleSize>=20 && rulesReference.sectionSize>=13 && rulesReference.lineHeight>=19, 'Rules typography is not comfortably readable.');
+  assert(rulesReference.sticky==='sticky' && rulesReference.scrollable, 'Rules navigation or scrolling is not usable.');
+  assert(rulesReference.postureRows===10 && rulesReference.missionRows===10, 'Rules reference tables are not fully populated.');
+  await page.keyboard.press('Escape');
+
+  const glossaryReference = await page.evaluate(() => {
+    toggleModal('glossary-overlay');
+    const overlay=document.getElementById('glossary-overlay'), modal=document.getElementById('glossary-modal'), body=overlay.querySelector('.reference-body');
+    const rect=modal.getBoundingClientRect(), close=overlay.querySelector('.reference-close').getBoundingClientRect();
+    body.scrollTop=body.scrollHeight;
+    return {ariaHidden:overlay.getAttribute('aria-hidden'),width:rect.width,closeWidth:close.width,closeHeight:close.height,assetSections:overlay.querySelectorAll('[data-asset-type]').length,scrollable:body.scrollHeight>body.clientHeight&&body.scrollTop>0};
+  });
+  assert(glossaryReference.ariaHidden==='false' && glossaryReference.assetSections===12, 'Asset glossary categories are incomplete.');
+  assert(glossaryReference.width===rulesReference.rect.width && glossaryReference.closeWidth>=40 && glossaryReference.closeHeight>=40, 'Reference dialogs do not share an accessible executive layout.');
+  assert(glossaryReference.scrollable, 'Asset glossary does not provide a usable scrolling region.');
+  await page.keyboard.press('Escape');
+
+  await page.setViewportSize({ width: 720, height: 900 });
+  const compactReference = await page.evaluate(() => {
+    toggleModal('rules-overlay');
+    const modal=document.getElementById('rules-modal'), body=modal.querySelector('.reference-body'), nav=modal.querySelector('.reference-nav'), grid=modal.querySelector('.reference-stat-grid');
+    const rect=modal.getBoundingClientRect();
+    return {x:rect.x,right:rect.right,bottom:rect.bottom,viewportWidth:innerWidth,viewportHeight:innerHeight,documentWidth:document.documentElement.scrollWidth,bodyOverflow:getComputedStyle(body).overflowY,navOverflow:getComputedStyle(nav).overflowX,gridColumns:getComputedStyle(grid).gridTemplateColumns.split(' ').length};
+  });
+  assert(compactReference.x>=0 && compactReference.right<=compactReference.viewportWidth && compactReference.bottom<=compactReference.viewportHeight, 'Compact rules reference does not fit its viewport.');
+  assert(compactReference.documentWidth<=compactReference.viewportWidth && compactReference.bodyOverflow==='auto', 'Compact rules reference causes page overflow or cannot scroll.');
+  assert(compactReference.navOverflow==='auto' && compactReference.gridColumns===2, 'Compact rules navigation or summary grid is not responsive.');
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({ width: 1680, height: 1050 });
+
   await page.click('#landing-ui button');
   await page.click('#btn-begin-setup');
   await page.hover('#setup-step-1 .btn');
@@ -168,9 +216,9 @@ async function main() {
   assert(runtimeErrors.length === 0, `Browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
   const report = {
-    build: '1.3.1-solid-locations',
+    build: '1.4.0-reference-guide',
     viewport: '1680x1050',
-    checks: 22,
+    checks: 33,
     status: 'PASS',
     screenshots: [
       'phase2-corrections-landing-1680x1050.png',

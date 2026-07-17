@@ -2,7 +2,7 @@
 
 ## Release
 
-- Build: `1.3.1-solid-locations`
+- Build: `1.4.0-reference-guide`
 - Branch: `phase2-ui`
 - Preserved baselines: annotated tags `phase1-final-1.0.1` and `phase2-executive-1.1.0`
 
@@ -31,11 +31,15 @@
 - Enforced Air-to-Air and Air-to-Surface target domains across aircraft, SAM, carrier-aircraft, airbase, Squadron-card, and naval-surface targets.
 - Added persistent three-hit hull durability to naval surface combatants while preserving published instant-destroy Enabler overrides.
 - Strengthened Winchester presentation on tokens, the command status line, and the selected-unit HUD; enlarged and simplified HUD typography.
+- Rebuilt the in-game Rules & Mechanics reference so every section reflects the mechanics enforced by the current engine, including the five-ATO sequence, persistent Missions, Posture exceptions, initiative, Intel, fog of war, deployment, domain targeting, hull damage, Winchester, persistent attrition, Enablers, and scoring.
+- Rebuilt the Asset Glossary around the complete playable roster: fighters, bombers, attack and reconnaissance UAS, AEW, ADA, carrier aviation, naval surface combatants, electronic-warfare aircraft, Squadron cards, Airbases, operating locations, and Enablers.
+- Bound reference build labels, authoritative card counts, Posture tables, and Mission tables to live game data to reduce future documentation drift.
+- Added readable command-glass reference dialogs with sticky section navigation, responsive tables, keyboard focus containment, focus restoration, outside-click dismissal, and Escape-to-close behavior.
 
 ## Validation
 
-- Gameplay browser playtests: 28 / 28 passed.
-- Phase Two browser visual checks: 22 / 22 passed, including saturated-container scrolling across all five operating locations.
+- Gameplay browser playtests: 29 / 29 passed, including complete Rules and Asset Glossary content, live-data hydration, accessibility state, keyboard focus, and dismissal behavior.
+- Phase Two browser visual checks: 33 / 33 passed, including desktop and compact reference readability, navigation, scrolling, and saturated-container scrolling across all five operating locations.
 - Enabler-focused browser groups: 4 / 4 passed; all 68 authoritative Enabler cards were exercised with additional generated-force, reaction, cyber, intel, and Counter-UAS assertions.
 - Verified equal play-area dimensions and transparency, location order, image loading, card descriptions, token type labels, F-16 identity, M-A-S state changes, and viewport overflow.
 - Browser screenshots are stored in `artifacts/screenshots/` at 1680 x 1050.

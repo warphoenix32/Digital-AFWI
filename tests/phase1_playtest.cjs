@@ -63,7 +63,7 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI Executive Edition', 'executive title missing');
-    assert(result.version === '1.3.1-solid-locations', 'solid-location build version missing');
+    assert(result.version === '1.4.0-reference-guide', 'reference-guide build version missing');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
     assert(result.maxRounds === 5 && result.rulesCycles === 5, 'default match is not five ATO cycles');
     assert(result.campaignGlobals === 'undefined,undefined' && !result.campaignUi, 'campaign system was not removed');
@@ -71,6 +71,68 @@ async function main() {
     assert(result.mediumAda.Spd === 0 && result.mediumAda.ShtR === 2 && result.longAda.Spd === 0 && result.longAda.ShtR === 4, 'PRC ADA profiles are not operational');
     assert(result.prcAew.Tags.join(',') === 'AEW', 'PRC AEW was incorrectly tagged as a fifth-generation fighter');
     assert(!/\bOR\s*$/i.test(result.specialMission), 'Special Mission Aircraft still has an incomplete rules sentence');
+  });
+
+  await test('rules and asset glossary match live mechanics and support keyboard access', async page => {
+    await page.focus('#landing-ui button');
+    const rules = await page.evaluate(() => {
+      toggleModal('rules-overlay');
+      const overlay=document.getElementById('rules-overlay');
+      const text=overlay.textContent.replace(/\s+/g,' ').trim();
+      return {
+        displayed:getComputedStyle(overlay).display,
+        hidden:overlay.getAttribute('aria-hidden'),
+        bodyLocked:document.body.classList.contains('reference-open'),
+        focusLabel:document.activeElement.getAttribute('aria-label'),
+        sections:overlay.querySelectorAll('.reference-section').length,
+        postureRows:document.querySelectorAll('#rules-posture-body tr').length,
+        missionRows:document.querySelectorAll('#rules-mission-body tr').length,
+        cardCount:document.getElementById('reference-card-count').textContent,
+        build:document.getElementById('rules-build-label').textContent,
+        text,
+        manifest:AFWI.Rules.manifest
+      };
+    });
+    assert(rules.displayed==='flex' && rules.hidden==='false' && rules.bodyLocked, 'rules dialog did not open accessibly');
+    assert(rules.focusLabel==='Close rules reference', 'rules dialog did not receive initial focus');
+    assert(rules.sections===11 && rules.postureRows===10 && rules.missionRows===10, 'rules reference is incomplete');
+    assert(rules.cardCount==='88' && /1\.4\.0-reference-guide/.test(rules.build), 'rules reference is not hydrated from live build data');
+    for(const phrase of ['five ATO cycles','Mission persists','one automatic Acquisition','Air-to-Air','three successful attacks','Return / Rearm Winchester Units','three scoring strikes','Single Enabler']) {
+      assert(rules.text.includes(phrase), `rules reference omits ${phrase}`);
+    }
+    assert(rules.manifest.match.atoCycles===5 && rules.manifest.initiative.winnerActsFirst && rules.manifest.targeting.navalSurfaceRequiresAircraftA2S, 'rules manifest does not represent core live mechanics');
+    assert(rules.manifest.damage.navalSurfaceHull===3 && rules.manifest.fogOfWar.squadronAcquisitionThreshold===1 && rules.manifest.intel.higherRatingAutoAcquisitionsPerTurn===1, 'rules manifest omits combat or intelligence mechanics');
+
+    await page.keyboard.press('Escape');
+    const closed=await page.evaluate(() => ({
+      hidden:document.getElementById('rules-overlay').getAttribute('aria-hidden'),
+      display:getComputedStyle(document.getElementById('rules-overlay')).display,
+      bodyLocked:document.body.classList.contains('reference-open'),
+      focusRestored:document.activeElement===document.querySelector('#landing-ui button')
+    }));
+    assert(closed.hidden==='true' && closed.display==='none' && !closed.bodyLocked && closed.focusRestored, 'Escape did not close rules and restore focus');
+
+    const glossary=await page.evaluate(() => {
+      toggleModal('glossary-overlay');
+      const overlay=document.getElementById('glossary-overlay');
+      return {
+        assets:overlay.querySelectorAll('[data-asset-type]').length,
+        text:overlay.textContent.replace(/\s+/g,' ').trim(),
+        focusLabel:document.activeElement.getAttribute('aria-label')
+      };
+    });
+    assert(glossary.assets===12 && glossary.focusLabel==='Close asset glossary', 'asset glossary is incomplete or lacks initial focus');
+    for(const phrase of ['F-22 and J-20B','F-35A','Weapon 6','Recon UAS','unarmed sensor platforms','two Acquisition rolls','Carrier aviation','Hull 3','EC-130','Squadron card','Airbase','Enabler Cards']) {
+      assert(glossary.text.includes(phrase), `asset glossary omits ${phrase}`);
+    }
+    assert(!/exclusively from|Weapon 5|Patriot, S-400/i.test(glossary.text), 'asset glossary retains a stale asset rule');
+    await page.keyboard.press('Shift+Tab');
+    const trappedAtEnd=await page.evaluate(() => document.activeElement.textContent.trim());
+    assert(trappedAtEnd==='Close Glossary', 'reverse-tab focus escaped the glossary dialog');
+    await page.keyboard.press('Tab');
+    const trappedAtStart=await page.evaluate(() => document.activeElement.getAttribute('aria-label'));
+    assert(trappedAtStart==='Close asset glossary', 'forward-tab focus escaped the glossary dialog');
+    await page.keyboard.press('Escape');
   });
 
   await test('complete authoritative force pool is freely draftable', async page => {

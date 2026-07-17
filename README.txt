@@ -1,5 +1,5 @@
-AFWI 1.3.1 EXECUTIVE EDITION - SOLID LOCATION PANELS
-================================================
+AFWI 1.4.0 EXECUTIVE EDITION - COMPLETE REFERENCE GUIDE
+=======================================================
 
 RUN
 1. Keep AFWI.html and the assets folder together.
@@ -42,12 +42,20 @@ RELEASE SCOPE
 - Initiative winner always acts first; players do not select turn order
 - Deterministic automation for card effects; explicit commander prompts for
   reactions, choices, targets, and hidden-information handoffs
+- Complete in-game Rules & Mechanics reference reconciled to the live engine,
+  including match flow, posture effects, missions, fog of war, deployment,
+  combat domains, damage, Winchester, persistent attrition, and scoring
+- Complete Asset Glossary covering every fielded asset family, Squadron cards,
+  Airbases, operating locations, HUD abbreviations, and Enabler employment
+- Reference dialogs populate build, force-pool, posture, and mission data from
+  the live game model and provide sticky navigation, readable tables,
+  responsive scrolling, focus containment, and Escape-to-close behavior
 
 VALIDATION
 - Run tests/phase1_static_validation.ps1 for local syntax, content, asset, and
   package-integrity checks (development validation requires Node.js).
 - Run tests/phase1_playtest.cjs in a development environment with Playwright
-  and Chrome for the full 28-scenario automated browser playtest suite.
+  and Chrome for the full 29-scenario automated browser playtest suite.
 - Run tests/enabler_focus_playtest.cjs for the exhaustive 68-card Enabler
   registry and focused generated-force, reaction, cyber, intel, and Counter-UAS checks.
 - Run tests/phase2_visual_regression.cjs for read-only executive-layout

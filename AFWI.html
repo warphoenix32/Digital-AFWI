@@ -217,6 +217,59 @@
         .log-container { height:112px; margin-top:9px; background:#050d14; border:1px solid #294050; color:#74dcaa; border-radius:9px; }
 
         .modal, .setup-container { background:#0b1824; color:#e8f1f7; border:1px solid #355064; box-shadow:0 18px 54px rgba(0,0,0,.48); }
+        body.reference-open { overflow:hidden; }
+        .reference-overlay { padding:16px; box-sizing:border-box; align-items:center; justify-content:center; background:rgba(2,8,13,.90); }
+        .reference-modal { position:relative; top:auto; left:auto; transform:none; width:min(1060px,calc(100vw - 32px)); max-height:calc(100vh - 32px); padding:0; overflow:hidden; border:1px solid #456378; border-radius:12px; background:#091722; color:#e8f1f7; box-shadow:0 24px 80px rgba(0,0,0,.62); font-family:"Segoe UI Variable Text","Segoe UI",Arial,sans-serif; }
+        .reference-header { min-height:76px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:15px 18px; border-bottom:1px solid #2d4658; background:#0d2231; }
+        .reference-header h2 { margin:2px 0 0; color:#f4f8fb; font-size:23px; line-height:1.15; letter-spacing:.01em; }
+        .reference-kicker { color:#77c5ff; font-size:10px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
+        .reference-header-actions { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+        .reference-version { padding:5px 9px; border:1px solid #3a586c; border-radius:999px; color:#a9becc; background:#102637; font-size:10px; font-weight:700; white-space:nowrap; }
+        .reference-close { width:40px; height:40px; border:1px solid #567184; border-radius:7px; background:#17364b; color:#fff; cursor:pointer; font-size:25px; line-height:1; }
+        .reference-close:hover, .reference-close:focus-visible { border-color:#f0b94a; outline:2px solid rgba(240,185,74,.42); outline-offset:2px; background:#204b66; }
+        .reference-body { max-height:calc(100vh - 110px); overflow-y:auto; padding:0 22px 24px; box-sizing:border-box; scrollbar-color:#58758a #07111a; scrollbar-width:thin; scroll-behavior:smooth; }
+        .reference-nav { position:sticky; top:0; z-index:6; display:flex; flex-wrap:wrap; gap:6px; margin:0 -22px 16px; padding:10px 22px; border-bottom:1px solid #263d4e; background:rgba(9,23,34,.97); box-shadow:0 8px 18px rgba(0,0,0,.18); }
+        .reference-nav a { padding:5px 9px; border:1px solid #345064; border-radius:999px; color:#bcd0dc; background:#102535; font-size:10px; font-weight:700; text-decoration:none; white-space:nowrap; }
+        .reference-nav a:hover, .reference-nav a:focus-visible { color:#fff; border-color:#f0b94a; outline:none; background:#173a51; }
+        .reference-intro { margin:0 0 16px; padding:15px 17px; border:1px solid #315065; border-left:5px solid #40a9ff; border-radius:8px; background:#0d2030; color:#c8d8e2; font-size:14px; line-height:1.58; }
+        .reference-stat-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:12px; }
+        .reference-stat { padding:9px 10px; border:1px solid #2d485b; border-radius:6px; background:#102838; }
+        .reference-stat b { display:block; color:#fff; font-size:17px; line-height:1.1; }
+        .reference-stat span { display:block; margin-top:3px; color:#96aebb; font-size:10px; line-height:1.25; }
+        .reference-section { scroll-margin-top:58px; margin:0 0 12px; padding:15px 17px; border:1px solid #273f50; border-radius:8px; background:#0c1c29; color:#c7d6df; font-size:13px; line-height:1.58; }
+        .reference-section h3 { margin:0 0 8px; color:#eff6fa; font-size:17px; line-height:1.25; }
+        .reference-section h4 { margin:12px 0 6px; color:#9ed5fa; font-size:13px; }
+        .reference-section p { margin:6px 0; }
+        .reference-section ul, .reference-section ol { margin:7px 0 4px; padding-left:21px; }
+        .reference-section li { margin:5px 0; }
+        .reference-section strong { color:#fff; }
+        .reference-note { margin-top:10px; padding:9px 11px; border-left:3px solid #f0b94a; background:#172838; color:#d9e4ea; }
+        .reference-table-wrap { margin-top:10px; overflow-x:auto; border:1px solid #294355; border-radius:7px; }
+        .reference-table { width:100%; border-collapse:collapse; min-width:650px; background:#0a1925; color:#c8d6df; font-size:11px; line-height:1.4; }
+        .reference-table th { padding:8px 9px; text-align:left; color:#fff; background:#153248; border-bottom:1px solid #3d5b70; letter-spacing:.04em; }
+        .reference-table td { padding:8px 9px; vertical-align:top; border-bottom:1px solid #223847; }
+        .reference-table tr:last-child td { border-bottom:0; }
+        .reference-table tbody tr:nth-child(even) { background:#0d2030; }
+        .reference-table .side-us { color:#76c5ff; font-weight:800; }
+        .reference-table .side-prc { color:#ff8a91; font-weight:800; }
+        .profile-strip { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+        .profile-chip { padding:5px 8px; border:1px solid #37566a; border-radius:5px; background:#112b3d; color:#cfe0e9; font-size:10px; font-weight:700; }
+        .profile-chip.air { border-color:#397fb0; color:#a9dcff; }
+        .profile-chip.surface { border-color:#8d7437; color:#f5d88d; }
+        .profile-chip.defense { border-color:#4f806c; color:#a9e3ca; }
+        .reference-footer { display:flex; justify-content:flex-end; padding-top:4px; }
+        .reference-footer .btn { margin-right:0; }
+        @media (max-width:760px) {
+            .reference-overlay { padding:7px; }
+            .reference-modal { width:calc(100vw - 14px); max-height:calc(100vh - 14px); }
+            .reference-header { padding:12px; }
+            .reference-header h2 { font-size:18px; }
+            .reference-version { display:none; }
+            .reference-body { max-height:calc(100vh - 84px); padding:0 12px 18px; }
+            .reference-nav { margin:0 -12px 12px; padding:8px 12px; flex-wrap:nowrap; overflow-x:auto; }
+            .reference-stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .reference-section { padding:12px; }
+        }
         .setup-container { background:radial-gradient(circle at 50% -10%,#162b3d 0,#0b1824 58%,#07111b 100%); }
         .setup-container h2, .setup-container h3 { color:#e8f1f7 !important; }
         .setup-container p, .setup-container li { color:#aebfcb !important; }
@@ -251,126 +304,245 @@
     </div>
 
     <!-- MODALS -->
-    <div id="rules-overlay" class="overlay">
-        <div id="rules-modal" class="modal">
-            <h2 style="margin-top:0; color:#0288d1;">AFWI Rules &amp; Mechanics Reference Guide</h2>
-            <div class="rules-section">
-                <strong>1. Action Economy, Turn Structure & Passing</strong><br>
-                During your active Turn, you are allocated a global shared action pool consisting of exactly <strong>1 Move</strong>, <strong>1 Acquire</strong>, and <strong>1 Shoot</strong> action. You do not have to use all actions, and they can be executed by different tokens in any sequence. Additionally, you may activate up to <strong>1 Squadron card per turn</strong>. Deploying a Squadron consumes the turn's remaining MAS actions, but legal Enabler play remains available. A round continues with alternating turns until both commanders choose to consecutively PASS, ending the current ATO Cycle.
+    <div id="rules-overlay" class="overlay reference-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="rules-title">
+        <div id="rules-modal" class="modal reference-modal">
+            <div class="reference-header">
+                <div><span class="reference-kicker">Current Engine Reference</span><h2 id="rules-title">AFWI Rules &amp; Mechanics</h2></div>
+                <div class="reference-header-actions"><span id="rules-build-label" class="reference-version">Build</span><button class="reference-close" type="button" data-reference-close onclick="toggleModal('rules-overlay')" aria-label="Close rules reference">&times;</button></div>
             </div>
-            <div class="rules-section">
-                <strong>2. The ATO Cycle Phases</strong><br>
-                Every ATO cycle runs through a rigid multi-domain sequence:
-                <ul>
-                    <li><strong>Setup &amp; Deployment:</strong> Select Postures, select covert Missions, and draft squadrons/enablers.</li>
-                    <li><strong>Initiative Bid:</strong> Sacrifice Enabler cards secretly to modify a 1d4 roll. High roll wins Initiative.</li>
-                    <li><strong>Play Intel:</strong> Roll 1d4 (with Advantage for initiative winner) to sweep/unmask enemy Enabler cards. At least 1 card remains hidden.</li>
-                    <li><strong>MAS Action Phase:</strong> Alternating commander turns utilizing the Move-Acquire-Shoot combat engine.</li>
-                    <li><strong>End of Round Cleanup:</strong> The tactical board clears for the next ATO. Squadron HP and aircraft losses persist in the match ledger. A redrafted squadron returns at its normal starting location with only its surviving aircraft unless an Enabler changes that state. Any airborne assets whose parent Squadron Cards were destroyed crash during land-back attrition.</li>
-                </ul>
+            <div class="reference-body" tabindex="0">
+                <nav class="reference-nav" aria-label="Rules sections">
+                    <a href="#rules-match">Match</a><a href="#rules-ato">ATO Cycle</a><a href="#rules-draft">Posture &amp; Draft</a><a href="#rules-turn">Turns</a><a href="#rules-info">Intel</a><a href="#rules-deploy">Deployment</a><a href="#rules-combat">Combat</a><a href="#rules-damage">Damage</a><a href="#rules-cards">Cards</a><a href="#rules-missions">Missions</a>
+                </nav>
+                <div class="reference-intro">
+                    This guide describes the mechanics enforced by the current digital build. Card text remains authoritative for named exceptions; when a card explicitly overrides a general rule, resolve the card as written.
+                    <div class="reference-stat-grid">
+                        <div class="reference-stat"><b>5</b><span>ATO cycles per Standard Match</span></div>
+                        <div class="reference-stat"><b>1 / 1 / 1</b><span>Move, Acquire, Shoot each turn</span></div>
+                        <div class="reference-stat"><b id="reference-card-count">88</b><span>Authoritative cards in the force pool</span></div>
+                        <div class="reference-stat"><b>2 PASS</b><span>Consecutive PASS commands end an ATO</span></div>
+                    </div>
+                </div>
+
+                <section id="rules-match" class="reference-section">
+                    <h3>1. Standard Match &amp; Victory</h3>
+                    <p>A Standard Match lasts <strong>five ATO cycles</strong>. After ATO 5, the commander with the higher Victory Point total wins; equal totals produce a stalemate. Raising a Cyber Rate to <strong>4</strong> ends the match immediately in favor of that commander.</p>
+                    <p>Both commanders use the complete remaining authoritative force pool. Squadron attrition and single-use card consumption can make individual cards unavailable later in the match.</p>
+                </section>
+
+                <section id="rules-ato" class="reference-section">
+                    <h3>2. ATO Cycle Sequence</h3>
+                    <ol>
+                        <li><strong>Posture:</strong> Each side selects a posture. A non-Standard posture cannot be selected in consecutive ATOs.</li>
+                        <li><strong>Mission:</strong> Each commander secretly selects one Mission during ATO 1. That Mission persists for the match.</li>
+                        <li><strong>Draft:</strong> Each side drafts legal Squadrons and Enablers up to the current posture limits.</li>
+                        <li><strong>Initiative Bid:</strong> Commanders may sacrifice Enablers from the current hand for +1 per card. High total acts first; ties reroll.</li>
+                        <li><strong>Cyber &amp; Intel:</strong> The initiative winner attempts a free Cyber Rate increase, then Intel reveal rolls expose some enemy Enablers while leaving at least one masked.</li>
+                        <li><strong>Action Phase:</strong> Turns alternate until both commanders issue consecutive PASS commands.</li>
+                        <li><strong>Resolution:</strong> End-of-ATO Missions score, Rogue aircraft crash, and transient hands, tokens, effects, and board state clear. Squadron HP and aircraft losses remain in the match ledger.</li>
+                    </ol>
+                </section>
+
+                <section id="rules-draft" class="reference-section">
+                    <h3>3. Postures &amp; Draft Limits</h3>
+                    <p>Every legal, available card remains visible in the draft. A full quota temporarily blocks additional selections; return a selected roster card to choose another. Zero-cost posture Squadrons do not consume the printed Squadron limit.</p>
+                    <div class="reference-table-wrap"><table class="reference-table"><thead><tr><th>Side</th><th>Posture</th><th>Draft Limit</th><th>Enforced Effect</th></tr></thead><tbody id="rules-posture-body"></tbody></table></div>
+                </section>
+
+                <section id="rules-turn" class="reference-section">
+                    <h3>4. Turn Actions, Squadron Activation &amp; Passing</h3>
+                    <p>At the start of each turn, the active commander receives one <strong>Move</strong>, one <strong>Acquire</strong>, and one <strong>Shoot</strong> action. These independent actions may be used in any order and by different friendly units.</p>
+                    <ul>
+                        <li>Up to <strong>one Squadron card</strong> may be deployed per turn. Deployment sets all remaining M-A-S actions to zero; legal Enablers may still be played.</li>
+                        <li><strong>END TURN</strong> hands play to the opponent without registering a pass.</li>
+                        <li><strong>PASS</strong> registers a pass and hands play over. The second consecutive PASS ends the ATO.</li>
+                        <li>The M-A-S indicator and selected-unit HUD show current availability, ranges, target thresholds, ammunition, hull state, and conditions.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-info" class="reference-section">
+                    <h3>5. Initiative, Cyber, Intel &amp; Fog of War</h3>
+                    <ul>
+                        <li>The <strong>initiative winner always acts first</strong> and rolls the Intel reveal with Advantage.</li>
+                        <li>The winner attempts to raise Cyber by rolling at least the next rate: 2+ to reach 2, 3+ to reach 3, and 4 to reach 4.</li>
+                        <li><strong>Cyber superiority</strong> gives Advantage on normal Acquisition rolls.</li>
+                        <li><strong>Intel Rating</strong> is persistent and non-spendable. On each turn, the side with the higher Intel Rating receives one automatic Acquisition before normal Acquire actions are consumed.</li>
+                        <li>Enemy hands remain masked except for Enablers exposed by Intel. Board tokens begin as unidentified tracks and must be acquired before being attacked.</li>
+                        <li>Deployed enemy Squadron cards use Fog of War and have <strong>AQ 1</strong>; the first legal targeting or Enabler acquisition reveals them. Airbases are always identified and never require Acquisition.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-deploy" class="reference-section">
+                    <h3>6. Generation, Locations &amp; Movement</h3>
+                    <ul>
+                        <li>Unless a card explicitly says otherwise, Squadron aircraft generate at the owning side's Airbase.</li>
+                        <li>The US commander may choose the Contingency Location unless using SURGE. Contingency normally generates 1d4 surviving aircraft; ACE or Flying Crew Chief generates the maximum.</li>
+                        <li>Bombers and AEW may deploy to, and later move into, their owning Standoff zone. They may instead begin at the owning Airbase; US forces may also use Contingency when legal.</li>
+                        <li>Enabler-generated assets follow the location printed on their card. Assets that say “any range band” prompt the commander for a band.</li>
+                        <li>Movement distance is measured across the five range bands and location map. Move 2 is standard for fighters; bombers, AEW, UAS, and surface ships generally move 1. Static ADA has Move 0.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-combat" class="reference-section">
+                    <h3>7. Acquisition &amp; Combat Sequence</h3>
+                    <ol>
+                        <li>Select a friendly unit, then an enemy target. An unidentified target triggers Acquisition if it is within Sensor Range.</li>
+                        <li>An identified target may be attacked only if it is within Weapon Range and the attacker has the correct domain capability.</li>
+                        <li><strong>Air-to-Air</strong> attacks may target aircraft. <strong>Air-to-Surface</strong> attacks may target Airbases, Squadron cards, ADA, and naval surface combatants.</li>
+                        <li>Naval surface combatants may be attacked only by aircraft with Air-to-Surface capability. Carrier aircraft such as the J-15 remain air targets, not surface ships.</li>
+                        <li>If an enemy ADA or guided-missile ship covers the attack path with its WEZ, the defender may activate Missile Defense. A chosen defense applies Disadvantage to the hit roll and any explosive damage roll.</li>
+                        <li>Advantage and Disadvantage cancel one another. Roll at or above the attacker's printed Hit Threshold to hit.</li>
+                    </ol>
+                </section>
+
+                <section id="rules-damage" class="reference-section">
+                    <h3>8. Damage, Missile Defense &amp; Winchester</h3>
+                    <ul>
+                        <li><strong>Aircraft and ordinary unit tokens:</strong> destroyed by one successful hit.</li>
+                        <li><strong>Naval surface combatants:</strong> require three successful attacks. Each hit removes one hull point. Explicit instant-destroy Enablers override hull durability.</li>
+                        <li><strong>Explosive Air-to-Surface attacks:</strong> after hitting a non-naval surface target, roll a separate 1d4 for damage.</li>
+                        <li><strong>Standard ammunition:</strong> natural 1–3 causes Winchester; natural 4 conserves ammunition.</li>
+                        <li><strong>Attack UAS:</strong> natural 1–2 causes Winchester; natural 3–4 conserves ammunition.</li>
+                        <li><strong>Static ADA:</strong> never goes Winchester and has infinite defensive reloads.</li>
+                        <li><strong>Naval salvo units:</strong> spend one salvo on an offensive attack or Missile Defense unless an offensive natural 4 conserves it. Zero salvos causes Winchester.</li>
+                        <li>Use <strong>Return / Rearm Winchester Units</strong> during the owning turn. Aircraft return to their Squadron's operating location; naval ships remain in place and rearm. Rogue Winchester aircraft crash instead.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-attrition" class="reference-section">
+                    <h3>9. Squadron Cards, Airbases &amp; Persistent Attrition</h3>
+                    <ul>
+                        <li>Deployed Squadron cards have <strong>2 HP</strong>. Explosive damage may remove more than one HP in a single attack.</li>
+                        <li>When a Squadron card is destroyed, linked aircraft at an Airbase, Standoff, or Contingency location are destroyed on the ground. Linked aircraft in range bands become Rogue and crash during ATO resolution if still airborne.</li>
+                        <li>Aircraft-token losses reduce that Squadron's persistent remaining quantity. Redrafting the Squadron in a later ATO generates only surviving aircraft unless a recovery effect restores losses.</li>
+                        <li>Airbases are always identified, cannot be destroyed, and may absorb no more than <strong>three scoring strikes</strong> during the match. Each applied strike awards the attacker 1 VP.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-cards" class="reference-section">
+                    <h3>10. Enablers, Reactions &amp; Explicit Overrides</h3>
+                    <ul>
+                        <li>Enablers may generate units, modify rolls or ranges, change Cyber/Intel, recover forces, strike bases, remove targets, or cancel another effect.</li>
+                        <li>Reaction cards prompt the correct commander at the legal timing window. Hot-seat handoffs protect hidden information and commander choices.</li>
+                        <li>A <strong>Single</strong> Enabler is consumed when successfully played and is unavailable for later drafts. A reusable or Multiple Enabler may return to the available pool in a later ATO.</li>
+                        <li>If an Enabler has no legal target or prerequisite, it remains in hand. Commander-choice effects prompt for a valid target rather than choosing silently.</li>
+                    </ul>
+                </section>
+
+                <section id="rules-missions" class="reference-section">
+                    <h3>11. Missions &amp; Scoring</h3>
+                    <p>Mission text determines whether points score immediately, at the end of a turn, or at the end of an ATO. Destruction Missions score only when the target is actually destroyed; naval hull damage before the third hit does not score.</p>
+                    <div class="reference-table-wrap"><table class="reference-table"><thead><tr><th>Side</th><th>Mission</th><th>Implemented Scoring</th></tr></thead><tbody id="rules-mission-body"></tbody></table></div>
+                    <div class="reference-note"><strong>Final scoring:</strong> Cyber Rate 4 is an immediate victory. Otherwise, after ATO 5, total VP determines the winner.</div>
+                </section>
+                <div class="reference-footer"><button class="btn btn-danger" type="button" onclick="toggleModal('rules-overlay')">Close Rules</button></div>
             </div>
-            <div class="rules-section">
-                <strong>2A. Standard Match Format</strong><br>
-                The default AFWI match lasts <strong>5 ATO cycles</strong>. Both commanders use the complete draftable force pool; no scenario selector or special force-pool restriction applies. Posture rules continue to determine the number and type of cards each commander may draft during an ATO.
-            </div>
-            <div class="rules-section">
-                <strong>3. Bidding for Initiative &amp; the Cyber Track</strong><br>
-                The commander who wins the Initiative Bid <strong>always acts first</strong> and gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (roll 2d4 and keep the higher die)</strong> on Acquisition checks.
-            </div>
-            <div class="rules-section">
-                <strong>4. Intel Domain, Active ID &amp; Fog of War</strong><br>
-                Opponents' squadron and enabler hands are MASKED. Assets spawned on the map begin as unacquired <strong>UNIDENTIFIED TRACKS</strong> with locked details. Deployed enemy Squadron cards also remain masked under Fog of War until targeted; Squadron cards have an Acquisition Threshold of <strong>1</strong>, so any legal token or Enabler acquisition reveals them. You must paint unidentified targets via Acquisition before they can be shot. If you hold Intel Advantage at round start, you roll the d4 with Advantage. <strong>Intel Rating:</strong> Intel is a persistent, non-spendable rating used by scenario effects and information-advantage mechanics. AWACS and bases automatically reveal certain targets on sensory contact.
-            </div>
-            <div class="rules-section">
-                <strong>5. Static Board Geography &amp; Movement</strong><br>
-                The theater map consists of a static layout with 5 consolidated central tactical movement bands (Lanes 1 to 5), flanked by each side's respective Airbase and Standoff zones. The PRC commander plays top-down (bottom bands are closer to US, top bands closer to PRC), while the US commander plays bottom-up. Standard aircraft have a Move Range of 2 bands, while heavy bombers and AEW platforms have a Move Range of 1 band. Heavy bombers and AEW platforms may deploy to and move into their owning side's Standoff zone. Static assets (SAMs) cannot move.
-            </div>
-            <div class="rules-section">
-                <strong>6. Combat, Munitions, &amp; the Winchester Rule</strong><br>
-                Armed units roll equal to or higher than their printed hit threshold to score a hit. Target acquisition uses the target's separate acquisition threshold before an attack may be declared. The natural attack die also determines weapon depletion:
-                <ul>
-                    <li><strong>Winchester Penalty:</strong> If the roll is a 1, 2, or 3, the unit expends its ordnance and is marked as <strong>Winchester [W]</strong>. It must return to its home airbase to re-arm at the beginning of its next turn.</li>
-                    <li><strong>Ammo Conservation:</strong> Rolling a Natural 4 represents a critical success where the asset destroys its target without exhausting its payload. It remains armed on the board.</li>
-                    <li><strong>Infinite Drone Ammo:</strong> Drones (UAS) carry highly efficient payloads and only go Winchester on a roll of 1 or 2.</li>
-                    <li><strong>Explosive Damage:</strong> A successful explosive air-to-surface attack rolls a separate 1d4 for damage. Missile Defense imposes Disadvantage on both the hit roll and this damage roll.</li>
-                    <li><strong>Attack Domains:</strong> Air-to-Air weapons may engage aircraft only. Air-to-Surface weapons may engage airbases, deployed Squadron cards, SAMs, and naval surface combatants. A naval surface combatant may be targeted only by an aircraft with Air-to-Surface capability.</li>
-                    <li><strong>Naval Hulls:</strong> Naval surface combatants require three successful attacks to destroy. Each successful attack removes one hull hit; explicit Enabler effects that immediately destroy a surface combatant override this durability rule.</li>
-                </ul>
-            </div>
-            <div class="rules-section">
-                <strong>7. Symmetrical Missile Defense (WEZ Intercepts)</strong><br>
-                Ground-based ADA (SAMs) and Guided Missile Destroyers (SAG) project a Weapon Engagement Zone (WEZ) equal to their shoot range. Any offensive strike path originating in or transiting through an enemy asset's WEZ triggers an active intercept warning. The defending player can activate Missile Defense, forcing the attacker's hit and damage rolls to suffer <strong>Disadvantage (roll 2 d4 and take the lower value)</strong>. Naval units must cover a physical Salvo Block to perform this, whereas static SAM units have infinite defensive payloads.
-            </div>
-            <div class="rules-section">
-                <strong>8. Deployed Squadron Damage &amp; Attrition</strong><br>
-                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their selected legal operating location. Aircraft generated by a Squadron begin on their owning player's airbase; the US commander may instead choose the Contingency Location when that option is available, and standoff-capable squadrons may use their owning Standoff zone. Enabler cards and other explicit rules may specify a different generation location. A Squadron's health and surviving aircraft count are visible to its owner and to an opponent only after acquisition. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the match. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
-            </div>
-            <button class="btn btn-danger" style="float:right;" onclick="toggleModal('rules-overlay')">Close</button>
-            <div style="clear:both;"></div>
         </div>
     </div>
 
-    <div id="glossary-overlay" class="overlay">
-        <div id="glossary-modal" class="modal">
-            <h2 style="margin-top:0; color:#0288d1;">Military Asset Glossary &amp; Strategic Role Playbook</h2>
-            <div class="rules-section">
-                <strong>5th Generation Stealth Fighters (F-22 Raptor, F-35A Lightning, J-20 Dragon)</strong><br>
-                <em>Strategic Role:</em> The premier air-dominance platforms. Equipped with advanced stealth cross-sections, they are extremely difficult for enemy radars to paint, granting them a baseline `+1` Acquisition Bonus (or hiding their properties entirely until scanned).
-                <ul>
-                    <li><strong>Combat Profile:</strong> High speed (Move Range: 2), moderate sensor suite, and high weapon lethality at short range (Shoot Range: 1).</li>
-                    <li><strong>Employment:</strong> Hunt enemy stealth fighters, run vanguard sweeps to clear paths for bombers, and intercept incoming strike groups. Multi-role F-35s can carry ground munitions.</li>
-                </ul>
+    <div id="glossary-overlay" class="overlay reference-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="glossary-title">
+        <div id="glossary-modal" class="modal reference-modal">
+            <div class="reference-header">
+                <div><span class="reference-kicker">Asset Employment Guide</span><h2 id="glossary-title">AFWI Asset Glossary</h2></div>
+                <div class="reference-header-actions"><span id="glossary-build-label" class="reference-version">Build</span><button class="reference-close" type="button" data-reference-close onclick="toggleModal('glossary-overlay')" aria-label="Close asset glossary">&times;</button></div>
             </div>
-            <div class="rules-section">
-                <strong>4th Generation Tactical Fighters (F-15EX Strike Eagle, J-16 Flanker, J-10C Firebird)</strong><br>
-                <em>Strategic Role:</em> As heavy loadout workhorses, 4th Gen fighters lack the stealth of 5th Gen platforms but compensate with massive, versatile payloads capable of firing both Air-to-Air (AAM) and Air-to-Ground (AGM) missiles.
-                <ul>
-                    <li><strong>Combat Profile:</strong> High speed (Move Range: 2), standard sensor suite, and devastating multi-role strikes at close-combat range (Shoot Range: 1).</li>
-                    <li><strong>Employment:</strong> Exploit holes in enemy air defenses created by stealth vanguards, escort high-value AWACS platforms, and execute kinetic ground-strike packages on airfields.</li>
-                </ul>
+            <div class="reference-body" tabindex="0">
+                <nav class="reference-nav" aria-label="Asset glossary sections">
+                    <a href="#asset-key">HUD Key</a><a href="#asset-gen5">Gen 5</a><a href="#asset-gen4">Gen 4</a><a href="#asset-bomber">Bombers</a><a href="#asset-uas">UAS</a><a href="#asset-aew">AEW</a><a href="#asset-ada">ADA</a><a href="#asset-carrier">Carrier Air</a><a href="#asset-naval">Naval</a><a href="#asset-ew">EW</a><a href="#asset-board">Board Assets</a>
+                </nav>
+                <div class="reference-intro">
+                    Profiles below reflect the current token and card rules used by the combat engine. Exact AQ, Hit Threshold, ranges, ammunition, and remaining hull values are shown in the selected-unit HUD during play.
+                    <div class="reference-stat-grid">
+                        <div class="reference-stat"><b>Air</b><span>Fighter, bomber, UAS, AEW, carrier aircraft</span></div>
+                        <div class="reference-stat"><b>Surface</b><span>ADA, Airbases, Squadron cards, ships</span></div>
+                        <div class="reference-stat"><b>AQ</b><span>Roll required to identify the target</span></div>
+                        <div class="reference-stat"><b>HT</b><span>Roll required for the attacker to hit</span></div>
+                    </div>
+                </div>
+
+                <section id="asset-key" class="reference-section" data-asset-type="hud-key">
+                    <h3>How to Read a Token &amp; the Selected-Unit HUD</h3>
+                    <div class="profile-strip"><span class="profile-chip">Move = bands per Move action</span><span class="profile-chip">Sensor = Acquisition range</span><span class="profile-chip">Weapon = Shoot range</span><span class="profile-chip">AQ = target identification threshold</span><span class="profile-chip">HT = attack hit threshold</span></div>
+                    <p>Unknown enemy tracks hide their identity and profile until acquired. <strong>WINCHESTER</strong> means the unit cannot attack until rearmed. <strong>Hull 3/3</strong> appears only for naval surface combatants. Squadron-card HP is separate from the aircraft tokens generated by that Squadron.</p>
+                </section>
+
+                <section id="asset-gen5" class="reference-section" data-asset-type="gen5-fighter">
+                    <h3>5th Generation Fighters — F-22, F-35A, J-20B</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip">Move 2</span><span class="profile-chip">Sensor 2</span><span class="profile-chip">Weapon 1</span><span class="profile-chip">HT 2+</span></div>
+                    <p><strong>F-22 and J-20B:</strong> Air-to-Air only and receive +1 on Acquisition rolls. <strong>F-35A:</strong> Multi-role; may conduct both Air-to-Air and Air-to-Surface attacks but does not receive that +1 bonus.</p>
+                    <p><strong>Employment:</strong> Use stealth fighters to acquire and clear enemy aircraft, protect high-value support assets, and exploit hard-to-acquire profiles. Use the F-35A when a stealthy surface-strike option is required.</p>
+                </section>
+
+                <section id="asset-gen4" class="reference-section" data-asset-type="gen4-fighter">
+                    <h3>4th Generation Multi-Role Fighters — F-15C/E, F-16C, J-10, J-16, JH-7</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip air">Air-to-Air</span><span class="profile-chip surface">Air-to-Surface</span><span class="profile-chip">Move 2</span><span class="profile-chip">Weapon 1</span></div>
+                    <p>All current Gen 4 fighter profiles can attack both air and surface targets. F-15 variants and J-16 use HT 2+; F-16C, J-10, and JH-7 use HT 3+ and are also harder to acquire at AQ 3.</p>
+                    <p><strong>Employment:</strong> Escort support aircraft, contest the air domain, and strike Airbases, Squadron cards, ADA, or ships after a legal Acquisition.</p>
+                </section>
+
+                <section id="asset-bomber" class="reference-section" data-asset-type="bomber">
+                    <h3>Heavy Bombers — B-52H Stratofortress, H-6K Badger</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip surface">Air-to-Surface only</span><span class="profile-chip">Move 1</span><span class="profile-chip">Sensor 2</span><span class="profile-chip">Weapon 6</span><span class="profile-chip">Explosive</span></div>
+                    <p>Bombers may begin at the owning Airbase or Standoff zone; the US may also use Contingency when legal. They may move into their owning Standoff zone and conduct long-range explosive strikes, but they cannot attack aircraft.</p>
+                    <p><strong>Employment:</strong> Pair bombers with AEW or other sensors, remain outside short-range fighter envelopes, and pressure identified surface targets across the theater.</p>
+                </section>
+
+                <section id="asset-uas" class="reference-section" data-asset-type="uas">
+                    <h3>Unmanned Aerial Systems — Attack &amp; Reconnaissance</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip">Move 1</span><span class="profile-chip">AQ 3</span></div>
+                    <p><strong>Attack UAS (MQ-9, TB-001):</strong> Sensor 2, Weapon 1, HT 3+, Air-to-Surface only. Their Infinite ammunition goes Winchester only on a natural 1–2.</p>
+                    <p><strong>Recon UAS (RQ-4, WX-10):</strong> unarmed sensor platforms. They can Acquire but cannot Shoot. Their +1 Acquisition bonus makes them useful for identifying targets without committing a fighter or AEW asset.</p>
+                </section>
+
+                <section id="asset-aew" class="reference-section" data-asset-type="aew">
+                    <h3>Airborne Early Warning — E-3 Sentry, KJ-2000</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip">Move 1</span><span class="profile-chip">Sensor 3</span><span class="profile-chip">+2 Acquisition</span><span class="profile-chip">Unarmed</span></div>
+                    <p>AEW may operate from an Airbase or owning Standoff zone and may attempt <strong>two Acquisition rolls for one Acquire action</strong>. It cannot attack.</p>
+                    <p><strong>Employment:</strong> Keep AEW protected and use its long sensor reach to identify targets for fighters, UAS, bombers, and Enabler effects.</p>
+                </section>
+
+                <section id="asset-ada" class="reference-section" data-asset-type="ada">
+                    <h3>Ground-Based ADA — NASAMS, HQ-9, SA-21</h3>
+                    <div class="profile-strip"><span class="profile-chip surface">Surface target</span><span class="profile-chip defense">Air-to-Air only</span><span class="profile-chip">Move 0</span><span class="profile-chip">Weapon / WEZ 2 or 4</span><span class="profile-chip">Infinite defense</span></div>
+                    <p>ADA can attack aircraft and project a Missile Defense WEZ equal to Weapon Range. It cannot attack surface targets, cannot move, and never goes Winchester. HQ-9 and generated NASAMS use range 2; SA-21 uses range 4.</p>
+                </section>
+
+                <section id="asset-carrier" class="reference-section" data-asset-type="carrier-aircraft">
+                    <h3>Carrier Aviation — J-15 Flanker-X2</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip air">Air-to-Air</span><span class="profile-chip surface">Air-to-Surface</span><span class="profile-chip">Move 2</span><span class="profile-chip">Weapon 1</span></div>
+                    <p>Carrier aviation carries a Naval family tag for card and Mission interactions but remains an <strong>aircraft target</strong> in combat. It does not receive a ship hull track and is destroyed by one successful hit.</p>
+                </section>
+
+                <section id="asset-naval" class="reference-section" data-asset-type="naval-surface">
+                    <h3>Naval Surface Combatants — DDG, CG &amp; Missile Boat Flotillas</h3>
+                    <div class="profile-strip"><span class="profile-chip surface">Surface target</span><span class="profile-chip">Hull 3</span><span class="profile-chip">Move 1</span><span class="profile-chip defense">Finite salvos</span></div>
+                    <p>Guided-missile destroyers and cruisers use Weapon/WEZ 3, attack air targets, may strike Airbases, and spend finite salvos for offense and Missile Defense. Missile boats use Weapon 2 and HT 3+ and do not attack aircraft.</p>
+                    <p>Ships require three successful attacks to destroy and may be targeted only by aircraft with Air-to-Surface capability. Surface ships cannot attack other ships through the normal Shoot action. Explicit anti-ship Enablers may immediately destroy a ship.</p>
+                </section>
+
+                <section id="asset-ew" class="reference-section" data-asset-type="electronic-warfare">
+                    <h3>Electronic Warfare Aircraft — EC-130 Compass Call</h3>
+                    <div class="profile-strip"><span class="profile-chip air">Air target</span><span class="profile-chip">Move 1</span><span class="profile-chip">Sensor 3</span><span class="profile-chip">Unarmed</span></div>
+                    <p>The Enabler-generated EC-130 imposes Disadvantage on enemy attacks originating in its range band. It is a support aircraft: it can move and sense but cannot attack.</p>
+                </section>
+
+                <section id="asset-board" class="reference-section" data-asset-type="board-assets">
+                    <h3>Squadron Cards, Airbases &amp; Operating Locations</h3>
+                    <ul>
+                        <li><strong>Squadron card:</strong> a surface target with AQ 1 and 2 HP. It anchors the persistent aircraft ledger and the generated tokens linked to it.</li>
+                        <li><strong>Airbase:</strong> always identified, indestructible, and capped at three scoring strikes. Each applied strike awards 1 VP.</li>
+                        <li><strong>US Contingency:</strong> optional US generation location when permitted. It normally generates 1d4 aircraft unless an ACE or Flying Crew Chief effect supplies the maximum.</li>
+                        <li><strong>Standoff:</strong> owning-side operating location available to bombers and AEW. It remains part of movement and attack-range calculations.</li>
+                        <li><strong>Range Bands 1–5:</strong> the central maneuver space. Band labels are read from each side's perspective, while movement uses the shared physical band distance.</li>
+                    </ul>
+                </section>
+
+                <section class="reference-section" data-asset-type="enabler-card">
+                    <h3>Enabler Cards</h3>
+                    <p>Enablers are operational effects rather than ordinary combat tokens. They may generate a profiled asset, modify a roll or range, alter Cyber/Intel, recover a loss, protect a base, strike a target, or react to/cancel another card. The title, timing, target, and explicit exception on the card govern its play.</p>
+                </section>
+                <div class="reference-footer"><button class="btn btn-danger" type="button" onclick="toggleModal('glossary-overlay')">Close Glossary</button></div>
             </div>
-            <div class="rules-section">
-                <strong>Standoff Heavy Bombers (B-52H Stratofortress, H-6K Badger)</strong><br>
-                <em>Strategic Role:</em> Heavy long-range strategic bombers. They operate exclusively from the safety of home Standoff zones, completely out of reach of ordinary fighter aircraft.
-                <ul>
-                    <li><strong>Combat Profile:</strong> Very slow (Move Range: 1), poor sensors, but equipped with devastating standoff cruise missiles capable of striking targets across the entire map (Shoot Range: 6/5).</li>
-                    <li><strong>Employment:</strong> Target and systematically dismantle static enemy airbase structures and ground radars from extreme distances. Bomber strikes inherently trigger Exploding d4 damage, but they depend on AEW AWACS to paint target locks first.</li>
-                </ul>
-            </div>
-            <div class="rules-section">
-                <strong>Unmanned Aerial Systems / UAS Combat Drones (MQ-9 Reaper, TB-001 Twin-Tailed Scorpion)</strong><br>
-                <em>Strategic Role:</em> Slower, expendable, cost-effective remotely piloted vehicles used to sustain continuous ground-strike pressure without risking pilot lives.
-                <ul>
-                    <li><strong>Combat Profile:</strong> Slow speed (Move Range: 1), standard sensors, and close range air-to-ground missiles (Shoot Range: 1).</li>
-                    <li><strong>Employment:</strong> UAS drones feature unique "Infinite Ammo" payloads, meaning they only go Winchester on a low roll of 1 or 2. Use them as persistent harassment assets to force SAM units to waste their ammo or slowly chip away at naval hulls.</li>
-                </ul>
-            </div>
-            <div class="rules-section">
-                <strong>Airborne Early Warning / AEW AWACS (E-3 Sentry, KJ-500)</strong><br>
-                <em>Strategic Role:</em> High-altitude flying radar and battle management systems. They carry zero weapons but represent the eyes and ears of the theater commander.
-                <ul>
-                    <li><strong>Combat Profile:</strong> Slow speed (Move Range: 1), zero weapons, but project an extreme sensor suite (Sensor Range: 3) with a massive `+2` Acquisition Roll Bonus.</li>
-                    <li><strong>Employment:</strong> Strategically park AWACS in Standoff zones. Due to their sensor suite, they can attempt <strong>two acquisitions per turn</strong>, sweeping away enemy fog of war to paint targets for fighters and heavy bombers. Protect them at all costs.</li>
-                </ul>
-            </div>
-            <div class="rules-section">
-                <strong>Surface-to-Air Missile Batteries / SAM ADA (Patriot, S-400 Triumf)</strong><br>
-                <em>Strategic Role:</em> Strategic ground-based air defenses placed on airfields to deny the enemy unrestricted airspace access.
-                <ul>
-                    <li><strong>Combat Profile:</strong> Stationary (Move Range: 0), strong radar sensors, and long-range interceptors (Shoot Range: 3/4).</li>
-                    <li><strong>Employment:</strong> SAM batteries establish lethal Weapon Engagement Zones (WEZs). Any enemy attack originating from or transiting through their sector automatically triggers active missile defense, forcing incoming enemy rolls to suffer Disadvantage. They hold infinite defensive reloads.</li>
-                </ul>
-            </div>
-            <div class="rules-section">
-                <strong>Naval guided Missile Destroyers / SAG Flotillas (DDG-81, Type 055 Renhai)</strong><br>
-                <em>Strategic Role:</em> Mobile, heavily armored surface combatants that act as floating multi-mission fortresses.
-                <ul>
-                    <li><strong>Combat Profile:</strong> Moderate speed (Move Range: 1), deep magazines represented by finite <strong>Salvo Blocks</strong>, and heavy air defense (Shoot Range: 3).</li>
-                    <li><strong>Employment:</strong> Sail guided-missile destroyers into forward lanes to extend a mobile protective air defense umbrella (WEZ) over advancing fighters. They must expend their air salvo blocks to perform active missile defense intercepts, but they can also launch offensive kinetic strikes against bases.</li>
-                </ul>
-            </div>
-            <button class="btn btn-danger" style="float:right;" onclick="toggleModal('glossary-overlay')">Close</button>
-            <div style="clear:both;"></div>
         </div>
     </div>
 
@@ -431,7 +603,7 @@
                 <li><strong>4. Combat Round Rotation (MAS Loop):</strong> Players alternate taking actions. You share 1 Move, 1 Acquire, and 1 Shoot action per turn across your forces. Turn ends when both pass consecutively. Deployed squadrons have 2 HP. Airborne tokens must RTB to avoid crashing if their base is destroyed.</li>
             </ul>
             <div style="text-align: center; margin-top: 15px;">
-                <button class="btn btn-warn" onclick="toggleModal('rules-overlay')">Open Full Rules &amp; Mechanics Reference</button>
+                <button class="btn btn-warn" type="button" aria-haspopup="dialog" onclick="toggleModal('rules-overlay')">Open Rules &amp; Mechanics</button>
             </div>
         </div>
         <div class="scenario-box" style="border-left-color:#f0b94a;">
@@ -446,8 +618,8 @@
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2 id="setup-header" class="header-us" style="border:none; margin:0;">US PLAYER: Strategic Setup</h2>
             <div>
-                <button class="btn" style="background:#546e7a;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
-                <button class="btn" style="background:#546e7a;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
+                <button class="btn" type="button" aria-haspopup="dialog" style="background:#546e7a;" onclick="toggleModal('glossary-overlay')">Asset Glossary</button>
+                <button class="btn" type="button" aria-haspopup="dialog" style="background:#546e7a;" onclick="toggleModal('rules-overlay')">Rules Reference</button>
             </div>
         </div>
         <hr style="border: 1px solid #cfd8dc; margin-bottom: 20px;">
@@ -536,8 +708,8 @@
                 <div><strong>DIGITAL AFWI</strong><span>EXECUTIVE EDITION · PHASE TWO</span></div>
             </div>
             <div>
-                <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('glossary-overlay')">[i] Asset Glossary</button>
-                <button class="btn" style="background:#546e7a; margin:0;" onclick="toggleModal('rules-overlay')">[?] Rules Reference</button>
+                <button class="btn" type="button" aria-haspopup="dialog" style="background:#546e7a; margin:0;" onclick="toggleModal('glossary-overlay')">Asset Glossary</button>
+                <button class="btn" type="button" aria-haspopup="dialog" style="background:#546e7a; margin:0;" onclick="toggleModal('rules-overlay')">Rules Reference</button>
                 <button class="btn" style="background:#455a64; margin:0;" onclick="openDiagnostics()">[D] Diagnostics</button>
             </div>
         </div>
@@ -1058,7 +1230,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.3.1-solid-locations",
+            buildVersion: "1.4.0-reference-guide",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
@@ -1176,11 +1348,21 @@
 
         AFWI.Rules = {
             manifest: {
-                actionEconomy:{ move:1, acquire:1, shoot:1, squadronDeploymentsPerTurn:1 },
+                match:{ atoCycles:5, vpVictory:"Highest VP after ATO 5", cyberInstantVictory:4, tieResult:"Stalemate" },
+                sequence:["Posture","Mission in ATO 1","Draft","Initiative","Cyber and Intel","Alternating Action Turns","ATO Resolution"],
+                drafting:{ authoritativeCards:88, squadronsPerSide:10, enablersPerSide:34, missionSelection:"ATO 1; persists for the match", nonStandardPostureRepeat:false },
+                initiative:{ winnerActsFirst:true, tieRerolls:true, winnerCyberAttempt:true, winnerIntelAdvantage:true },
+                actionEconomy:{ move:1, acquire:1, shoot:1, squadronDeploymentsPerTurn:1, consecutivePassesToEndAto:2 },
+                fogOfWar:{ tokensRequireAcquisition:true, squadronAcquisitionThreshold:1, airbasesAlwaysIdentified:true, intelRevealsEnablers:true },
+                deployment:{ defaultLocation:"Owning Airbase", usContingencyOptional:true, surgeDisablesContingency:true, standoffEligible:["Bomber","AEW"] },
+                targeting:{ airToAir:["Aircraft"], airToSurface:["Airbase","Squadron Card","ADA","Naval Surface"], navalSurfaceRequiresAircraftA2S:true, carrierAircraftAreAirTargets:true },
+                damage:{ ordinaryTokenHits:1, squadronCardHp:2, navalSurfaceHull:3, explosiveSurfaceDamage:"1d4", airbaseDestructible:false },
                 winchester:{ Standard:"Natural 1-3 Winchester; natural 4 conserves", Infinite:"Natural 1-2 Winchester", Salvo:"Finite naval offensive/defensive salvo" },
                 airbase:{ acquisitionRequired:false, maxStrikes:3, vpPerSuccessfulStrike:1, destructible:false },
+                cards:{ singleConsumedOnPlay:true, multipleReturnsToPool:true, invalidEffectRemainsInHand:true },
                 atoPersistence:{ boardClearsEachATO:true, squadronHpPersists:true, aircraftLossesPersist:true },
-                cyber:{ instantVictoryRate:4 },
+                cyber:{ instantVictoryRate:4, superiorityGrantsAcquisitionAdvantage:true },
+                intel:{ persistent:true, higherRatingAutoAcquisitionsPerTurn:1 },
                 defaultAtoCycles:5
             }
         };
@@ -1353,10 +1535,130 @@
             if(phaseMap[id]) setPhase(phaseMap[id]);
         }
 
+        var referenceReturnFocus = null;
+
+        function escapeReferenceText(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function hydrateReferenceGuides() {
+            var version = AFWI.Build.buildVersion;
+            var rulesBuild = document.getElementById('rules-build-label');
+            var glossaryBuild = document.getElementById('glossary-build-label');
+            if(rulesBuild) rulesBuild.textContent = 'Build ' + version;
+            if(glossaryBuild) glossaryBuild.textContent = 'Build ' + version;
+
+            var authoritativeCount = 0;
+            for(var c=0; c<MASTER_DECK.length; c++) if(MASTER_DECK[c].Authoritative) authoritativeCount++;
+            var countLabel = document.getElementById('reference-card-count');
+            if(countLabel) countLabel.textContent = authoritativeCount;
+
+            var effects = {
+                pU5:'Always selectable.',
+                pU1:'Contingency generates the maximum surviving aircraft.',
+                pU2:'Contingency is unavailable.',
+                pU3:'Automatically fields Air Defense Artillery.',
+                pU4:'Bomber Squadrons cost zero draft slots.',
+                pP5:'Always selectable.',
+                pP1:'Only PLAAF-family Enablers are legal.',
+                pP2:'SAM Squadrons are excluded.',
+                pP3:'SAM Squadrons cost zero draft slots.',
+                pP4:'Reduced Squadron limit; no additional special rule.'
+            };
+            var postureBody = document.getElementById('rules-posture-body');
+            if(postureBody) {
+                var postureRows = '';
+                var sides = ['US','PRC'];
+                for(var s=0; s<sides.length; s++) {
+                    var side = sides[s];
+                    for(var p=0; p<POSTURES[side].length; p++) {
+                        var posture = POSTURES[side][p];
+                        postureRows += '<tr><td class="side-' + side.toLowerCase() + '">' + side + '</td><td><strong>' + escapeReferenceText(posture.title) + '</strong></td><td>' + posture.sq + ' Squadron / ' + posture.en + ' Enabler</td><td>' + escapeReferenceText(effects[posture.id] || posture.desc) + '</td></tr>';
+                    }
+                }
+                postureBody.innerHTML = postureRows;
+            }
+
+            var missionBody = document.getElementById('rules-mission-body');
+            if(missionBody) {
+                var missionRows = '';
+                var missionSides = ['US','PRC'];
+                for(var ms=0; ms<missionSides.length; ms++) {
+                    var missionSide = missionSides[ms];
+                    for(var m=0; m<MISSIONS[missionSide].length; m++) {
+                        var mission = MISSIONS[missionSide][m];
+                        missionRows += '<tr><td class="side-' + missionSide.toLowerCase() + '">' + missionSide + '</td><td><strong>' + escapeReferenceText(mission.title) + '</strong></td><td>' + escapeReferenceText(mission.desc) + '</td></tr>';
+                    }
+                }
+                missionBody.innerHTML = missionRows;
+            }
+        }
+
+        function getOpenReferenceOverlay() {
+            return document.querySelector('.reference-overlay[aria-hidden="false"]');
+        }
+
+        function closeReferenceOverlay(overlay, restoreFocus) {
+            if(!overlay) return;
+            overlay.style.display = 'none';
+            overlay.setAttribute('aria-hidden','true');
+            if(!getOpenReferenceOverlay()) document.body.classList.remove('reference-open');
+            if(restoreFocus !== false && referenceReturnFocus && typeof referenceReturnFocus.focus === 'function') {
+                referenceReturnFocus.focus();
+            }
+            referenceReturnFocus = null;
+        }
+
         function toggleModal(id) {
             var overlay = document.getElementById(id);
-            overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+            if(!overlay) return;
+            var isReference = /(^|\s)reference-overlay(\s|$)/.test(overlay.className);
+            if(!isReference) {
+                overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+                return;
+            }
+            if(overlay.getAttribute('aria-hidden') === 'false') {
+                closeReferenceOverlay(overlay, true);
+                return;
+            }
+            var openOverlay = getOpenReferenceOverlay();
+            if(openOverlay && openOverlay !== overlay) closeReferenceOverlay(openOverlay, false);
+            referenceReturnFocus = document.activeElement;
+            hydrateReferenceGuides();
+            overlay.style.display = 'flex';
+            overlay.setAttribute('aria-hidden','false');
+            document.body.classList.add('reference-open');
+            var body = overlay.querySelector('.reference-body');
+            if(body) body.scrollTop = 0;
+            var closeButton = overlay.querySelector('[data-reference-close]');
+            if(closeButton) closeButton.focus();
         }
+
+        document.addEventListener('click', function(event) {
+            var target = event.target;
+            if(target && /(^|\s)reference-overlay(\s|$)/.test(target.className || '')) toggleModal(target.id);
+        });
+
+        document.addEventListener('keydown', function(event) {
+            var overlay = getOpenReferenceOverlay();
+            if(!overlay) return;
+            if(event.key === 'Escape' || event.keyCode === 27) {
+                event.preventDefault();
+                closeReferenceOverlay(overlay, true);
+                return;
+            }
+            if(event.key !== 'Tab' && event.keyCode !== 9) return;
+            var focusable = overlay.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]');
+            if(!focusable.length) return;
+            var first = focusable[0], last = focusable[focusable.length-1];
+            if(event.shiftKey && document.activeElement === first) {
+                event.preventDefault(); last.focus();
+            } else if(!event.shiftKey && document.activeElement === last) {
+                event.preventDefault(); first.focus();
+            }
+        });
 
         function cardAllowedByPosture(card, posture) {
             if(!posture) return true;

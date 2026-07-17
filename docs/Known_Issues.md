@@ -1,4 +1,4 @@
-# AFWI 1.3 Combat Roster - Acceptance Notes
+# AFWI 1.4 Reference Guide - Acceptance Notes
 
 No open Phase One gameplay defect is known in this release.
 
