@@ -105,8 +105,10 @@ async function main() {
       usPanel: box('#panel-us'), prcPanel: box('#panel-prc'), board:box('.board'), hud:box('#selected-unit-panel'),
       prcZone: box('.zone-prc'), usZone: box('.zone-us'),
       usStandoff: box('#us-standoff'), usAirbase: box('#us-airbase'), usContingency: box('#us-contingency'),
-      zoneOpacities: bases.map(selector => getComputedStyle(document.querySelector(selector),'::before').opacity),
-      zoneBackgrounds: bases.map(selector => getComputedStyle(document.querySelector(selector),'::before').backgroundImage),
+      zoneColors: bases.map(selector => getComputedStyle(document.querySelector(selector)).backgroundColor),
+      zoneBackgroundImages: bases.map(selector => getComputedStyle(document.querySelector(selector)).backgroundImage),
+      zoneBeforeDisplays: bases.map(selector => getComputedStyle(document.querySelector(selector),'::before').display),
+      zoneAfterDisplays: bases.map(selector => getComputedStyle(document.querySelector(selector),'::after').display),
       mas: [...document.querySelectorAll('#mas-indicator .mas-cell')].map(el => ({ action:el.dataset.action, className:el.className })),
       descriptions: [...document.querySelectorAll('#panel-us .card-description')].map(el => el.textContent.trim()),
       tokens: [...document.querySelectorAll('.token:not(.unknown)')].map(el => ({
@@ -124,8 +126,9 @@ async function main() {
   assert(board.hud.x >= board.board.x && board.hud.right <= board.board.right && board.hud.width >= board.board.width - 20, `Selected-token HUD is not constrained to the board column (${board.hud.width}/${board.board.width}).`);
   assert(Math.abs(board.usZone.width - board.prcZone.width) < 0.5, 'US and PRC play areas are not equal width.');
   assert(Math.abs(board.usZone.height - board.prcZone.height) < 0.5, 'US and PRC play areas are not equal height.');
-  assert(new Set(board.zoneOpacities).size === 1, 'Play-area image transparency is not equal.');
-  assert(board.zoneBackgrounds.every(value => value && value !== 'none'), 'A location background image is missing.');
+  assert(new Set(board.zoneColors).size === 1 && board.zoneColors[0] === 'rgb(16, 40, 56)', `Location boxes do not share the approved solid background: ${JSON.stringify(board.zoneColors)}`);
+  assert(board.zoneBackgroundImages.every(value => value === 'none'), 'A location box still has a background image.');
+  assert(board.zoneBeforeDisplays.every(value => value === 'none') && board.zoneAfterDisplays.every(value => value === 'none'), 'A legacy location-image overlay is still active.');
   assert(board.usStandoff.x < board.usAirbase.x && board.usAirbase.x < board.usContingency.x, 'US airbase/contingency order is incorrect.');
   assert(Math.abs(board.usStandoff.width - board.usAirbase.width) < 1 && Math.abs(board.usAirbase.width - board.usContingency.width) < 1, 'US location columns are not equal.');
   assert(board.mas.length === 3 && board.mas.every(item => /available/.test(item.className)), 'M-A-S availability indicator is incomplete.');
@@ -157,15 +160,15 @@ async function main() {
     });
     drawUI();
     return locations.map(id=>{
-      const el=document.getElementById(id), style=getComputedStyle(el); el.scrollTop=el.scrollHeight;
-      return {id,overflowY:style.overflowY,wrap:style.flexWrap,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop};
+      const el=document.getElementById(id), style=getComputedStyle(el), colorBefore=style.backgroundColor; el.scrollTop=el.scrollHeight;
+      return {id,overflowY:style.overflowY,wrap:style.flexWrap,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop,colorBefore,colorAfter:getComputedStyle(el).backgroundColor,backgroundImage:getComputedStyle(el).backgroundImage};
     });
   });
-  assert(locationScrolling.every(item=>item.overflowY==='auto' && item.wrap==='wrap' && item.scrollHeight>item.clientHeight && item.scrollTop>0), `A populated location failed to scroll: ${JSON.stringify(locationScrolling)}`);
+  assert(locationScrolling.every(item=>item.overflowY==='auto' && item.wrap==='wrap' && item.scrollHeight>item.clientHeight && item.scrollTop>0 && item.colorBefore==='rgb(16, 40, 56)' && item.colorAfter===item.colorBefore && item.backgroundImage==='none'), `A populated location failed solid-background scrolling: ${JSON.stringify(locationScrolling)}`);
   assert(runtimeErrors.length === 0, `Browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
   const report = {
-    build: '1.3.0-combat-roster',
+    build: '1.3.1-solid-locations',
     viewport: '1680x1050',
     checks: 22,
     status: 'PASS',

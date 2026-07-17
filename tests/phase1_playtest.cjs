@@ -63,7 +63,7 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI Executive Edition', 'executive title missing');
-    assert(result.version === '1.3.0-combat-roster', 'combat-roster build version missing');
+    assert(result.version === '1.3.1-solid-locations', 'solid-location build version missing');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
     assert(result.maxRounds === 5 && result.rulesCycles === 5, 'default match is not five ATO cycles');
     assert(result.campaignGlobals === 'undefined,undefined' && !result.campaignUi, 'campaign system was not removed');
@@ -255,7 +255,7 @@ async function main() {
       state.us.buffs={nextAtk:'normal',nextCyb:'normal',moveDenied:false,attackMode:'normal',acquisitionMode:'normal',airAttackMode:'normal',bomberAttackMode:'normal',contingencyAutoGenerate:false,fighterRange:null,nextAutoHit:false,nextUASReroll:false,sofProtected:false};
       const attacker={side:'US',name:'F-35A',loc:'lane-3',shtR:1,attackThreshold:2,canAttackAir:true,canAttackSurface:true,explosive:false,winchesterType:'Standard',winchester:false,tags:['Fighter','Gen5']};
       const target={side:'PRC',name:'Type 055',loc:'lane-3',acquired:true,parentSqId:null,tags:['Naval','SAG','SAM'],maxHp:3,currentHp:3};
-      state.tokens=[attacker,target];AFWI.Random.setSequence([4,4,4]);
+      state.tokens=[attacker,target];AFWI.Random.setSequence([4,4,4,4,4,4]);
       const history=[];
       for(let i=0;i<3;i++){resolveCommittedAttack(attacker,target,state.us,false,null);history.push({present:state.tokens.indexOf(target)>=0,hp:target.currentHp,vp:state.us.vp,losses:state.prc.losses.length});}
       return {history,navalLosses:state.prc.navalLosses};

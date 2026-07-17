@@ -99,7 +99,7 @@
         #landing-ui { background-image: linear-gradient(rgba(28,40,51,.90),rgba(28,40,51,.90)), url('assets/board/board.jpg'); background-size: cover; background-position:center; }
         .board { background:#fff; }
         .bands-container { background-image: linear-gradient(rgba(20,32,40,.34),rgba(20,32,40,.34)), url('assets/board/board.jpg') !important; background-size: cover !important; background-position:center center !important; background-repeat:no-repeat !important; } .band { background: transparent !important; background-image:none !important; }
-        .zone .base { background-image:none !important; background-color:rgba(255,255,255,.90) !important; }
+        .zone .base { background-image:none !important; background-color:#102838 !important; }
         .bands-container { position:relative; }
         .bands-container:before, .bands-container:after { content:''; position:absolute; top:0; bottom:0; width:54px; background:rgba(20,32,40,.78); z-index:1; pointer-events:none; }
         .bands-container:before { left:0; } .bands-container:after { right:0; }
@@ -191,16 +191,12 @@
         .zone { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; height:144px; min-height:144px; flex-basis:144px; padding:7px; background:#0b1823 !important; border-color:#294050 !important; }
         .zone-prc #prc-airbase { grid-column:span 2; }
         .zone-us #us-standoff, .zone-us #us-airbase, .zone-us #us-contingency { grid-column:span 1; }
-        .base { position:relative; isolation:isolate; overflow-x:hidden; overflow-y:auto; scrollbar-color:#496579 rgba(4,11,18,.52); scrollbar-width:thin; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; justify-content:center; align-content:flex-start; gap:4px; }
+        .base { position:relative; isolation:isolate; overflow-x:hidden; overflow-y:auto; scrollbar-color:#496579 rgba(4,11,18,.52); scrollbar-width:thin; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background-color:#102838 !important; background-image:none !important; color:#d7e5ee; padding:7px; justify-content:center; align-content:flex-start; gap:4px; }
         .base::-webkit-scrollbar { width:8px; }
         .base::-webkit-scrollbar-track { background:rgba(4,11,18,.52); }
         .base::-webkit-scrollbar-thumb { background:#496579; border:2px solid rgba(4,11,18,.72); border-radius:8px; }
         .base::-webkit-scrollbar-thumb:hover { background:#6f91a7; }
-        .base:before { content:''; position:absolute; z-index:-2; inset:0; background-size:cover; background-position:center center; opacity:var(--zone-image-opacity); }
-        .base:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(180deg,rgba(7,16,25,.42),rgba(7,16,25,.82)); }
-        #prc-standoff:before, #us-standoff:before { background-image:url('assets/ui/generated/standoff-ocean-v2.png'); }
-        #prc-airbase:before, #us-airbase:before { background-image:url('assets/ui/generated/airbase-panorama-v2.png'); }
-        #us-contingency:before { background-image:url('assets/ui/generated/contingency-airfield-v2.png'); }
+        .base:before, .base:after { content:none; display:none; background:none; }
         #prc-standoff, #prc-airbase { border-color:rgba(255,95,103,.5); }
         #us-standoff, #us-airbase, #us-contingency { border-color:rgba(64,169,255,.5); }
         .airbase-header { border-color:#3b5262; background:rgba(6,15,23,.64); margin:-2px -2px 4px; width:calc(100% + 4px); padding:4px 6px; }
@@ -1062,7 +1058,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.3.0-combat-roster",
+            buildVersion: "1.3.1-solid-locations",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"

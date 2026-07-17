@@ -1,4 +1,4 @@
-AFWI 1.3 EXECUTIVE EDITION - COMBAT AND ROSTER CORRECTIONS COMPLETE
+AFWI 1.3.1 EXECUTIVE EDITION - SOLID LOCATION PANELS
 ================================================
 
 RUN
@@ -35,9 +35,10 @@ RELEASE SCOPE
   with larger Segoe UI Variable/Segoe UI HUD typography
 - Exact supplied token silhouettes and equipment-type labels; unsupported
   silhouettes use a correct type label instead of a misleading substitute
-- New locally generated, container-safe imagery for the landing page, theater,
-  airbases, US contingency location, and standoff zones; supplied imagery remains
-  available and is still used for associated Squadron/Enabler side cards
+- New locally generated imagery remains active on the landing page and theater.
+  Airbase, contingency, and standoff boxes use one solid command-glass color
+  that remains continuous when wrapped content is scrolled; existing image
+  assets remain preserved and associated Squadron/Enabler side-card art remains active
 - Initiative winner always acts first; players do not select turn order
 - Deterministic automation for card effects; explicit commander prompts for
   reactions, choices, targets, and hidden-information handoffs
