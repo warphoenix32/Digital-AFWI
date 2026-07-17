@@ -2,7 +2,7 @@
 
 ## Release
 
-- Build: `1.2.0-executive-corrections`
+- Build: `1.2.1-executive-corrections`
 - Branch: `phase2-ui`
 - Preserved baselines: annotated tags `phase1-final-1.0.1` and `phase2-executive-1.1.0`
 
@@ -24,13 +24,15 @@
 - Enforced initiative winner acts first without a turn-order prompt.
 - Added operational standoff deployment and movement for eligible bomber and AEW forces.
 - Centered and wrapped deployed forces in location containers.
+- Added vertical overflow scrolling to every airbase, contingency, and standoff container.
 - Moved and condensed the selected-token HUD into the board-width column to provide taller command sidebars.
 - Rethemed setup screens to match the command-glass game board and strengthened button hover/focus visibility.
 
 ## Validation
 
 - Gameplay browser playtests: 23 / 23 passed.
-- Phase Two browser visual checks: 21 / 21 passed.
+- Phase Two browser visual checks: 22 / 22 passed, including saturated-container scrolling across all five operating locations.
+- Enabler-focused browser groups: 4 / 4 passed; all 68 authoritative Enabler cards were exercised with additional generated-force, reaction, cyber, intel, and Counter-UAS assertions.
 - Verified equal play-area dimensions and transparency, location order, image loading, card descriptions, token type labels, F-16 identity, M-A-S state changes, and viewport overflow.
 - Browser screenshots are stored in `artifacts/screenshots/` at 1680 x 1050.
 

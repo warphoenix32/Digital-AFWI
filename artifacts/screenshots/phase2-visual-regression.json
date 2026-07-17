@@ -1,7 +1,7 @@
 {
-  "build": "1.2.0-executive-corrections",
+  "build": "1.2.1-executive-corrections",
   "viewport": "1680x1050",
-  "checks": 21,
+  "checks": 22,
   "status": "PASS",
   "screenshots": [
     "phase2-corrections-landing-1680x1050.png",

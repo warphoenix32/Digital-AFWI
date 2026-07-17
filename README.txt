@@ -22,6 +22,7 @@ RELEASE SCOPE
   owning-side standoff, and explicit Enabler-card location exceptions
 - Deployed Squadron cards use fog of war with AQ 1
 - Compact board-width selected-token HUD without changing physical token scale
+- Airbase, contingency, and standoff containers wrap centered forces and scroll vertically when their visible area is exceeded
 - Executive command-glass UI with equal-size US and PRC play areas
 - Prominent M-A-S availability/spent indicator
 - Exact supplied token silhouettes and equipment-type labels; unsupported
@@ -38,6 +39,8 @@ VALIDATION
   package-integrity checks (development validation requires Node.js).
 - Run tests/phase1_playtest.cjs in a development environment with Playwright
   and Chrome for the full automated browser playtest suite.
+- Run tests/enabler_focus_playtest.cjs for the exhaustive 68-card Enabler
+  registry and focused generated-force, reaction, cyber, intel, and Counter-UAS checks.
 - Run tests/phase2_visual_regression.cjs for executive-layout validation and
   reproducible 1680x1050 browser screenshots.
 - See docs/Phase2_Executive_UI_Report.md for the Phase Two release record.

@@ -1,6 +1,6 @@
 {
   "release": "AFWI 1.2 Executive Corrections",
-  "build": "1.2.0-executive-corrections",
+  "build": "1.2.1-executive-corrections",
   "date": "2026-07-16",
   "result": "PASS",
   "browser": "Google Chrome via Playwright",

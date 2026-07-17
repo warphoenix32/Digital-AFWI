@@ -182,7 +182,11 @@
         .zone { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; height:144px; min-height:144px; flex-basis:144px; padding:7px; background:#0b1823 !important; border-color:#294050 !important; }
         .zone-prc #prc-airbase { grid-column:span 2; }
         .zone-us #us-standoff, .zone-us #us-airbase, .zone-us #us-contingency { grid-column:span 1; }
-        .base { position:relative; isolation:isolate; overflow:hidden; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; justify-content:center; align-content:flex-start; gap:4px; }
+        .base { position:relative; isolation:isolate; overflow-x:hidden; overflow-y:auto; scrollbar-color:#496579 rgba(4,11,18,.52); scrollbar-width:thin; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; justify-content:center; align-content:flex-start; gap:4px; }
+        .base::-webkit-scrollbar { width:8px; }
+        .base::-webkit-scrollbar-track { background:rgba(4,11,18,.52); }
+        .base::-webkit-scrollbar-thumb { background:#496579; border:2px solid rgba(4,11,18,.72); border-radius:8px; }
+        .base::-webkit-scrollbar-thumb:hover { background:#6f91a7; }
         .base:before { content:''; position:absolute; z-index:-2; inset:0; background-size:cover; background-position:center center; opacity:var(--zone-image-opacity); }
         .base:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(180deg,rgba(7,16,25,.42),rgba(7,16,25,.82)); }
         #prc-standoff:before, #us-standoff:before { background-image:url('assets/ui/generated/standoff-ocean-v2.png'); }
@@ -1032,7 +1036,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.2.0-executive-corrections",
+            buildVersion: "1.2.1-executive-corrections",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"

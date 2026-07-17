@@ -63,7 +63,7 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI Executive Edition', 'executive title missing');
-    assert(result.version === '1.2.0-executive-corrections', 'correction build version missing');
+    assert(result.version === '1.2.1-executive-corrections', 'correction build version missing');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
     assert(result.maxRounds === 5 && result.rulesCycles === 5, 'default match is not five ATO cycles');
     assert(result.campaignGlobals === 'undefined,undefined' && !result.campaignUi, 'campaign system was not removed');

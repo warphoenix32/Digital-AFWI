@@ -144,12 +144,27 @@ async function main() {
 
   const masSpent = await page.evaluate(() => [...document.querySelectorAll('#mas-indicator .mas-cell')].map(el => el.className));
   assert(/spent/.test(masSpent[0]) && /available/.test(masSpent[1]) && /spent/.test(masSpent[2]), 'M-A-S spent state does not track the action pool.');
+
+  const locationScrolling = await page.evaluate(() => {
+    const locations=['prc-standoff','prc-airbase','us-standoff','us-airbase','us-contingency'];
+    state.us.deployedSquadrons=[]; state.prc.deployedSquadrons=[]; state.tokens=[]; state.turnSide='US';
+    locations.forEach((loc, locationIndex) => {
+      const side=loc.indexOf('prc-')===0?'PRC':'US';
+      for(let i=0;i<18;i++) state.tokens.push({side,cardId:side==='US'?'US-AUTH-SQ-10':'PRC-AUTH-SQ-06',name:side==='US'?'F-16C Fighting Falcon':'J-10 Firebird',loc,spd:2,acqR:2,shtR:1,targetAcq:3,attackThreshold:3,winchesterType:'Standard',winchester:false,acquired:true,rogue:false,tags:['Fighter','Gen4']});
+    });
+    drawUI();
+    return locations.map(id=>{
+      const el=document.getElementById(id), style=getComputedStyle(el); el.scrollTop=el.scrollHeight;
+      return {id,overflowY:style.overflowY,wrap:style.flexWrap,scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,scrollTop:el.scrollTop};
+    });
+  });
+  assert(locationScrolling.every(item=>item.overflowY==='auto' && item.wrap==='wrap' && item.scrollHeight>item.clientHeight && item.scrollTop>0), `A populated location failed to scroll: ${JSON.stringify(locationScrolling)}`);
   assert(runtimeErrors.length === 0, `Browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
   const report = {
-    build: '1.2.0-executive-corrections',
+    build: '1.2.1-executive-corrections',
     viewport: '1680x1050',
-    checks: 21,
+    checks: 22,
     status: 'PASS',
     screenshots: [
       'phase2-corrections-landing-1680x1050.png',
