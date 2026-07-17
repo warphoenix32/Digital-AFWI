@@ -1,11 +1,12 @@
 {
-  "build": "1.1.0-phase2-executive",
+  "build": "1.2.0-executive-corrections",
   "viewport": "1680x1050",
-  "checks": 18,
+  "checks": 21,
   "status": "PASS",
   "screenshots": [
-    "phase2-executive-landing-1680x1050.png",
-    "phase2-executive-us-command-1680x1050.png",
-    "phase2-executive-prc-command-1680x1050.png"
+    "phase2-corrections-landing-1680x1050.png",
+    "phase2-corrections-setup-1680x1050.png",
+    "phase2-corrections-us-command-1680x1050.png",
+    "phase2-corrections-prc-command-1680x1050.png"
   ]
 }

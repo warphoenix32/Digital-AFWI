@@ -117,12 +117,12 @@
         }
         body { background:#050b12; color:var(--ink); }
         .btn { border:1px solid #36566c; border-radius:7px; background:#163a55; color:#f7fbff; box-shadow:0 4px 14px rgba(0,0,0,.18); letter-spacing:.02em; }
-        .btn:hover { background:#205477; border-color:#75c4ff; }
+        .btn:hover, .btn:focus-visible { background:#205477; border-color:#f0b94a; outline:2px solid rgba(240,185,74,.42); outline-offset:2px; box-shadow:0 0 0 1px rgba(240,185,74,.26),0 6px 18px rgba(0,0,0,.34); }
         .btn-danger { background:#6e2730; } .btn-warn { background:#76551a; } .btn-pass { background:#2c4050; }
         #landing-ui {
             min-height:100vh; height:auto; box-sizing:border-box; position:relative; overflow:hidden;
-            background-image:linear-gradient(90deg,rgba(4,10,17,.98) 0%,rgba(4,10,17,.82) 48%,rgba(4,10,17,.46) 100%),url('assets/ui/backgrounds/landing-f35-executive-v3.jpg');
-            background-size:cover; background-position:center; align-items:flex-start; text-align:left; padding:10vh 8vw;
+            background-image:linear-gradient(90deg,rgba(4,10,17,.98) 0%,rgba(4,10,17,.82) 48%,rgba(4,10,17,.40) 100%),url('assets/ui/generated/landing-command-center-v2.png');
+            background-size:cover; background-position:center center; align-items:flex-start; text-align:left; padding:10vh 8vw;
         }
         #landing-ui:after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,rgba(64,169,255,.07),transparent 35%,rgba(0,0,0,.45)); }
         .landing-content { position:relative; z-index:1; max-width:680px; }
@@ -150,16 +150,20 @@
         .mas-cell.spent { opacity:.38; text-decoration:line-through; background:#121c24; }
         .command-actions { display:flex; align-items:center; flex-shrink:0; }
 
-        .selected-unit-panel { background:rgba(13,26,39,.97); color:var(--ink); border:1px solid #294050; border-left:6px solid #4a6172; border-radius:9px; min-height:76px; margin:0 0 8px; box-shadow:0 8px 24px rgba(0,0,0,.22); }
+        .selected-unit-panel { background:rgba(13,26,39,.97); color:var(--ink); border:1px solid #294050; border-left:6px solid #4a6172; border-radius:8px; min-height:62px; margin:7px 7px 0; padding:7px 9px; grid-template-columns:52px minmax(150px,1.15fr) repeat(3,minmax(92px,.8fr)); gap:7px; box-shadow:0 8px 24px rgba(0,0,0,.22); flex:0 0 auto; }
         .selected-unit-panel.us { background:#0d2234; border-left-color:var(--us); }
         .selected-unit-panel.prc { background:#29171c; border-left-color:var(--prc); }
-        .selected-unit-panel.empty { color:#8298a8; background:rgba(13,26,39,.97); }
+        .selected-unit-panel.empty { color:#8298a8; background:rgba(13,26,39,.97); min-height:48px; }
+        .selected-unit-panel .selected-art { width:48px; height:38px; }
+        .selected-unit-panel .selected-name { font-size:14px; }
+        .selected-unit-panel .selected-sub { margin-top:2px; font-size:9px; line-height:1.25; }
+        .selected-unit-panel .selected-stat { min-height:36px; padding-left:7px; font-size:10px; line-height:1.32; }
         .selected-unit-panel .selected-sub { color:#91a7b7; }
         .selected-unit-panel .selected-stat { border-color:#2b4253; }
         .selected-unit-panel .selected-stat b { color:#dce8f0; }
         .selected-art { object-fit:contain !important; filter:drop-shadow(0 3px 5px rgba(0,0,0,.4)); }
 
-        .flex-container { gap:9px; height:calc(100vh - 342px); min-height:600px; }
+        .flex-container { gap:9px; height:calc(100vh - 260px); min-height:650px; }
         .panel { width:292px; box-sizing:border-box; background:rgba(10,22,33,.96); border:1px solid #294050; border-radius:9px; padding:12px; color:var(--ink); box-shadow:0 10px 30px rgba(0,0,0,.25); }
         #panel-us { border-top-color:var(--us) !important; } #panel-prc { border-top-color:var(--prc) !important; }
         .panel h4 { color:#91a7b7; border-color:#294050 !important; font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
@@ -178,20 +182,19 @@
         .zone { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; height:144px; min-height:144px; flex-basis:144px; padding:7px; background:#0b1823 !important; border-color:#294050 !important; }
         .zone-prc #prc-airbase { grid-column:span 2; }
         .zone-us #us-standoff, .zone-us #us-airbase, .zone-us #us-contingency { grid-column:span 1; }
-        .base { position:relative; isolation:isolate; overflow:hidden; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; }
-        .base:before { content:''; position:absolute; z-index:-2; inset:0; background-size:cover; background-position:center; opacity:var(--zone-image-opacity); }
+        .base { position:relative; isolation:isolate; overflow:hidden; min-width:0; margin:0; border:1px solid #385266; border-radius:6px; background:rgba(12,25,37,.78) !important; color:#d7e5ee; padding:7px; justify-content:center; align-content:flex-start; gap:4px; }
+        .base:before { content:''; position:absolute; z-index:-2; inset:0; background-size:cover; background-position:center center; opacity:var(--zone-image-opacity); }
         .base:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(180deg,rgba(7,16,25,.42),rgba(7,16,25,.82)); }
-        #prc-standoff:before { background-image:url('assets/ui/backgrounds/prc-standoff-photo.jpg'); }
-        #us-standoff:before { background-image:url('assets/ui/backgrounds/us-standoff-photo.jpg'); }
-        #prc-airbase:before, #us-airbase:before { background-image:url('assets/ui/backgrounds/airbase-runway-photo.jpg'); }
-        #us-contingency:before { background-image:url('assets/ui/backgrounds/us-contingency-photo.jpg'); }
+        #prc-standoff:before, #us-standoff:before { background-image:url('assets/ui/generated/standoff-ocean-v2.png'); }
+        #prc-airbase:before, #us-airbase:before { background-image:url('assets/ui/generated/airbase-panorama-v2.png'); }
+        #us-contingency:before { background-image:url('assets/ui/generated/contingency-airfield-v2.png'); }
         #prc-standoff, #prc-airbase { border-color:rgba(255,95,103,.5); }
         #us-standoff, #us-airbase, #us-contingency { border-color:rgba(64,169,255,.5); }
         .airbase-header { border-color:#3b5262; background:rgba(6,15,23,.64); margin:-2px -2px 4px; width:calc(100% + 4px); padding:4px 6px; }
         .airbase-strikes { background:#132331; border-color:#466071; color:#d3e1e9; }
         .squadron-board-card { background:rgba(13,28,41,.94); color:#e7f0f6; border-color:#496275; text-shadow:0 1px 2px #000; }
         .squadron-board-card:hover { background:#183246; }
-        .bands-container { background-image:linear-gradient(rgba(5,14,22,.68),rgba(5,14,22,.68)),url('assets/board/board.jpg') !important; }
+        .bands-container { background-image:linear-gradient(rgba(5,14,22,.66),rgba(5,14,22,.66)),url('assets/ui/generated/theater-island-chain-v2.png') !important; background-position:center center !important; }
         .band { border-color:rgba(125,159,180,.18); }
 
         .token { border-width:1px; border-color:rgba(255,255,255,.8); border-radius:7px; background-image:linear-gradient(180deg,rgba(255,255,255,.08),rgba(0,0,0,.18)); box-shadow:0 4px 10px rgba(0,0,0,.35); padding:2px 2px 15px; }
@@ -202,9 +205,19 @@
         .token-stats { background:rgba(2,8,13,.88); color:#ffd66b; }
         .log-container { height:112px; margin-top:9px; background:#050d14; border:1px solid #294050; color:#74dcaa; border-radius:9px; }
 
-        .modal, .setup-container { background:#f7f9fa; color:#17232c; }
+        .modal, .setup-container { background:#0b1824; color:#e8f1f7; border:1px solid #355064; box-shadow:0 18px 54px rgba(0,0,0,.48); }
+        .setup-container { background:radial-gradient(circle at 50% -10%,#162b3d 0,#0b1824 58%,#07111b 100%); }
+        .setup-container h2, .setup-container h3 { color:#e8f1f7 !important; }
+        .setup-container p, .setup-container li { color:#aebfcb !important; }
+        .scenario-box { background:rgba(16,33,48,.92); color:#dce8ef; border-left-color:#40a9ff; border-radius:6px; }
+        .draft-pool, .draft-picks { background:#09151f; border-color:#29485d; border-radius:7px; color:#dce8ef; }
+        #setup-step-3 > div:first-of-type, #active-sac-pool, #intel-result-box { background:#102130 !important; border:1px solid #29485d !important; color:#dce8ef !important; }
+        .card-sel { border-color:#55d6a0 !important; box-shadow:inset 0 0 0 1px rgba(85,214,160,.3),0 0 16px rgba(85,214,160,.16); }
+        .card-sacrificed { border-color:#ff5f67 !important; background:#351b22 !important; }
+        .header-us { color:#61b7ff !important; border-color:#40a9ff; }
+        .header-prc { color:#ff777e !important; border-color:#ff5f67; }
         @media (max-width:1400px) {
-            .panel { width:250px; } .selected-unit-panel { grid-template-columns:64px minmax(150px,1fr) repeat(3,minmax(110px,1fr)); gap:8px; }
+            .panel { width:250px; } .selected-unit-panel { grid-template-columns:46px minmax(130px,1fr) repeat(3,minmax(82px,.78fr)); gap:5px; }
             .mas-indicator { grid-template-columns:repeat(3,46px); } .status-bar .btn { padding:8px 9px; }
         }
         @media (max-width:1120px) {
@@ -236,18 +249,22 @@
             </div>
             <div class="rules-section">
                 <strong>2. The ATO Cycle Phases</strong><br>
-                Every campaign round runs through a rigid multi-domain sequence:
+                Every ATO cycle runs through a rigid multi-domain sequence:
                 <ul>
                     <li><strong>Setup &amp; Deployment:</strong> Select Postures, select covert Missions, and draft squadrons/enablers.</li>
                     <li><strong>Initiative Bid:</strong> Sacrifice Enabler cards secretly to modify a 1d4 roll. High roll wins Initiative.</li>
                     <li><strong>Play Intel:</strong> Roll 1d4 (with Advantage for initiative winner) to sweep/unmask enemy Enabler cards. At least 1 card remains hidden.</li>
                     <li><strong>MAS Action Phase:</strong> Alternating commander turns utilizing the Move-Acquire-Shoot combat engine.</li>
-                    <li><strong>End of Round Cleanup:</strong> The tactical board clears for the next ATO. Squadron HP and aircraft losses persist in the campaign ledger. A redrafted squadron returns at its normal starting location with only its surviving aircraft unless an Enabler changes that state. Any airborne assets whose parent Squadron Cards were destroyed crash during land-back attrition.</li>
+                    <li><strong>End of Round Cleanup:</strong> The tactical board clears for the next ATO. Squadron HP and aircraft losses persist in the match ledger. A redrafted squadron returns at its normal starting location with only its surviving aircraft unless an Enabler changes that state. Any airborne assets whose parent Squadron Cards were destroyed crash during land-back attrition.</li>
                 </ul>
             </div>
             <div class="rules-section">
+                <strong>2A. Standard Match Format</strong><br>
+                The default AFWI match lasts <strong>5 ATO cycles</strong>. Both commanders use the complete draftable force pool; no scenario selector or special force-pool restriction applies. Posture rules continue to determine the number and type of cards each commander may draft during an ATO.
+            </div>
+            <div class="rules-section">
                 <strong>3. Bidding for Initiative &amp; the Cyber Track</strong><br>
-                The commander who wins the Initiative Bid gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (roll 2d4 and keep the higher die)</strong> on Acquisition checks.
+                The commander who wins the Initiative Bid <strong>always acts first</strong> and gains immediate Intel Advantage. They also get a free chance to advance their Cyber Rate on their private Cyber Track (0 to 4). To advance, you must roll equal to or higher than the target rate (e.g., to go from 1 to 2, roll a 2+ on 1d4). <strong>Instant Victory:</strong> Attaining a Cyber Rate of 4 immediately ends the game with a win. Cyber Advantage (holding a higher Cyber Rate than your opponent) grants <strong>Advantage (roll 2d4 and keep the higher die)</strong> on Acquisition checks.
             </div>
             <div class="rules-section">
                 <strong>4. Intel Domain, Active ID &amp; Fog of War</strong><br>
@@ -255,7 +272,7 @@
             </div>
             <div class="rules-section">
                 <strong>5. Static Board Geography &amp; Movement</strong><br>
-                The theater map consists of a static layout with 5 consolidated central tactical movement bands (Lanes 1 to 5), flanked by each side's respective Airbase and Standoff zones. The PRC commander plays top-down (bottom bands are closer to US, top bands closer to PRC), while the US commander plays bottom-up. Standard aircraft have a Move Range of 2 bands, while heavy bombers and AEW platforms have a Move Range of 1 band. Static assets (SAMs) cannot move.
+                The theater map consists of a static layout with 5 consolidated central tactical movement bands (Lanes 1 to 5), flanked by each side's respective Airbase and Standoff zones. The PRC commander plays top-down (bottom bands are closer to US, top bands closer to PRC), while the US commander plays bottom-up. Standard aircraft have a Move Range of 2 bands, while heavy bombers and AEW platforms have a Move Range of 1 band. Heavy bombers and AEW platforms may deploy to and move into their owning side's Standoff zone. Static assets (SAMs) cannot move.
             </div>
             <div class="rules-section">
                 <strong>6. Combat, Munitions, &amp; the Winchester Rule</strong><br>
@@ -273,7 +290,7 @@
             </div>
             <div class="rules-section">
                 <strong>8. Deployed Squadron Damage &amp; Attrition</strong><br>
-                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their side's airbase. Aircraft generated by a Squadron begin on their owning player's airbase; the US commander may instead choose the Contingency Location when that option is available. Enabler cards and other explicit rules may specify a different generation location. A Squadron's health and surviving aircraft count are visible to its owner and to an opponent only after acquisition. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the campaign. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
+                Unlike standard tokens which are destroyed in 1 hit, Deployed Squadrons act as command cards with 2 HP and are placed directly on their selected legal operating location. Aircraft generated by a Squadron begin on their owning player's airbase; the US commander may instead choose the Contingency Location when that option is available, and standoff-capable squadrons may use their owning Standoff zone. Enabler cards and other explicit rules may specify a different generation location. A Squadron's health and surviving aircraft count are visible to its owner and to an opponent only after acquisition. Deployed airborne tokens are linked back to their parent squadron. If a squadron card is reduced to 0 HP, its base structure is ruined. Any associated airborne tokens on the board are marked as Rogue or must land at round end. Attempting to land back on a destroyed squadron card causes immediate crash-destruction.<br><br><strong>Airbase Strikes:</strong> Airbases are always identified and require no Acquisition. Each airbase may be successfully struck up to three times during the match. Every successful strike awards the attacker 1 VP. Airbase strikes cause no other effect, and an airbase cannot be destroyed.
             </div>
             <button class="btn btn-danger" style="float:right;" onclick="toggleModal('rules-overlay')">Close</button>
             <div style="clear:both;"></div>
@@ -396,7 +413,7 @@
             <strong>COMMANDER's GUIDE &amp; HOW TO PLAY:</strong> 
             <ul style="margin:5px 0;">
                 <li><strong>1. Pre-Game Strategic Setup:</strong> Both commanders sequentially select their strategic Posture (altering draft limits &amp; starting VP), choose an undisclosed covert Mission (bonus victory points), and draft their initial squadrons and enabler decks.</li>
-                <li><strong>2. Bidding for Initiative:</strong> Each round starts with players sacrificing Enabler cards (out of the game) to modify their d4 Initiative roll. The winner chooses turn order, attempts a Cyber Track progress roll, and gains the Intel Advantage.</li>
+                <li><strong>2. Bidding for Initiative:</strong> Each round starts with players sacrificing Enabler cards (out of the game) to modify their d4 Initiative roll. The winner acts first, attempts a Cyber Track progress roll, and gains the Intel Advantage.</li>
                 <li><strong>3. Play Intel &amp; Fog of War:</strong> Commanders roll to see how many opposing Enablers they sweep. The winner rolls with Advantage. All unacquired enemy assets remain MASKED as 'UNIDENTIFIED TRACKS' on the board.</li>
                 <li><strong>4. Combat Round Rotation (MAS Loop):</strong> Players alternate taking actions. You share 1 Move, 1 Acquire, and 1 Shoot action per turn across your forces. Turn ends when both pass consecutively. Deployed squadrons have 2 HP. Airborne tokens must RTB to avoid crashing if their base is destroyed.</li>
             </ul>
@@ -404,13 +421,11 @@
                 <button class="btn btn-warn" onclick="toggleModal('rules-overlay')">Open Full Rules &amp; Mechanics Reference</button>
             </div>
         </div>
-        <div class="scenario-box" style="border-left-color:#f57f17;">
-            <strong>SELECT CAMPAIGN:</strong>
-            <p style="font-size:12px; color:#546e7a; margin:6px 0 12px;">Campaign rules control ATO length, legal forces, missions, postures, and special scoring. First-time players should use Meeting Engagement.</p>
-            <div id="campaign-list" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-            <div id="campaign-summary" style="margin-top:10px; font-size:12px; line-height:1.5;"></div>
+        <div class="scenario-box" style="border-left-color:#f0b94a;">
+            <strong>STANDARD MATCH:</strong>
+            <p style="font-size:12px; margin:6px 0 0;">Five ATO cycles. Both commanders draft freely from every available squadron and enabler card, subject only to their selected posture. A condensed Quick Start option will be added in a later phase.</p>
         </div>
-        <button id="btn-begin-campaign" class="btn" style="width:100%; font-size:16px;" onclick="beginSetupSequence()">Acknowledge & Begin Setup</button>
+        <button id="btn-begin-setup" class="btn" style="width:100%; font-size:16px;" onclick="beginSetupSequence()">Acknowledge &amp; Begin Setup</button>
     </div>
 
     <!-- COMBINED SETUP UI (Posture -> Mission -> Draft) -->
@@ -528,10 +543,6 @@
             </div>
         </div>
 
-        <div id="selected-unit-panel" class="selected-unit-panel empty" aria-live="polite">
-            Select one of your aircraft or unit tokens to view its complete in-play profile.
-        </div>
-
         <div class="flex-container">
             <!-- US Panel -->
             <div class="panel" id="panel-us" style="border-top-width: 6px; border-top-color:#1565c0;">
@@ -549,13 +560,16 @@
 
             <!-- Board -->
             <div class="board">
+                <div id="selected-unit-panel" class="selected-unit-panel empty" aria-live="polite">
+                    Select one of your aircraft or unit tokens to view its complete in-play profile.
+                </div>
                 <div class="zone zone-prc">
-                    <div class="base" id="prc-standoff">PRC STANDOFF</div>
+                    <div class="base" id="prc-standoff" onclick="move('prc-standoff')">PRC STANDOFF</div>
                     <div class="base airbase-target" id="prc-airbase" onclick="targetAirbase('PRC')">PRC AIRBASE</div>
                 </div>
                 <div class="bands-container" id="bands-container"></div>
                 <div class="zone zone-us">
-                    <div class="base" id="us-standoff">US STANDOFF</div>
+                    <div class="base" id="us-standoff" onclick="move('us-standoff')">US STANDOFF</div>
                     <div class="base airbase-target" id="us-airbase" onclick="targetAirbase('US')">US AIRBASE</div>
                     <div class="base" id="us-contingency">US CONTINGENCY LOCATION</div>
                 </div>
@@ -599,21 +613,6 @@
         };
 
         var MISSIONS = {"US":[{"id":"mU1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mU2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mU3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mU4","title":"N-K DOMINANCE","desc":"Score at end of each ATO. +3 VP x US Cyber Rate +1VP for each electronic-warfare, Cyber, or non-kinetic card played."},{"id":"mU5","title":"ENFORCE RULE OF LAW","desc":"Score at the end of each turn. +2 VP for each squadron card activated during turn. +1 VP for each token generated by Enabler Card during turn."}],"PRC":[{"id":"mP1","title":"ECONOMY OF FORCE","desc":"Score at end of each ATO. +2 VP for each squadron not activated during ATO. +2VP for each Enabler Card representing a unit in hand not used."},{"id":"mP2","title":"ATTRITION","desc":"+3 VP Ship, Bomber, AEW token destroyed. +2 VP for each squadron card destroyed. +1 VP for all other tokens destroyed."},{"id":"mP3","title":"INTERDICTION","desc":"+4 VP for each Bomber, AEW token, and squadron card destroyed.  +3 VP for each Ship  ADA token destroyed. +2 VP for all other tokens destroyed."},{"id":"mP4","title":"THREE DOMINANCES","desc":"Score at end of each ATO. +2 VP x PRC Cyber Rate, +3 VP for each Naval unit on board, +1 VP for each Naval Enabler card played, and each intact Squadron."},{"id":"mP5","title":"COUNTER-INTERVENTION","desc":"+3 VP for each enemy Air Token destroyed on the ground. +1 VP for each PLARF card played."}]};
-
-        // Published Player Guide campaigns. The digital game applies these
-        // constraints directly so campaign selection is no longer cosmetic.
-        var CAMPAIGNS = [
-            { id:"campaign-1", title:"MEETING ENGAGEMENT", rounds:1, missions:["ATTRITION"], postures:["STANDARD"],
-              desc:"Introductory one-ATO fighter engagement.", fixedSquadrons:{US:["US-AUTH-SQ-10"],PRC:["PRC-AUTH-SQ-06"]}, noEnablers:true },
-            { id:"campaign-2", title:"TOURNAMENT", rounds:2, missions:["ATTRITION"], postures:["STANDARD"],
-              desc:"Two-ATO competitive campaign with alternating initiative and no initiative-card sacrifice.", tournamentInitiative:true },
-            { id:"campaign-3", title:"PROLONGED COMBAT", rounds:5, missions:null, postures:null,
-              desc:"Full five-ATO campaign using all legal resources." },
-            { id:"campaign-4", title:"THE WORLD WATCHES", rounds:2, missions:null, postures:null,
-              desc:"Two-ATO campaign; no long-range missiles, SOF, or bomber squadrons. Air kills earn up to +2 bonus VP per ATO.", worldOpinion:true },
-            { id:"campaign-5", title:"RESERVES", rounds:2, missions:null, postures:null,
-              desc:"Two-ATO second-line fight; no fifth-generation aircraft, bombers, or PRC long-range ADA. Intact squadrons score at campaign end.", reserves:true }
-        ];
 
         // Phase 1 Refactor: Map core stats directly to unit records, strip deprecated ammo pools
         var MASTER_DECK = [
@@ -714,8 +713,8 @@
         })();
 
         var phase5Metrics = {
-            US: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0, worldOpinionVP:0, airKills:0 },
-            PRC: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0, worldOpinionVP:0, airKills:0 }
+            US: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 },
+            PRC: { activatedThisATO:{}, activatedThisTurn:0, enablerCategoriesPlayed:0, navalEnablersPlayed:0, enablerUnitTokensGenerated:0, enablerUnitTokensGeneratedThisTurn:0, plarfPlayed:0 }
         };
 
         function chooseFromList(items, heading, formatter) {
@@ -843,7 +842,7 @@
                 var already=false, player=state[side.toLowerCase()];
                 for(var h=0;h<player.sqHand.length;h++) if(player.sqHand[h].ID===card.ID) already=true;
                 for(var ds=0;ds<player.deployedSquadrons.length;ds++) if(player.deployedSquadrons[ds].cardId===card.ID) already=true;
-                if(!already && card.Side===side && card.Type==='SQ' && card.Draftable && cardAllowedByCampaign(card) && isSquadronAvailable(card)) choices.push(card);
+                if(!already && card.Side===side && card.Type==='SQ' && card.Draftable && isSquadronAvailable(card)) choices.push(card);
             }
             if(!choices.length) return false;
             var menu='Choose an additional Squadron number:\n';
@@ -909,7 +908,7 @@
         function chooseGeneratedLocation(card, side) {
             var description=(card && card.DESC) || '';
             if(/airbase or contingency location/i.test(description)) {
-                return confirm('Place ' + card.TITLE + ' at the US Contingency Location? OK=Contingency, Cancel=US Airbase.') ? 'us-contingency' : 'us-airbase';
+                return confirm('Place ' + card.TITLE + ' at the US Airbase? OK=Airbase, Cancel=Contingency.') ? 'us-airbase' : 'us-contingency';
             }
             if(/(?:on|at) the (?:US|PRC) airbase/i.test(description)) return side==='US'?'us-airbase':'prc-airbase';
             var lane=parseInt(prompt('Deploy generated asset to range band 1-5 (from owning side):','1'),10);
@@ -990,8 +989,8 @@
 
         // STATE ENGINE
         var state = { 
-            round: 1, maxRounds: 4, turnSide: 'US', consecutivePasses: 0,
-            campaign: null, initiativeHistory: [],
+            round: 1, maxRounds: 5, turnSide: 'US', consecutivePasses: 0,
+            initiativeHistory: [],
             phase: 'landing', actionLocked: false, gameOver: false, engineErrors: [],
             tokens: [], selected: null, sqDeployedThisTurn: 0,
             acts: { move: 1, acq: 1, sht: 1 }, 
@@ -1033,7 +1032,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.1.0-phase2-executive",
+            buildVersion: "1.2.0-executive-corrections",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
@@ -1092,7 +1091,7 @@
             }
         };
 
-        AFWI.CampaignState = {
+        AFWI.MatchState = {
             getPlayer: function(side) { return state[String(side).toLowerCase()]; },
             getSquadronLedger: function(side) { return this.getPlayer(side).squadronLedger; },
             getSquadronRecord: function(cardOrId) {
@@ -1120,7 +1119,6 @@
             phase5Metrics.US.activatedThisATO={}; phase5Metrics.PRC.activatedThisATO={};
             phase5Metrics.US.enablerCategoriesPlayed=0; phase5Metrics.PRC.enablerCategoriesPlayed=0; phase5Metrics.US.navalEnablersPlayed=0; phase5Metrics.PRC.navalEnablersPlayed=0; phase5Metrics.US.enablerUnitTokensGenerated=0; phase5Metrics.PRC.enablerUnitTokensGenerated=0; phase5Metrics.US.activatedThisTurn=0; phase5Metrics.PRC.activatedThisTurn=0; phase5Metrics.US.enablerUnitTokensGeneratedThisTurn=0; phase5Metrics.PRC.enablerUnitTokensGeneratedThisTurn=0;
             phase5Metrics.US.plarfPlayed=0; phase5Metrics.PRC.plarfPlayed=0; state.selected = null; pendingAttack = null;
-            phase5Metrics.US.worldOpinionVP=0; phase5Metrics.PRC.worldOpinionVP=0; phase5Metrics.US.airKills=0; phase5Metrics.PRC.airKills=0;
                 AFWI.Events.emit("ato.cleared");
             },
             snapshot: function() {
@@ -1155,9 +1153,9 @@
                 actionEconomy:{ move:1, acquire:1, shoot:1, squadronDeploymentsPerTurn:1 },
                 winchester:{ Standard:"Natural 1-3 Winchester; natural 4 conserves", Infinite:"Natural 1-2 Winchester", Salvo:"Finite naval offensive/defensive salvo" },
                 airbase:{ acquisitionRequired:false, maxStrikes:3, vpPerSuccessfulStrike:1, destructible:false },
-                campaignPersistence:{ boardClearsEachATO:true, squadronHpPersists:true, aircraftLossesPersist:true },
+                atoPersistence:{ boardClearsEachATO:true, squadronHpPersists:true, aircraftLossesPersist:true },
                 cyber:{ instantVictoryRate:4 },
-                roundsByCampaign:[1,2,5,2,2]
+                defaultAtoCycles:5
             }
         };
 
@@ -1202,7 +1200,7 @@
             architectureSnapshot: function() {
                 return {
                     build:AFWI.Build,
-                    campaign:AFWI.CampaignState.snapshot(),
+                    match:AFWI.MatchState.snapshot(),
                     ato:AFWI.ATOState.snapshot(),
                     contentValidation:AFWI.Validator.validateContent(),
                     recentEvents:AFWI.Events.getHistory().slice(-25)
@@ -1327,52 +1325,6 @@
             overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
         }
 
-        function renderCampaignSelection() {
-            var el=document.getElementById('campaign-list');
-            if(!el) return;
-            var html='';
-            for(var i=0;i<CAMPAIGNS.length;i++) {
-                var selected=state.campaign && state.campaign.id===CAMPAIGNS[i].id;
-                html += "<div class='card "+(selected?'card-sel':'')+"' style='width:145px;' onclick='selectCampaign("+i+")'><b>"+(i+1)+". "+CAMPAIGNS[i].title+"</b><br><span style='font-size:10px;'>"+CAMPAIGNS[i].rounds+" ATO"+(CAMPAIGNS[i].rounds===1?'':'s')+"</span></div>";
-            }
-            el.innerHTML=html;
-            if(state.campaign) {
-                document.getElementById('campaign-summary').innerHTML='<b>'+state.campaign.title+'</b> &mdash; '+state.campaign.rounds+' ATO'+(state.campaign.rounds===1?'':'s')+': '+state.campaign.desc;
-                document.getElementById('btn-begin-campaign').disabled=false;
-            }
-        }
-
-        function selectCampaign(index) {
-            if(index<0 || index>=CAMPAIGNS.length) return;
-            state.campaign=CAMPAIGNS[index];
-            state.maxRounds=state.campaign.rounds;
-            renderCampaignSelection();
-        }
-
-        function campaignAllowsPosture(posture) {
-            return !state.campaign || !state.campaign.postures || state.campaign.postures.indexOf(posture.title)>=0;
-        }
-
-        function campaignAllowsMission(mission) {
-            return !state.campaign || !state.campaign.missions || state.campaign.missions.indexOf(mission.title)>=0;
-        }
-
-        function cardAllowedByCampaign(card) {
-            var campaign=state.campaign;
-            if(!campaign) return true;
-            if(campaign.fixedSquadrons && card.Type==='SQ') return campaign.fixedSquadrons[card.Side].indexOf(card.ID)>=0;
-            if(campaign.noEnablers && card.Type==='EN') return false;
-            if(campaign.worldOpinion) {
-                if(card.Type==='SQ' && card.Tags && card.Tags.indexOf('Bomber')>=0) return false;
-                if(card.Type==='EN' && ((card.Family && /SOF|AFSOC|PLARF/i.test(card.Family)) || /long-range|ballistic|cruise missile|hypersonic|tomahawk|HIMARS/i.test((card.TITLE||'')+' '+(card.DESC||'')))) return false;
-            }
-            if(campaign.reserves && card.Type==='SQ') {
-                if(card.Tags && (card.Tags.indexOf('Gen5')>=0 || card.Tags.indexOf('Bomber')>=0)) return false;
-                if(card.Side==='PRC' && card.Tags && card.Tags.indexOf('SAM')>=0 && /Long Range|SA-21/i.test((card.TITLE||'')+' '+(card.EQ||''))) return false;
-            }
-            return true;
-        }
-
         function cardAllowedByPosture(card, posture) {
             if(!posture) return true;
             if(card.Side==='PRC' && posture.title==='PLAAF' && card.Type==='EN') return !!(card.Family && /PLAAF/i.test(card.Family));
@@ -1390,7 +1342,7 @@
         function countAvailableDraftCards(side, type) {
             var count = 0;
             for(var i=0; i<MASTER_DECK.length; i++) {
-                if(MASTER_DECK[i].Side === side && MASTER_DECK[i].Type === type && MASTER_DECK[i].Draftable && cardAllowedByCampaign(MASTER_DECK[i]) && cardAllowedByPosture(MASTER_DECK[i], state[side.toLowerCase()].posture || setup.selPosture)) count++;
+                if(MASTER_DECK[i].Side === side && MASTER_DECK[i].Type === type && MASTER_DECK[i].Draftable && cardAllowedByPosture(MASTER_DECK[i], state[side.toLowerCase()].posture || setup.selPosture)) count++;
             }
             return count;
         }
@@ -1423,7 +1375,7 @@
         function deploySquadronCard(card, sideState) {
             var record = getSquadronRecord(card);
             if(record.destroyed || record.currentHp <= 0 || record.remainingQty <= 0) {
-                logPriv(card.Side, "Squadron is unavailable due to persistent campaign losses.", true);
+                logPriv(card.Side, "Squadron is unavailable due to persistent match losses.", true);
                 return false;
             }
             var deployed = {
@@ -1435,7 +1387,7 @@
                 destroyed: record.destroyed,
                 vp: record.vp,
                 acquired: false,
-                campaignRef: record
+                ledgerRef: record
             };
             sideState.deployedSquadrons.push(deployed);
             var loc = getDeploymentLocation(card);
@@ -1469,23 +1421,36 @@
         }
 
         function syncSquadronDamage(deployedSq) {
-            if(deployedSq && deployedSq.campaignRef) {
-                deployedSq.campaignRef.currentHp = Math.max(0, deployedSq.currentHp);
-                deployedSq.campaignRef.destroyed = !!deployedSq.destroyed;
+            if(deployedSq && deployedSq.ledgerRef) {
+                deployedSq.ledgerRef.currentHp = Math.max(0, deployedSq.currentHp);
+                deployedSq.ledgerRef.destroyed = !!deployedSq.destroyed;
             }
         }
 
         function getEffectiveDraftLimit(side, type, posture) {
-            if(state.campaign && state.campaign.fixedSquadrons && type==='SQ') return state.campaign.fixedSquadrons[side].length;
-            if(state.campaign && state.campaign.noEnablers && type==='EN') return 0;
             var requested = (type === "SQ") ? posture.sq : posture.en;
             return Math.min(requested, countAvailableDraftCards(side, type));
         }
 
+        function canUseStandoffCard(card) {
+            if(!card || card.Type !== 'SQ') return false;
+            if(card.Loc === 'standoff' || /\bor standoff\b/i.test(card.DESC || '')) return true;
+            return !!(card.Tags && (card.Tags.indexOf('Bomber') >= 0 || card.Tags.indexOf('AEW') >= 0));
+        }
+
+        function canUseStandoffToken(tok) {
+            if(!tok || !tok.side) return false;
+            var card = tok.cardId ? getMasterCard(tok.cardId) : null;
+            return canUseStandoffCard(card) || !!(tok.tags && (tok.tags.indexOf('Bomber') >= 0 || tok.tags.indexOf('AEW') >= 0));
+        }
+
         function getDeploymentLocation(card) {
             if(card.Tags && card.Tags.includes("Naval")) return (card.Side === "US") ? "lane-5" : "lane-1";
+            if(canUseStandoffCard(card) && confirm("Deploy " + card.TITLE + " to the " + card.Side + " Standoff zone? OK=Standoff, Cancel=continue to base selection.")) {
+                return card.Side === "US" ? "us-standoff" : "prc-standoff";
+            }
             if(card.Side === "US" && !(state.us.posture && state.us.posture.title === "SURGE") && card.Tags && !card.Tags.includes("Naval")) {
-                if(confirm("Base " + card.TITLE + " at the US Contingency Location? OK=Contingency, Cancel=US Airbase.")) return "us-contingency";
+                if(!confirm("Base " + card.TITLE + " at the US Airbase? OK=Airbase, Cancel=Contingency.")) return "us-contingency";
             }
             return card.Side === "US" ? "us-airbase" : "prc-airbase";
         }
@@ -1498,8 +1463,7 @@
 
         // SETUP PHASE ENGINE
         function beginSetupSequence() {
-            if(!state.campaign) { alert('Select a Campaign.'); return; }
-            state.maxRounds=state.campaign.rounds;
+            state.maxRounds=5;
             setup.side = "US"; setup.step = 1; setup.selPosture = null; setup.selMission = null; setup.picks = [];
             renderSetupUI();
             showUI('setup-ui');
@@ -1515,7 +1479,7 @@
 
             if(setup.step === 1) {
                 var pList = [];
-                for(var pi=0;pi<POSTURES[setup.side].length;pi++) if(campaignAllowsPosture(POSTURES[setup.side][pi])) pList.push(POSTURES[setup.side][pi]);
+                for(var pi=0;pi<POSTURES[setup.side].length;pi++) pList.push(POSTURES[setup.side][pi]);
                 setup.posturePool=pList;
                 var html = "";
                 for(var i=0; i<pList.length; i++) {
@@ -1527,7 +1491,7 @@
             else if (setup.step === 2) {
                 if(!setup.missionPool) {
                     setup.missionPool = [];
-                    for(var mi=0;mi<MISSIONS[setup.side].length;mi++) if(campaignAllowsMission(MISSIONS[setup.side][mi])) setup.missionPool.push(MISSIONS[setup.side][mi]);
+                    for(var mi=0;mi<MISSIONS[setup.side].length;mi++) setup.missionPool.push(MISSIONS[setup.side][mi]);
                 }
                 var html = "";
                 for(var i=0; i<setup.missionPool.length; i++) {
@@ -1583,14 +1547,14 @@
 
             for(var j=0; j<MASTER_DECK.length; j++) {
                 var c = MASTER_DECK[j];
-                if(c.Side === setup.side && c.Draftable && isSquadronAvailable(c) && cardAllowedByCampaign(c) && cardAllowedByPosture(c, setup.selPosture)) {
+                if(c.Side === setup.side && c.Draftable && isSquadronAvailable(c) && cardAllowedByPosture(c, setup.selPosture)) {
                     var picked = false;
                     for(var p=0; p<setup.picks.length; p++) { if(setup.picks[p].ID === c.ID) picked = true; }
                     if(!picked) {
                         var statusTxt = "";
                         if(c.Type === "SQ") {
                             var rec = getSquadronRecord(c);
-                            statusTxt = "<br><span style='font-size:10px; font-weight:bold;'>Campaign State: HP " + rec.currentHp + "/" + rec.maxHp + " | Aircraft " + rec.remainingQty + "/" + rec.maxQty + "</span>";
+                            statusTxt = "<br><span style='font-size:10px; font-weight:bold;'>Match State: HP " + rec.currentHp + "/" + rec.maxHp + " | Aircraft " + rec.remainingQty + "/" + rec.maxQty + "</span>";
                         }
                         var cHtml = "<div class='card' onclick='draftCard("+j+")'><b>" + c.TITLE + "</b><br><i style='color:"+(c.Side==="US"?"#1565c0":"#c62828")+"'>" + c.EQ + "</i><br><span style='font-size:10px; color:#546e7a;'>" + c.DESC + "</span>" + statusTxt + "</div>";
                         if(c.Type === "SQ") sqHtml += cHtml;
@@ -1645,16 +1609,6 @@
             setup.prcSacrifices = [];
             setup.bidSide = "US"; 
 
-            if(state.campaign && state.campaign.tournamentInitiative) {
-                state.forcedInitiativeWinner=(state.round>1 && state.tournamentFirstWinner)?(state.tournamentFirstWinner==='US'?'PRC':'US'):null;
-                resolveInitiativeBid(true);
-                return;
-            }
-            if(state.campaign && state.campaign.worldOpinion && state.round===2 && state.worldOpinionInitiative) {
-                state.forcedInitiativeWinner=state.worldOpinionInitiative;
-                resolveInitiativeBid(false);
-                return;
-            }
             state.forcedInitiativeWinner=null;
 
             document.getElementById('bid-handover-box').style.display = 'block';
@@ -1683,8 +1637,7 @@
             var html = "";
             for(var i=0; i<hand.length; i++) {
                 var isSac = sacList.includes(i);
-                var style = isSac ? "border-color: #c62828; background: #ffebee;" : "";
-                html += "<div class='card' style='"+style+"' onclick='toggleSacrificeActive("+i+")'><b>" + hand[i].TITLE + "</b> [" + hand[i].EQ + "]<br><i>" + (isSac ? "SACRIFICED (+1 Roll)" : "In Hand") + "</i></div>";
+                html += "<div class='card " + (isSac ? "card-sacrificed" : "") + "' onclick='toggleSacrificeActive("+i+")'><b>" + hand[i].TITLE + "</b> [" + hand[i].EQ + "]<br><i>" + (isSac ? "SACRIFICED (+1 Roll)" : "In Hand") + "</i></div>";
             }
             document.getElementById('active-sac-pool').innerHTML = html || "<i>No Enablers in Hand.</i>";
             document.getElementById('active-sac-status').innerText = side + " Bid Modifier: +" + sacList.length;
@@ -1714,7 +1667,7 @@
             }
         }
 
-        function resolveInitiativeBid(tournamentMode) {
+        function resolveInitiativeBid() {
             var usMod = setup.usSacrifices.length;
             var prcMod = setup.prcSacrifices.length;
 
@@ -1728,10 +1681,8 @@
                 } while(usTotal === prcTotal);
                 winner = prcTotal > usTotal ? 'PRC' : 'US';
             }
-            if(tournamentMode && state.round===1) state.tournamentFirstWinner=winner;
             state.initiativeHistory.push({round:state.round,winner:winner});
-            var chosenFirst = confirm(winner + " won initiative. Should US act first? OK=US, Cancel=PRC") ? "US" : "PRC";
-            state.initiativeFirstSide = chosenFirst;
+            state.initiativeFirstSide = winner;
 
             function deleteSacrificedCards(sideStr) {
                 var hand = state[sideStr.toLowerCase()].enHand;
@@ -2176,6 +2127,7 @@
                 var html = "<div class='airbase-header'><span>" + sideStr + " AIRBASE</span><span class='airbase-strikes" + cappedClass + "'>STRIKES " + strikes + "/3</span></div>";
                 var arr = state[sideKey].deployedSquadrons || [];
                 var contingencyHtml = "<div class='airbase-header'><span>US CONTINGENCY</span></div>";
+                var standoffHtml = "<div class='airbase-header'><span>" + sideStr + " STANDOFF</span></div>";
                 for(var i=0; i<arr.length; i++) {
                     if(arr[i].destroyed || arr[i].currentHp <= 0) continue;
                     var ledger = state[sideKey].squadronLedger[arr[i].cardId] || null;
@@ -2183,10 +2135,13 @@
                     var isKnown = sideStr === state.turnSide || !!arr[i].acquired;
                     var cardContent = isKnown ? ("<b>" + arr[i].name + "</b><br>HP: " + arr[i].currentHp + "/" + arr[i].maxHp + "<br>Aircraft: " + qtyText) : "<b>UNIDENTIFIED SQUADRON</b><br>FOG OF WAR<br>AQ: 1";
                     var cardHtml = "<div class='squadron-board-card " + sideKey + "' onclick='event.cancelBubble=true; targetDeployedSquadron(\"" + sideStr + "\", " + i + ")'>" + cardContent + "</div>";
-                    if(sideStr === "US" && arr[i].baseLoc === "us-contingency") contingencyHtml += cardHtml;
+                    if(arr[i].baseLoc === sideKey + "-standoff") standoffHtml += cardHtml;
+                    else if(sideStr === "US" && arr[i].baseLoc === "us-contingency") contingencyHtml += cardHtml;
                     else html += cardHtml;
                 }
                 baseEl.innerHTML = html;
+                var standoffEl = document.getElementById(sideKey + '-standoff');
+                if(standoffEl) standoffEl.innerHTML = standoffHtml;
                 if(sideStr === "US") {
                     var clEl = document.getElementById('us-contingency');
                     if(clEl) clEl.innerHTML = contingencyHtml;
@@ -2740,7 +2695,7 @@
         }
 
         function resolveDestroyedSquadronTokens(cardId, sideStr) {
-            var baseLocations = [sideStr === "US" ? "us-airbase" : "prc-airbase", "us-contingency"];
+            var baseLocations = [sideStr === "US" ? "us-airbase" : "prc-airbase", sideStr === "US" ? "us-standoff" : "prc-standoff", "us-contingency"];
             for(var i=state.tokens.length-1; i>=0; i--) {
                 var t=state.tokens[i];
                 if(t.parentSqId !== cardId) continue;
@@ -2774,14 +2729,6 @@
                 } else if(title==='COUNTER-INTERVENTION' && !destroyedTok.sqRef && tags.indexOf('Squadron')<0 && destroyedTok.loc && (destroyedTok.loc.indexOf('airbase')>=0 || destroyedTok.loc.indexOf('contingency')>=0) && tags.indexOf('SAM')<0 && tags.indexOf('Naval')<0) points=3;
                 if(points) { ps.vp+=points; logPub(scorer+' Mission ('+title+'): +'+points+' VP'); }
             }
-            var destroyedInAir=destroyedTok.loc && destroyedTok.loc.indexOf('lane-')===0 && tags.indexOf('SAM')<0 && tags.indexOf('Naval')<0;
-            if(state.campaign && state.campaign.worldOpinion && destroyedInAir) {
-                phase5Metrics[scorer].airKills++;
-                if(phase5Metrics[scorer].worldOpinionVP<2) {
-                    phase5Metrics[scorer].worldOpinionVP++; ps.vp++;
-                    logPub(scorer+' World Opinion air-victory bonus: +1 VP ('+phase5Metrics[scorer].worldOpinionVP+'/2 this ATO).');
-                }
-            }
         }
 
         function checkRoundEndMissions() {
@@ -2811,6 +2758,13 @@
                 if(typeof bandMap[targetLoc] === 'undefined') { engineError('Move rejected: invalid destination.'); return; }
 
                 if(state.acts.move <= 0) { logPriv(state.turnSide, "No MOVE actions left.", true); return; }
+                if(/-standoff$/.test(targetLoc)) {
+                    var ownStandoff = state.turnSide.toLowerCase() + '-standoff';
+                    if(targetLoc !== ownStandoff || !canUseStandoffToken(tok)) {
+                        logPriv(state.turnSide, "Only eligible friendly bomber or AEW forces may enter their owning Standoff zone.", true);
+                        return;
+                    }
+                }
                 if(pState.buffs.moveDenied) {
                     logAction("MOVE DENIED BY A2/AD ENABLER!", "Adversary A2/AD triggered, cancelling their movement."); pState.buffs.moveDenied = false; state.acts.move--; state.selected = null; drawUI(); return;
                 }
@@ -2843,7 +2797,12 @@
                         state.tokens.splice(i, 1);
                     } else {
                         var isNavalShip = t.tags && t.tags.includes("SAG");
-                        if(!isNavalShip) t.loc = (state.turnSide === "US") ? "us-airbase" : "prc-airbase";
+                        if(!isNavalShip) {
+                            var home = (state.turnSide === "US") ? "us-airbase" : "prc-airbase";
+                            var deployed = state[state.turnSide.toLowerCase()].deployedSquadrons || [];
+                            for(var d=0; d<deployed.length; d++) if(deployed[d].cardId === t.parentSqId && deployed[d].baseLoc) { home = deployed[d].baseLoc; break; }
+                            t.loc = home;
+                        }
                         t.winchester = false; 
                         count++;
                     }
@@ -2894,12 +2853,6 @@
             state.actionLocked = true;
             setPhase('roundResolution');
             checkRoundEndMissions();
-            if(state.campaign && state.campaign.worldOpinion && state.round===1) {
-                if(phase5Metrics.US.airKills>phase5Metrics.PRC.airKills) state.worldOpinionInitiative='US';
-                else if(phase5Metrics.PRC.airKills>phase5Metrics.US.airKills) state.worldOpinionInitiative='PRC';
-                else state.worldOpinionInitiative=null;
-            }
-
             // Phase 4 Attrition Check: Airborne units whose base is destroyed crash when attempting to land
             var crashCount = 0;
             for(var i=state.tokens.length-1; i>=0; i--) {
@@ -2942,16 +2895,6 @@
             validateEngineState('endRound');
             state.round++;
             if(state.round > state.maxRounds) {
-                if(state.campaign && state.campaign.reserves && !state.campaignEndScored) {
-                    var reserveSides=['US','PRC'];
-                    for(var rs=0;rs<reserveSides.length;rs++) {
-                        var reserveSide=reserveSides[rs], reservePlayer=state[reserveSide.toLowerCase()], intact=0;
-                        for(var rid in reservePlayer.draftedSquadrons) if(reservePlayer.draftedSquadrons.hasOwnProperty(rid) && reservePlayer.squadronLedger[rid] && reservePlayer.squadronLedger[rid].currentHp>0) intact++;
-                        reservePlayer.vp+=intact;
-                        if(intact) logPub(reserveSide+' Reserves campaign intact-squadron bonus: +'+intact+' VP.');
-                    }
-                    state.campaignEndScored=true;
-                }
                 var winnerTxt = "DRAW (STALEMATE)";
                 if(state.us.vp > state.prc.vp) winnerTxt = "US FORCES WIN";
                 else if (state.prc.vp > state.us.vp) winnerTxt = "PRC FORCES WIN";
@@ -2998,7 +2941,6 @@
         }
 
         /* Boot after all legacy function declarations are available. */
-        selectCampaign(0);
         AFWI.Bootstrap.initialize();
     </script>
 </body>

@@ -1,5 +1,7 @@
 # AFWI 1.0 Final - Phase One Finalization Report
 
+> Historical baseline: the selectable campaign system documented below was superseded and removed in build `1.2.0-executive-corrections`. The current game uses the fixed five-ATO Standard Match and complete available card pool.
+
 ## Outcome
 
 Phase One gameplay implementation is complete. `AFWI.html` is the final

@@ -27,7 +27,7 @@ async function main() {
 
   await page.goto(gameUrl, { waitUntil: 'load' });
   await page.waitForTimeout(200);
-  await page.screenshot({ path: path.join(outputDir, 'phase2-executive-landing-1680x1050.png'), fullPage: true });
+  await page.screenshot({ path: path.join(outputDir, 'phase2-corrections-landing-1680x1050.png'), fullPage: true });
 
   const landing = await page.evaluate(() => ({
     title: document.title,
@@ -38,8 +38,20 @@ async function main() {
   }));
   assert(landing.title === 'AFWI Executive Edition', 'Executive page title is missing.');
   assert(landing.width <= landing.viewport, 'Landing page overflows horizontally.');
-  assert(/landing-f35-executive-v3/.test(landing.hero), 'Approved landing photograph is not active.');
+  assert(/landing-command-center-v2/.test(landing.hero), 'New command-center landing image is not active.');
   assert(landing.logoLoaded, 'Landing logo did not load.');
+
+  await page.click('#landing-ui button');
+  await page.click('#btn-begin-setup');
+  await page.hover('#setup-step-1 .btn');
+  await page.screenshot({ path: path.join(outputDir, 'phase2-corrections-setup-1680x1050.png'), fullPage: true });
+  const setupTheme = await page.evaluate(() => {
+    const container=getComputedStyle(document.getElementById('setup-ui'));
+    const button=getComputedStyle(document.querySelector('#setup-step-1 .btn'));
+    return {background:container.backgroundImage,color:container.color,buttonBorder:button.borderColor,buttonOutline:button.outlineColor};
+  });
+  assert(/radial-gradient/.test(setupTheme.background), 'Setup UI does not use the command-glass theme.');
+  assert(setupTheme.buttonBorder === 'rgb(240, 185, 74)' && setupTheme.buttonOutline === 'rgba(240, 185, 74, 0.42)', 'Setup button hover is not visibly highlighted.');
 
   await page.evaluate(() => {
     const usCards = ['US-AUTH-SQ-10','US-AUTH-SQ-08','US-AUTH-SQ-02','US-AUTH-SQ-04'].map(getMasterCard);
@@ -57,7 +69,7 @@ async function main() {
     state.us.squadronLedger = {};
     state.prc.squadronLedger = {};
     state.tokens = [];
-    window.confirm = () => false;
+    window.confirm = () => true;
     deploySquadronCard(usCards[0], state.us);
     deploySquadronCard(prcCards[0], state.prc);
     state.tokens[0].loc = 'lane-4';
@@ -77,7 +89,7 @@ async function main() {
   });
 
   await page.waitForTimeout(200);
-  await page.screenshot({ path: path.join(outputDir, 'phase2-executive-us-command-1680x1050.png') });
+  await page.screenshot({ path: path.join(outputDir, 'phase2-corrections-us-command-1680x1050.png') });
 
   const board = await page.evaluate(() => {
     const box = selector => {
@@ -87,7 +99,7 @@ async function main() {
     const zones = [...document.querySelectorAll('.zone')];
     const bases = ['#prc-standoff','#prc-airbase','#us-standoff','#us-airbase','#us-contingency'];
     return {
-      usPanel: box('#panel-us'), prcPanel: box('#panel-prc'),
+      usPanel: box('#panel-us'), prcPanel: box('#panel-prc'), board:box('.board'), hud:box('#selected-unit-panel'),
       prcZone: box('.zone-prc'), usZone: box('.zone-us'),
       usStandoff: box('#us-standoff'), usAirbase: box('#us-airbase'), usContingency: box('#us-contingency'),
       zoneOpacities: bases.map(selector => getComputedStyle(document.querySelector(selector),'::before').opacity),
@@ -106,6 +118,7 @@ async function main() {
 
   assert(Math.abs(board.usPanel.width - board.prcPanel.width) < 0.5, 'Command side panels are not equal width.');
   assert(Math.abs(board.usPanel.height - board.prcPanel.height) < 0.5, 'Command side panels are not equal height.');
+  assert(board.hud.x >= board.board.x && board.hud.right <= board.board.right && board.hud.width >= board.board.width - 20, `Selected-token HUD is not constrained to the board column (${board.hud.width}/${board.board.width}).`);
   assert(Math.abs(board.usZone.width - board.prcZone.width) < 0.5, 'US and PRC play areas are not equal width.');
   assert(Math.abs(board.usZone.height - board.prcZone.height) < 0.5, 'US and PRC play areas are not equal height.');
   assert(new Set(board.zoneOpacities).size === 1, 'Play-area image transparency is not equal.');
@@ -127,21 +140,22 @@ async function main() {
     window.scrollTo(0, 0);
   });
   await page.waitForTimeout(200);
-  await page.screenshot({ path: path.join(outputDir, 'phase2-executive-prc-command-1680x1050.png') });
+  await page.screenshot({ path: path.join(outputDir, 'phase2-corrections-prc-command-1680x1050.png') });
 
   const masSpent = await page.evaluate(() => [...document.querySelectorAll('#mas-indicator .mas-cell')].map(el => el.className));
   assert(/spent/.test(masSpent[0]) && /available/.test(masSpent[1]) && /spent/.test(masSpent[2]), 'M-A-S spent state does not track the action pool.');
   assert(runtimeErrors.length === 0, `Browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
   const report = {
-    build: '1.1.0-phase2-executive',
+    build: '1.2.0-executive-corrections',
     viewport: '1680x1050',
-    checks: 18,
+    checks: 21,
     status: 'PASS',
     screenshots: [
-      'phase2-executive-landing-1680x1050.png',
-      'phase2-executive-us-command-1680x1050.png',
-      'phase2-executive-prc-command-1680x1050.png'
+      'phase2-corrections-landing-1680x1050.png',
+      'phase2-corrections-setup-1680x1050.png',
+      'phase2-corrections-us-command-1680x1050.png',
+      'phase2-corrections-prc-command-1680x1050.png'
     ]
   };
   fs.writeFileSync(path.join(outputDir, 'phase2-visual-regression.json'), `${JSON.stringify(report, null, 2)}\n`);

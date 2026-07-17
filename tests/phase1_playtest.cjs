@@ -47,14 +47,15 @@ async function main() {
     }
   }
 
-  await test('boot, content validation, and five-campaign selector', async page => {
+  await test('boot, content validation, and fixed five-ATO match format', async page => {
     const result = await page.evaluate(() => ({
       title: document.title,
       version: AFWI.Build.buildVersion,
-      campaigns: CAMPAIGNS.map(c => ({ title: c.title, rounds: c.rounds })),
       validation: AFWI.Validator.validateContent(),
-      selected: state.campaign && state.campaign.id,
-      buttons: document.querySelectorAll('#campaign-list .card').length,
+      maxRounds: state.maxRounds,
+      campaignGlobals: typeof CAMPAIGNS + ',' + typeof selectCampaign,
+      campaignUi: !!document.getElementById('campaign-list'),
+      rulesCycles: AFWI.Rules.manifest.defaultAtoCycles,
       corruptedPrcTitles: MASTER_DECK.filter(c => c.Side==='PRC' && c.Authoritative && /[ÃÂæçéå]/.test(c.TITLE||'')).map(c=>c.ID),
       mediumAda: getMasterCard('PRC-AUTH-SQ-02'),
       longAda: getMasterCard('PRC-AUTH-SQ-05'),
@@ -62,44 +63,36 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI Executive Edition', 'executive title missing');
-    assert(result.version === '1.1.0-phase2-executive', 'phase two build version missing');
-    assert(result.campaigns.length === 5, 'five campaigns were not registered');
-    assert(result.campaigns.map(c => c.rounds).join(',') === '1,2,5,2,2', 'campaign ATO lengths are incorrect');
+    assert(result.version === '1.2.0-executive-corrections', 'correction build version missing');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
-    assert(result.selected === 'campaign-1' && result.buttons === 5, 'default campaign selector is not playable');
+    assert(result.maxRounds === 5 && result.rulesCycles === 5, 'default match is not five ATO cycles');
+    assert(result.campaignGlobals === 'undefined,undefined' && !result.campaignUi, 'campaign system was not removed');
     assert(result.corruptedPrcTitles.length === 0, `corrupted PRC titles: ${result.corruptedPrcTitles.join(',')}`);
     assert(result.mediumAda.Spd === 0 && result.mediumAda.ShtR === 2 && result.longAda.Spd === 0 && result.longAda.ShtR === 4, 'PRC ADA profiles are not operational');
     assert(result.prcAew.Tags.join(',') === 'AEW', 'PRC AEW was incorrectly tagged as a fifth-generation fighter');
     assert(!/\bOR\s*$/i.test(result.specialMission), 'Special Mission Aircraft still has an incomplete rules sentence');
   });
 
-  await test('campaign-specific force restrictions', async page => {
+  await test('complete authoritative force pool is freely draftable', async page => {
     const result = await page.evaluate(() => {
-      function visible(campaignIndex, side) {
-        selectCampaign(campaignIndex);
-        return MASTER_DECK.filter(c => c.Side === side && c.Draftable && cardAllowedByCampaign(c)).map(c => c.ID);
-      }
-      const meetingUS = visible(0, 'US');
-      const meetingPRC = visible(0, 'PRC');
-      const worldUS = visible(3, 'US');
-      const reservesUS = visible(4, 'US');
-      const reservesPRC = visible(4, 'PRC');
+      const visible = side => MASTER_DECK.filter(c => c.Side === side && c.Draftable).map(c => c.ID);
+      const us = visible('US'), prc = visible('PRC');
       return {
-        meetingUS, meetingPRC, worldUS, reservesUS, reservesPRC,
-        meetingNoEnablers: meetingUS.every(id => getMasterCard(id).Type === 'SQ') && meetingPRC.every(id => getMasterCard(id).Type === 'SQ'),
-        worldHasForbidden: worldUS.some(id => { const c=getMasterCard(id); return c.Tags && c.Tags.indexOf('Bomber') >= 0 || /special operations|long.range missile/i.test((c.TITLE||'')+' '+(c.DESC||'')); }),
-        reservesHasForbidden: reservesUS.concat(reservesPRC).some(id => { const c=getMasterCard(id); return c.Tags && (c.Tags.indexOf('Gen5') >= 0 || c.Tags.indexOf('Bomber') >= 0) || c.Side==='PRC' && c.Tags && c.Tags.indexOf('SAM') >= 0 && /Long Range|SA-21/i.test((c.TITLE||'')+' '+(c.EQ||'')); })
+        usSquadrons:us.filter(id=>getMasterCard(id).Type==='SQ').length,
+        usEnablers:us.filter(id=>getMasterCard(id).Type==='EN').length,
+        prcSquadrons:prc.filter(id=>getMasterCard(id).Type==='SQ').length,
+        prcEnablers:prc.filter(id=>getMasterCard(id).Type==='EN').length,
+        hasBomber:us.concat(prc).some(id=>{const c=getMasterCard(id);return c.Tags&&c.Tags.indexOf('Bomber')>=0;}),
+        hasGen5:us.concat(prc).some(id=>{const c=getMasterCard(id);return c.Tags&&c.Tags.indexOf('Gen5')>=0;})
       };
     });
-    assert(result.meetingNoEnablers, 'Meeting Engagement exposed enablers');
-    assert(result.meetingUS.length === 1 && result.meetingPRC.length === 1, 'Meeting Engagement did not lock the prescribed forces');
-    assert(!result.worldHasForbidden, 'World Watches exposed a forbidden capability');
-    assert(!result.reservesHasForbidden, 'Reserves exposed a forbidden capability');
+    assert(result.usSquadrons === 10 && result.prcSquadrons === 10, 'all authoritative squadrons are not draftable');
+    assert(result.usEnablers === 34 && result.prcEnablers === 34, 'all authoritative enablers are not draftable');
+    assert(result.hasBomber && result.hasGen5, 'free draft incorrectly filtered major capabilities');
   });
 
   await test('posture restrictions and zero-cost draft exceptions', async page => {
     const result = await page.evaluate(() => {
-      selectCampaign(2);
       const joint = POSTURES.PRC.find(p => p.title === 'JOINT OPERATIONS');
       const ada = POSTURES.PRC.find(p => p.title === 'ADA');
       const standoff = POSTURES.US.find(p => p.title === 'STANDOFF');
@@ -122,40 +115,34 @@ async function main() {
         fighter: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Fighter')>=0),
         uas: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('UAS')>=0),
         bomber: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Bomber')>=0),
-        aew: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('AEW')>=0),
         ada: MASTER_DECK.find(c => c.Side==='US' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('SAM')>=0),
         prcFighter: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Fighter')>=0),
-        prcUas: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('UAS')>=0),
-        prcBomber: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Bomber')>=0),
-        prcAew: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('AEW')>=0)
+        prcBomber: MASTER_DECK.find(c => c.Side==='PRC' && c.Type==='SQ' && c.Tags && c.Tags.indexOf('Bomber')>=0)
       };
       state.us.posture=POSTURES.US.find(p=>p.title==='STANDARD');
-      window.confirm = () => false;
-      const normal = {
-        fighter: getDeploymentLocation(cards.fighter),
-        uas: getDeploymentLocation(cards.uas),
-        bomber: getDeploymentLocation(cards.bomber),
-        aew: getDeploymentLocation(cards.aew),
-        ada: cards.ada ? getDeploymentLocation(cards.ada) : 'us-airbase',
-        prcFighter: getDeploymentLocation(cards.prcFighter),
-        prcUas: getDeploymentLocation(cards.prcUas),
-        prcBomber: getDeploymentLocation(cards.prcBomber),
-        prcAew: getDeploymentLocation(cards.prcAew)
-      };
       window.confirm = () => true;
-      return {normal,contingency:getDeploymentLocation(cards.fighter)};
+      const usDefault = {fighter:getDeploymentLocation(cards.fighter),uas:getDeploymentLocation(cards.uas),ada:cards.ada?getDeploymentLocation(cards.ada):'us-airbase'};
+      window.confirm = () => false;
+      const contingency=getDeploymentLocation(cards.fighter);
+      let answers=[false,true]; window.confirm=()=>answers.shift();
+      const bomberBase=getDeploymentLocation(cards.bomber);
+      window.confirm=()=>true; const bomberStandoff=getDeploymentLocation(cards.bomber);
+      window.confirm=()=>false; const prcBomberBase=getDeploymentLocation(cards.prcBomber);
+      window.confirm=()=>true; const prcBomberStandoff=getDeploymentLocation(cards.prcBomber);
+      return {usDefault,contingency,bomberBase,bomberStandoff,prcBomberBase,prcBomberStandoff,prcFighter:getDeploymentLocation(cards.prcFighter)};
     });
-    assert(Object.values(result.normal).slice(0,5).every(loc=>loc==='us-airbase'), 'a US squadron did not generate at the US airbase');
-    assert(Object.values(result.normal).slice(5).every(loc=>loc==='prc-airbase'), 'a PRC squadron did not generate at the PRC airbase');
+    assert(Object.values(result.usDefault).every(loc=>loc==='us-airbase'), 'OK did not default US deployment to the airbase');
     assert(result.contingency === 'us-contingency', 'US contingency selection was not honored');
+    assert(result.bomberBase==='us-airbase' && result.bomberStandoff==='us-standoff', 'US standoff-capable force locations failed');
+    assert(result.prcBomberBase==='prc-airbase' && result.prcBomberStandoff==='prc-standoff' && result.prcFighter==='prc-airbase', 'PRC force locations failed');
   });
 
   await test('Enabler cards retain their explicit generation locations', async page => {
     const result = await page.evaluate(() => {
       const ada=getMasterCard('US-AUTH-EN-26'), ec130=getMasterCard('US-AUTH-EN-20'), j15=getMasterCard('PRC-AUTH-EN-26');
-      window.confirm=()=>false; window.prompt=()=> '3';
+      window.confirm=()=>true; window.prompt=()=> '3';
       const adaBase=chooseGeneratedLocation(ada,'US');
-      window.confirm=()=>true;
+      window.confirm=()=>false;
       const adaContingency=chooseGeneratedLocation(ada,'US');
       return {adaBase,adaContingency,ec130:chooseGeneratedLocation(ec130,'US'),j15:chooseGeneratedLocation(j15,'PRC')};
     });
@@ -279,7 +266,7 @@ async function main() {
     });
     assert(result.shipPresent, 'cancelled submarine card still destroyed its target');
     assert(result.usHand === 0 && result.prcHand === 0 && result.usDiscard === 1 && result.prcDiscard === 1, 'submarine attack/counter cards were not both consumed');
-    assert(!result.usDraftable && !result.prcDraftable, 'cancelled single-use cards were not removed from the campaign pool');
+    assert(!result.usDraftable && !result.prcDraftable, 'cancelled single-use cards were not removed from the match pool');
   });
 
   await test('Winchester rules for static ADA, UAS, and naval salvos', async page => {
@@ -330,7 +317,7 @@ async function main() {
 
   await test('mission scoring uses authoritative categories and no generic token VP', async page => {
     const result = await page.evaluate(() => {
-      function score(mission,tok){state.us.vp=0;state.prc.vp=0;state.us.mission={title:mission};state.prc.mission=null;state.campaign=null;checkMissionVP(tok);return state.us.vp;}
+      function score(mission,tok){state.us.vp=0;state.prc.vp=0;state.us.mission={title:mission};state.prc.mission=null;checkMissionVP(tok);return state.us.vp;}
       state.us.vp=0;state.us.mission={title:'COUNTER-INTERVENTION'};state.prc.squadronLedger={SQ:{remainingQty:2,maxQty:2}};
       state.tokens=[{side:'PRC',name:'Ground 1',loc:'prc-airbase',parentSqId:'SQ',tags:['Fighter']},{side:'PRC',name:'Ground 2',loc:'prc-airbase',parentSqId:'SQ',tags:['Fighter']}];
       resolveDestroyedSquadronTokens('SQ','PRC'); const groundDestruction=state.us.vp;
@@ -351,43 +338,47 @@ async function main() {
     assert(result.groundDestruction === 6, 'aircraft destroyed with their ground squadron did not score as ground kills');
   });
 
-  await test('World Watches ATO bonus is capped and drives next initiative', async page => {
+  await test('initiative winner always acts first without a turn-order prompt', async page => {
     const result = await page.evaluate(() => {
-      selectCampaign(3); state.us.vp=0; state.prc.vp=0; state.us.mission=null; state.prc.mission=null;
-      phase5Metrics.US.airKills=0; phase5Metrics.US.worldOpinionVP=0; phase5Metrics.PRC.airKills=0;
-      for(let i=0;i<3;i++) checkMissionVP({side:'PRC',loc:'lane-2',tags:['Fighter']});
-      state.round=1; state.phase='action'; state.actionLocked=false; state.tokens=[]; state.maxRounds=2;
-      const original=showInterstitial; showInterstitial=(m,s,cb)=>cb();
-      endRound(); showInterstitial=original;
-      return { vp:state.us.vp, round:state.round, initiative:state.worldOpinionInitiative };
+      state.forcedInitiativeWinner='PRC'; state.prc.cyber=1; state.us.cyber=1;
+      state.us.enHand=[]; state.prc.enHand=[]; setup.usSacrifices=[]; setup.prcSacrifices=[];
+      let prompts=0; window.confirm=()=>{prompts++;return true;}; AFWI.Random.setSequence([1,1,1,1,1]);
+      resolveInitiativeBid();
+      return {winner:state.intelAdvSide,first:state.initiativeFirstSide,prompts};
     });
-    assert(result.vp === 2, 'World Watches bonus exceeded or missed the +2/ATO cap');
-    assert(result.round === 2 && result.initiative === 'US', 'World Watches did not carry air-victory initiative into ATO 2');
+    assert(result.winner === 'PRC' && result.first === 'PRC', 'initiative winner did not receive first action');
+    assert(result.prompts === 0, 'initiative resolution still asked players to select first side');
   });
 
-  await test('Reserves campaign awards intact drafted squadrons once at campaign end', async page => {
+  await test('standoff deployment, movement, centering, and wrapping are operational', async page => {
     const result = await page.evaluate(() => {
-      selectCampaign(4); state.us.vp=0; state.prc.vp=0; state.us.mission=null; state.prc.mission=null;
-      state.us.draftedSquadrons={A:true,B:true}; state.prc.draftedSquadrons={C:true};
-      state.us.squadronLedger={A:{currentHp:2},B:{currentHp:0}}; state.prc.squadronLedger={C:{currentHp:1}};
-      state.round=2;state.maxRounds=2;state.phase='action';state.actionLocked=false;state.tokens=[];
-      endRound();
-      const first={us:state.us.vp,prc:state.prc.vp,over:state.gameOver};
-      state.actionLocked=false; endRound();
-      return {first,us:state.us.vp,prc:state.prc.vp};
+      state.phase='action'; state.actionLocked=false; state.turnSide='US'; state.acts={move:1,acq:1,sht:1};
+      state.us.posture=POSTURES.US.find(p=>p.title==='STANDARD'); state.us.deployedSquadrons=[]; state.us.squadronLedger={}; state.tokens=[];
+      const bomber=MASTER_DECK.find(c=>c.Side==='US'&&c.Type==='SQ'&&c.Tags&&c.Tags.indexOf('Bomber')>=0);
+      window.confirm=()=>true; deploySquadronCard(bomber,state.us); drawUI();
+      const deployed=state.us.deployedSquadrons[0], tok=state.tokens[0];
+      const cardInStandoff=!!document.querySelector('#us-standoff .squadron-board-card');
+      const tokensInStandoff=document.querySelectorAll('#us-standoff .token').length;
+      tok.loc='us-airbase'; state.selected=tok; state.acts.move=1; move('us-standoff');
+      const moved=tok.loc;
+      const fighter={side:'US',cardId:'US-AUTH-SQ-05',name:'F-22',loc:'us-airbase',spd:2,tags:['Fighter']};
+      state.tokens.push(fighter); state.selected=fighter; state.acts.move=1; move('us-standoff');
+      const baseStyle=getComputedStyle(document.getElementById('us-airbase'));
+      return {baseLoc:deployed.baseLoc,cardInStandoff,tokensInStandoff,moved,fighterLoc:fighter.loc,justify:baseStyle.justifyContent,wrap:baseStyle.flexWrap};
     });
-    assert(result.first.over && result.first.us === 1 && result.first.prc === 1, 'Reserves intact-squadron bonus was wrong');
-    assert(result.us === 1 && result.prc === 1, 'campaign-end reserves bonus scored more than once');
+    assert(result.baseLoc==='us-standoff' && result.cardInStandoff && result.tokensInStandoff>0, 'standoff deployment did not render the squadron and tokens');
+    assert(result.moved==='us-standoff' && result.fighterLoc==='us-airbase', 'standoff movement eligibility was not enforced');
+    assert(result.justify==='center' && result.wrap==='wrap', 'board containers do not center and wrap deployed forces');
   });
 
-  await test('ATO clearing preserves campaign attrition but removes transient force state', async page => {
+  await test('ATO clearing preserves match attrition but removes transient force state', async page => {
     const result = await page.evaluate(() => {
       state.us.squadronLedger={SQ:{maxQty:4,remainingQty:2,currentHp:2}}; state.us.vp=7; state.us.cyber=3; state.us.sqHand=[{}]; state.us.enHand=[{}]; state.us.discarded=[{}]; state.us.losses=[{}]; state.us.deployedSquadrons=[{}]; state.tokens=[{}]; state.us.buffs.attackMode='adv';
       AFWI.ATOState.clear();
       return {ledger:state.us.squadronLedger.SQ, vp:state.us.vp, cyber:state.us.cyber, hands:state.us.sqHand.length+state.us.enHand.length, tokens:state.tokens.length, attackMode:state.us.buffs.attackMode};
     });
-    assert(result.ledger.remainingQty === 2 && result.ledger.currentHp === 2, 'campaign attrition was erased between ATOs');
-    assert(result.vp === 7 && result.cyber === 3, 'persistent campaign totals were erased');
+    assert(result.ledger.remainingQty === 2 && result.ledger.currentHp === 2, 'match attrition was erased between ATOs');
+    assert(result.vp === 7 && result.cyber === 3, 'persistent match totals were erased');
     assert(result.hands === 0 && result.tokens === 0 && result.attackMode === 'normal', 'transient ATO state was not cleared');
   });
 
@@ -401,7 +392,7 @@ async function main() {
       window.confirm=()=>true; window.prompt=()=> '1';
       for(const source of cards){
         for(const master of MASTER_DECK) if(master.Authoritative) master.Draftable=true;
-        state.us=player('US'); state.prc=player('PRC'); state.round=1;state.maxRounds=5;state.phase='action';state.actionLocked=false;state.gameOver=false;state.engineErrors=[];state.turnSide=source.Side;state.acts={move:1,acq:1,sht:1};state.selected=null;state.sqDeployedThisTurn=0;pendingAttack=null;state.campaign=CAMPAIGNS[2];
+        state.us=player('US'); state.prc=player('PRC'); state.round=1;state.maxRounds=5;state.phase='action';state.actionLocked=false;state.gameOver=false;state.engineErrors=[];state.turnSide=source.Side;state.acts={move:1,acq:1,sht:1};state.selected=null;state.sqDeployedThisTurn=0;pendingAttack=null;
         state.tokens=[token('US','UAS',['UAS']),token('US','SHIP',['Naval','SAG','SAM']),token('US','FIGHTER',['Fighter']),token('PRC','UAS',['UAS']),token('PRC','SHIP',['Naval','SAG','SAM']),token('PRC','FIGHTER',['Fighter'])];
         const p=state[source.Side.toLowerCase()], enemy=state[source.Side==='US'?'prc':'us'];
         const lost=token(source.Side,'LOST AIRCRAFT',['Fighter']); lost.parentSqId='LOST-SQ'; p.losses=[lost]; p.squadronLedger['LOST-SQ']={cardId:'LOST-SQ',name:'Lost Squadron',maxHp:2,currentHp:2,maxQty:1,remainingQty:0,destroyed:false};
@@ -422,9 +413,9 @@ async function main() {
     assert(result.failures.length === 0, `enabler failures: ${result.failures.join(' | ')}`);
   });
 
-  await test('full five-ATO campaign simulation reaches a stable final game state', async page => {
+  await test('full five-ATO match simulation reaches a stable final game state', async page => {
     const result = await page.evaluate(() => {
-      selectCampaign(2); state.us.mission=null; state.prc.mission=null; state.us.vp=5; state.prc.vp=3;
+      state.us.mission=null; state.prc.mission=null; state.us.vp=5; state.prc.vp=3; state.maxRounds=5;
       let completed=0;
       const original=showInterstitial;
       showInterstitial=(m,s,cb)=>cb();
@@ -435,30 +426,30 @@ async function main() {
       showInterstitial=original;
       return {completed,round:state.round,max:state.maxRounds,over:state.gameOver,phase:state.phase,winner:document.getElementById('go-winner').innerText,errors:state.engineErrors.slice()};
     });
-    assert(result.completed === 5 && result.round === 6 && result.max === 5, 'five-ATO campaign length failed');
-    assert(result.over && result.phase === 'gameOver' && result.winner === 'US FORCES WIN', 'final campaign result was not rendered');
+    assert(result.completed === 5 && result.round === 6 && result.max === 5, 'five-ATO match length failed');
+    assert(result.over && result.phase === 'gameOver' && result.winner === 'US FORCES WIN', 'final match result was not rendered');
     assert(result.errors.length === 0, `engine validation errors: ${result.errors.join(' | ')}`);
   });
 
-  await test('complete Meeting Engagement hot-seat playthrough', async page => {
+  await test('complete first-ATO hot-seat playthrough advances the standard match', async page => {
     await page.click('#landing-ui button');
-    await page.click('#btn-begin-campaign');
+    await page.click('#btn-begin-setup');
 
-    // US setup: the campaign restricts both choices and the force pool to one.
+    // US setup: one legal squadron is enough to complete an under-limit draft.
     await page.click('#posture-list .card');
     await page.click('#setup-step-1 .btn');
-    await page.click('#mission-list .card');
+    await page.locator('#mission-list .card').filter({hasText:'ATTRITION'}).click();
     await page.click('#setup-step-2 .btn');
-    await page.click('#draft-pool-sq .card');
+    await page.locator('#draft-pool-sq .card').filter({hasText:'F-22'}).first().click();
     await page.click('#btn-confirm-draft');
     await page.click('#interstitial-ui > .btn');
 
     // PRC setup.
     await page.click('#posture-list .card');
     await page.click('#setup-step-1 .btn');
-    await page.click('#mission-list .card');
+    await page.locator('#mission-list .card').filter({hasText:'ATTRITION'}).click();
     await page.click('#setup-step-2 .btn');
-    await page.click('#draft-pool-sq .card');
+    await page.locator('#draft-pool-sq .card').filter({hasText:'J-10'}).first().click();
     await page.click('#btn-confirm-draft');
     await page.evaluate(() => AFWI.Random.setSequence([4,1,1,1,1,1,1,1]));
     await page.click('#interstitial-ui > .btn');
@@ -469,12 +460,13 @@ async function main() {
     await page.click('#btn-bid-start');
     await page.click('#btn-submit-bid');
     await page.click('#interstitial-ui > .btn');
-    assert(/PRC will act first/i.test(await page.textContent('#intel-result-box')), 'private intel summary did not show the initiative winner\'s selected first side');
+    assert(/US will act first/i.test(await page.textContent('#intel-result-box')), 'private intel summary did not show the initiative winner acting first');
     await page.click('#btn-intel-next');
     await page.click('#interstitial-ui > .btn');
     assert(await page.isVisible('#game-ui'), 'action board did not open after initiative/intel');
 
     const result = await page.evaluate(() => {
+      window.confirm=()=>true;
       // Deploy the current side, hand off, and deploy the opponent.
       playCard(state.turnSide,true,0);
       const first=state.turnSide;
@@ -502,29 +494,28 @@ async function main() {
       target=state.tokens.find(t=>t.side!==state.turnSide);
       AFWI.Random.setSequence([4,1]); state.selected=attacker; select(target); endTurn(); dismissInterstitial();
 
-      // The first side fires, then two consecutive passes close the one-ATO campaign.
+      // The first side fires, then two consecutive passes close ATO 1.
       attacker=state.tokens.find(t=>t.side===state.turnSide);
       target=state.tokens.find(t=>t.side!==state.turnSide && t.acquired);
       AFWI.Random.setSequence([4,1]); state.selected=attacker; select(target);
       const afterShot={tokens:state.tokens.length,usVP:state.us.vp,prcVP:state.prc.vp};
-      passTurn(); dismissInterstitial(); passTurn();
-      return {first,second,afterShot,over:state.gameOver,phase:state.phase,round:state.round,errors:state.engineErrors.slice()};
+      passTurn(); dismissInterstitial(); passTurn(); dismissInterstitial();
+      return {first,second,afterShot,over:state.gameOver,phase:state.phase,round:state.round,setupVisible:document.getElementById('setup-ui').style.display==='block',errors:state.engineErrors.slice()};
     });
     assert(result.first !== result.second, 'hot-seat side handoff did not alternate');
     assert(result.afterShot.tokens === 7, 'fighter engagement did not destroy exactly one aircraft');
-    assert(result.afterShot.usVP + result.afterShot.prcVP === 1, 'Meeting Engagement Attrition kill did not score 1 VP');
-    assert(result.over && result.phase === 'gameOver' && result.round === 2, 'consecutive passes did not finish the one-ATO campaign');
+    assert(result.afterShot.usVP + result.afterShot.prcVP === 1, 'Attrition kill did not score 1 VP');
+    assert(!result.over && result.phase === 'draft' && result.round === 2 && result.setupVisible, 'consecutive passes did not advance the five-ATO match to ATO 2 setup');
     assert(result.errors.length === 0, `full-flow engine errors: ${result.errors.join(' | ')}`);
   });
 
-  await test('landing-to-campaign setup UI navigation', async page => {
+  await test('landing-to-standard-match setup UI navigation', async page => {
     await page.click('#landing-ui button');
     assert(await page.isVisible('#scenario-ui'), 'scenario screen did not open');
-    await page.click('#campaign-list .card:nth-child(3)');
-    const summary = await page.textContent('#campaign-summary');
-    assert(/5 ATO/i.test(summary), 'campaign selection did not update the summary');
-    await page.click('#btn-begin-campaign');
-    assert(await page.isVisible('#setup-ui'), 'campaign did not enter player setup');
+    const summary = await page.textContent('#scenario-ui');
+    assert(/Five ATO cycles/i.test(summary) && !await page.$('#campaign-list'), 'standard match briefing is incorrect');
+    await page.click('#btn-begin-setup');
+    assert(await page.isVisible('#setup-ui'), 'standard match did not enter player setup');
     const header = await page.textContent('#setup-header');
     assert(/US PLAYER/i.test(header), 'US setup did not start first');
   });

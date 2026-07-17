@@ -1497,7 +1497,7 @@
       },
       {
         "title": "SURGE",
-        "desc": "Contingency Locations cannot be used during this campaign."
+        "desc": "Contingency Locations cannot be used while this posture is active."
       },
       {
         "title": "HEDGEHOG",
