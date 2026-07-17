@@ -1,4 +1,4 @@
-# AFWI 1.0 Final - Acceptance Notes
+# AFWI 1.3 Combat Roster - Acceptance Notes
 
 No open Phase One gameplay defect is known in this release.
 
@@ -11,5 +11,5 @@ The following items are intentional boundaries rather than broken mechanics:
 3. Final validation on the exact organizational workstation, browser policy,
    display scaling, and enterprise compatibility configuration remains an
    operational acceptance activity.
-4. Senior-leader visual polish and Quick Start are reserved for Phases Two and
-   Three respectively and were not added during Phase One.
+4. Quick Start remains reserved for Phase Three and was not added in this
+   combat/roster correction build.

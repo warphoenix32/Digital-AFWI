@@ -2,10 +2,13 @@ const { chromium } = require('playwright');
 const { pathToFileURL } = require('url');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 const root = path.resolve(__dirname, '..');
 const gameUrl = pathToFileURL(path.join(root, 'AFWI.html')).href;
-const outputDir = path.join(root, 'artifacts', 'screenshots');
+// Visual validation is read-only with respect to the committed screenshot baseline.
+// Set AFWI_SCREENSHOT_OUTPUT explicitly when new review artifacts are requested.
+const outputDir = process.env.AFWI_SCREENSHOT_OUTPUT || fs.mkdtempSync(path.join(os.tmpdir(), 'afwi-visual-'));
 const chromePath = process.env.AFWI_CHROME || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
 function assert(condition, message) {
@@ -162,7 +165,7 @@ async function main() {
   assert(runtimeErrors.length === 0, `Browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
   const report = {
-    build: '1.2.1-executive-corrections',
+    build: '1.3.0-combat-roster',
     viewport: '1680x1050',
     checks: 22,
     status: 'PASS',

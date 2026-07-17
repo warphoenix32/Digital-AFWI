@@ -2,7 +2,7 @@
 
 ## Release
 
-- Build: `1.2.1-executive-corrections`
+- Build: `1.3.0-combat-roster`
 - Branch: `phase2-ui`
 - Preserved baselines: annotated tags `phase1-final-1.0.1` and `phase2-executive-1.1.0`
 
@@ -27,10 +27,14 @@
 - Added vertical overflow scrolling to every airbase, contingency, and standoff container.
 - Moved and condensed the selected-token HUD into the board-width column to provide taller command sidebars.
 - Rethemed setup screens to match the command-glass game board and strengthened button hover/focus visibility.
+- Made every legal authoritative card explicitly selectable in the draft UI, added individual roster-card returns, and clearly marked quota-blocked cards instead of silently rejecting clicks.
+- Enforced Air-to-Air and Air-to-Surface target domains across aircraft, SAM, carrier-aircraft, airbase, Squadron-card, and naval-surface targets.
+- Added persistent three-hit hull durability to naval surface combatants while preserving published instant-destroy Enabler overrides.
+- Strengthened Winchester presentation on tokens, the command status line, and the selected-unit HUD; enlarged and simplified HUD typography.
 
 ## Validation
 
-- Gameplay browser playtests: 23 / 23 passed.
+- Gameplay browser playtests: 28 / 28 passed.
 - Phase Two browser visual checks: 22 / 22 passed, including saturated-container scrolling across all five operating locations.
 - Enabler-focused browser groups: 4 / 4 passed; all 68 authoritative Enabler cards were exercised with additional generated-force, reaction, cyber, intel, and Counter-UAS assertions.
 - Verified equal play-area dimensions and transparency, location order, image loading, card descriptions, token type labels, F-16 identity, M-A-S state changes, and viewport overflow.
@@ -38,4 +42,4 @@
 
 ## Source-image preservation
 
-The Phase Two scripts create new derived assets under `assets/ui/`. They do not overwrite the supplied token images or imagery embedded in the AFWI presentation and documents.
+The Phase Two scripts create new derived assets under `assets/ui/`. They do not overwrite the supplied token images or imagery embedded in the AFWI presentation and documents. The visual-regression harness now uses a temporary output directory unless `AFWI_SCREENSHOT_OUTPUT` is explicitly set, preserving committed screenshots during routine validation.

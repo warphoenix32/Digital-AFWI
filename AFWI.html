@@ -142,7 +142,8 @@
         .status-bar { background:rgba(13,26,39,.97); border:1px solid #294050; border-radius:9px; color:var(--ink); padding:8px 12px; margin-bottom:8px; min-height:54px; box-sizing:border-box; gap:12px; }
         .turn-block { min-width:130px; }
         .turn-block small { display:block; color:#71899b; font-size:9px; letter-spacing:.15em; text-transform:uppercase; margin-bottom:2px; }
-        #unit-status { flex:1; min-width:0; color:#9fb1bf !important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #unit-status { flex:1; min-width:0; color:#aebfcb !important; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-family:"Segoe UI Variable Text","Segoe UI",Arial,sans-serif; font-size:13px; font-weight:500; }
+        .status-winchester { display:inline-flex; align-items:center; margin-left:7px; padding:3px 8px; border:1px solid #ffb02e; border-radius:999px; background:#4b2d08; color:#ffd06a; font-weight:800; font-style:normal; letter-spacing:.08em; box-shadow:0 0 12px rgba(255,176,46,.32); }
         .mas-indicator { display:grid; grid-template-columns:repeat(3,54px); gap:5px; flex-shrink:0; }
         .mas-cell { height:38px; box-sizing:border-box; border:1px solid #355268; border-radius:6px; background:#102637; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#bcd4e5; }
         .mas-cell b { font-size:16px; line-height:1; } .mas-cell small { font-size:7px; letter-spacing:.12em; margin-top:3px; }
@@ -150,14 +151,16 @@
         .mas-cell.spent { opacity:.38; text-decoration:line-through; background:#121c24; }
         .command-actions { display:flex; align-items:center; flex-shrink:0; }
 
-        .selected-unit-panel { background:rgba(13,26,39,.97); color:var(--ink); border:1px solid #294050; border-left:6px solid #4a6172; border-radius:8px; min-height:62px; margin:7px 7px 0; padding:7px 9px; grid-template-columns:52px minmax(150px,1.15fr) repeat(3,minmax(92px,.8fr)); gap:7px; box-shadow:0 8px 24px rgba(0,0,0,.22); flex:0 0 auto; }
+        .selected-unit-panel { background:rgba(13,26,39,.97); color:var(--ink); border:1px solid #294050; border-left:6px solid #4a6172; border-radius:8px; min-height:62px; margin:7px 7px 0; padding:7px 9px; grid-template-columns:52px minmax(150px,1.15fr) repeat(3,minmax(92px,.8fr)); gap:7px; box-shadow:0 8px 24px rgba(0,0,0,.22); flex:0 0 auto; font-family:"Segoe UI Variable Text","Segoe UI",Arial,sans-serif; }
         .selected-unit-panel.us { background:#0d2234; border-left-color:var(--us); }
         .selected-unit-panel.prc { background:#29171c; border-left-color:var(--prc); }
+        .selected-unit-panel.winchester { border-color:#ffb02e; border-left-color:#ffb02e; box-shadow:0 0 0 1px rgba(255,176,46,.28),0 8px 26px rgba(0,0,0,.28); }
         .selected-unit-panel.empty { color:#8298a8; background:rgba(13,26,39,.97); min-height:48px; }
         .selected-unit-panel .selected-art { width:48px; height:38px; }
-        .selected-unit-panel .selected-name { font-size:14px; }
-        .selected-unit-panel .selected-sub { margin-top:2px; font-size:9px; line-height:1.25; }
-        .selected-unit-panel .selected-stat { min-height:36px; padding-left:7px; font-size:10px; line-height:1.32; }
+        .selected-unit-panel .selected-name { font-size:15px; font-weight:700; letter-spacing:.01em; }
+        .selected-unit-panel .selected-sub { margin-top:2px; font-size:10px; line-height:1.3; }
+        .selected-unit-panel .selected-stat { min-height:36px; padding-left:7px; font-size:11px; line-height:1.38; font-weight:500; }
+        .selected-winchester-alert { display:inline-block; margin-top:4px; padding:3px 7px; border:1px solid #ffb02e; border-radius:4px; background:#4b2d08; color:#ffd06a; font-size:10px; font-weight:800; letter-spacing:.08em; }
         .selected-unit-panel .selected-sub { color:#91a7b7; }
         .selected-unit-panel .selected-stat { border-color:#2b4253; }
         .selected-unit-panel .selected-stat b { color:#dce8f0; }
@@ -173,6 +176,12 @@
         .card:before { content:''; position:absolute; z-index:-2; inset:0; background-image:var(--card-art); background-size:cover; background-position:center; opacity:.23; }
         .card:after { content:''; position:absolute; z-index:-1; inset:0; background:linear-gradient(90deg,rgba(7,17,28,.97) 12%,rgba(7,17,28,.78) 70%,rgba(7,17,28,.90)); }
         .card:hover { background:#142a3c; border-color:var(--amber); }
+        .card.draft-picked { border-color:#55d6a0; background:#123128; }
+        .card.draft-picked:after { background:linear-gradient(90deg,rgba(7,31,25,.96),rgba(10,45,36,.80)); }
+        .card.draft-disabled { cursor:not-allowed; opacity:.55; border-color:#41505b; }
+        .card.draft-disabled:hover { border-color:#6f7d87; background:#102130; }
+        .draft-card-state { display:block; margin-top:5px; color:#ffd06a; font-size:9px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; }
+        #draft-guidance { min-height:18px; margin:7px 0 0; color:#aebfcb; font-size:11px; }
         .card .card-equipment { color:#88cfff; font-style:normal; font-size:10px; }
         .card .card-description { display:block; color:#b5c5d0; font-size:10px; line-height:1.35; margin-top:3px; }
         .card-vp { color:#78deb0; }
@@ -207,6 +216,8 @@
         .token-type { display:block; font-size:9px; line-height:11px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .token.unknown .token-type { color:#d2dde5; }
         .token-stats { background:rgba(2,8,13,.88); color:#ffd66b; }
+        .token.winchester { border:3px solid #ffb02e !important; box-shadow:0 0 0 2px rgba(255,176,46,.23),0 0 17px rgba(255,176,46,.58),0 4px 10px rgba(0,0,0,.45); }
+        .winchester-badge { position:absolute; top:2px; right:2px; z-index:3; padding:2px 3px; border:1px solid #ffd06a; border-radius:3px; background:#4b2d08; color:#fff1c4; font-size:7px; line-height:1; font-weight:900; letter-spacing:.04em; text-shadow:none; }
         .log-container { height:112px; margin-top:9px; background:#050d14; border:1px solid #294050; color:#74dcaa; border-radius:9px; }
 
         .modal, .setup-container { background:#0b1824; color:#e8f1f7; border:1px solid #355064; box-shadow:0 18px 54px rgba(0,0,0,.48); }
@@ -286,6 +297,8 @@
                     <li><strong>Ammo Conservation:</strong> Rolling a Natural 4 represents a critical success where the asset destroys its target without exhausting its payload. It remains armed on the board.</li>
                     <li><strong>Infinite Drone Ammo:</strong> Drones (UAS) carry highly efficient payloads and only go Winchester on a roll of 1 or 2.</li>
                     <li><strong>Explosive Damage:</strong> A successful explosive air-to-surface attack rolls a separate 1d4 for damage. Missile Defense imposes Disadvantage on both the hit roll and this damage roll.</li>
+                    <li><strong>Attack Domains:</strong> Air-to-Air weapons may engage aircraft only. Air-to-Surface weapons may engage airbases, deployed Squadron cards, SAMs, and naval surface combatants. A naval surface combatant may be targeted only by an aircraft with Air-to-Surface capability.</li>
+                    <li><strong>Naval Hulls:</strong> Naval surface combatants require three successful attacks to destroy. Each successful attack removes one hull hit; explicit Enabler effects that immediately destroy a surface combatant override this durability rule.</li>
                 </ul>
             </div>
             <div class="rules-section">
@@ -463,6 +476,7 @@
                 <div>Squadrons: <span id="draft-sq-count">0</span> / <span id="draft-sq-limit">5</span> &nbsp;|&nbsp; Enablers: <span id="draft-en-count">0</span> / <span id="draft-en-limit">5</span></div>
                 <div><button class="btn btn-warn" onclick="resetDraft()">Reset Picks</button> <button id="btn-confirm-draft" class="btn" style="display:none;" onclick="confirmDraft()">Complete Setup</button></div>
             </div>
+            <div id="draft-guidance" aria-live="polite">Select any available card. Click a selected roster card to return it to the pool.</div>
             <div class="draft-layout">
                 <div class="draft-pool">
                     <div class="draft-pool-col"><h4 style="margin-top:0;">Squadrons</h4><div id="draft-pool-sq"></div></div>
@@ -705,13 +719,16 @@
                 if(c.ID==="PRC-AUTH-SQ-05") { c.Spd=0; c.ShtR=4; }
                 c.targetAcq = 2;
                 c.attackThreshold = (typeof c.hitThreshold === "number") ? c.hitThreshold : 2;
-                c.canAttackAir = c.ShtR >= 0 && !(c.Tags && (c.Tags.indexOf("Bomber")>=0 || c.Tags.indexOf("UAS")>=0));
-                c.canAttackSurface = c.ShtR >= 0 && !(c.Tags && c.Tags.indexOf("AEW")>=0);
-                if(c.Tags && c.Tags.indexOf("UAS")>=0) { c.targetAcq=3; c.attackThreshold=3; c.canAttackAir=false; c.canAttackSurface=true; }
-                if(c.Tags && c.Tags.indexOf("Bomber")>=0) { c.attackThreshold=2; c.canAttackAir=false; c.canAttackSurface=true; }
+                var tags=c.Tags||[], equipment=(c.EQ||'').toLowerCase(), armed=c.ShtR>=0;
+                var isFighter=tags.indexOf("Fighter")>=0, isGen4=tags.indexOf("Gen4")>=0;
+                var isMultiRole=isGen4 || /f-35|strike eagle|f-15e|j-16|j-10|jh-7/.test(equipment);
+                c.canAttackAir = armed && isFighter;
+                c.canAttackSurface = armed && isMultiRole;
+                if(tags.indexOf("UAS")>=0) { c.targetAcq=3; c.attackThreshold=3; c.canAttackAir=false; c.canAttackSurface=armed; }
+                if(tags.indexOf("Bomber")>=0) { c.attackThreshold=2; c.canAttackAir=false; c.canAttackSurface=armed; }
                 if(c.Tags && c.Tags.indexOf("AEW")>=0) { c.canAttackAir=false; c.canAttackSurface=false; }
                 if(c.Tags && c.Tags.indexOf("SAM")>=0) { c.canAttackAir=true; c.canAttackSurface=false; }
-                if(c.Tags && c.Tags.indexOf("Naval")>=0) { c.canAttackAir=true; c.canAttackSurface=true; }
+                if(c.Tags && c.Tags.indexOf("Naval")>=0 && c.Tags.indexOf("SAG")>=0) { c.canAttackAir=true; c.canAttackSurface=true; }
                 if(c.ID==="US-AUTH-SQ-10" || c.ID==="PRC-AUTH-SQ-06" || c.ID==="PRC-AUTH-SQ-10") c.targetAcq=3;
             }
         })();
@@ -792,7 +809,13 @@
                 else if(/h-6/.test(low)){asset='assets/tokens/prc/h6.png';tags=['Bomber'];}
                 else if(/aew|awacs|kj-/.test(low)){asset=side==='US'?'assets/tokens/us/aew.png':'assets/tokens/prc/aew.png';tags=['AEW'];}
                 else if(/sam|patriot|hq-9|sa-21/.test(low)){asset=side==='US'?'assets/tokens/us/ada.png':'assets/tokens/prc/ada.png';tags=['SAM'];}
-                if(asset) return {qty:parseInt(m[1],10),name:equipment,tags:tags,spd:tags.indexOf('SAM')>=0?0:1,acqR:2,shtR:tags.indexOf('AEW')>=0?-1:1,hitThreshold:2,winchesterType:tags.indexOf('UAS')>=0?'Infinite':'Standard',salvos:null,asset:asset};
+                if(asset) {
+                    var armed=tags.indexOf('AEW')<0;
+                    var canAir=armed && tags.indexOf('Fighter')>=0;
+                    var canSurface=armed && (tags.indexOf('Bomber')>=0 || tags.indexOf('UAS')>=0 || tags.indexOf('Gen4')>=0 || /f-35|strike eagle|f-15e|j-16|j-10|jh-7/.test(low));
+                    if(tags.indexOf('SAM')>=0) { canAir=true; canSurface=false; }
+                    return {qty:parseInt(m[1],10),name:equipment,tags:tags,spd:tags.indexOf('SAM')>=0?0:1,acqR:2,shtR:armed?1:-1,hitThreshold:2,canAttackAir:canAir,canAttackSurface:canSurface,winchesterType:tags.indexOf('UAS')>=0?'Infinite':'Standard',salvos:null,asset:asset};
+                }
             }
             return null;
         }
@@ -923,7 +946,10 @@
             var spec=generatedUnitSpec(c); if(!spec) return false;
             var loc=chooseGeneratedLocation(c,side); if(!loc) return false;
             var before=state.tokens.length;
-            for(var i=0;i<spec.qty;i++) state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,targetAcq:spec.targetAcq||2,attackThreshold:spec.attackThreshold||spec.hitThreshold||2,canAttackAir:spec.canAttackAir!==false,canAttackSurface:spec.canAttackSurface!==false,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,assetPath:spec.asset,generatedByEnabler:true});
+            for(var i=0;i<spec.qty;i++) {
+                var navalHull=spec.tags && spec.tags.indexOf('Naval')>=0 && spec.tags.indexOf('SAG')>=0;
+                state.tokens.push({isBase:false,parentSqId:null,side:side,cardId:c.ID+'-SPAWN',name:spec.name,loc:loc,spd:spec.spd,vp:1,acqR:spec.acqR,shtR:spec.shtR,winchesterType:spec.winchesterType,hitThreshold:spec.hitThreshold,targetAcq:spec.targetAcq||2,attackThreshold:spec.attackThreshold||spec.hitThreshold||2,canAttackAir:spec.canAttackAir===true,canAttackSurface:spec.canAttackSurface===true,acqBonus:0,acquired:false,winchester:false,rogue:false,tags:spec.tags,explosive:false,salvos:spec.salvos,maxHp:navalHull?3:null,currentHp:navalHull?3:null,assetPath:spec.asset,generatedByEnabler:true});
+            }
             var made=state.tokens.length-before;
             phase5Metrics[side].enablerUnitTokensGenerated+=made; phase5Metrics[side].enablerUnitTokensGeneratedThisTurn+=made;
             logPub(c.TITLE+': generated '+made+' '+spec.name+' token(s) in '+loc+'.'); return made>0;
@@ -1036,7 +1062,7 @@
 
         AFWI.Build = {
             engineVersion: "2.0.0",
-            buildVersion: "1.2.1-executive-corrections",
+            buildVersion: "1.3.0-combat-roster",
             contentVersion: "2026.3-authoritative",
             regressionBaseline: "3.36.2",
             regressionBaselineSha256: "3b1fe739932d779e4dac5a6b44fde714941b3eba29e83a0fa75ef16454150cf5"
@@ -1183,8 +1209,15 @@
                 var sides = ["US", "PRC"];
                 for(var sidx=0; sidx<sides.length; sidx++) {
                     var side = sides[sidx];
-                    var sqCount = AFWI.ContentRegistry.getSquadrons(side).length;
-                    var enCount = AFWI.ContentRegistry.getEnablers(side).length;
+                    var sqCount = 0, enCount = 0;
+                    for(var cidx=0; cidx<MASTER_DECK.length; cidx++) {
+                        var rosterCard=MASTER_DECK[cidx];
+                        if(rosterCard.Side!==side || !rosterCard.Authoritative) continue;
+                        if(rosterCard.Type==='SQ') sqCount++;
+                        else if(rosterCard.Type==='EN') enCount++;
+                    }
+                    if(sqCount !== 10) errors.push(side + " authoritative Squadron roster is incomplete: expected 10, found " + sqCount + ".");
+                    if(enCount !== 34) errors.push(side + " authoritative Enabler roster is incomplete: expected 34, found " + enCount + ".");
                     var plist = POSTURES[side] || [];
                     for(var pidx=0; pidx<plist.length; pidx++) {
                         if(plist[pidx].sq > sqCount) warnings.push(side + " posture " + plist[pidx].title + " requests more Squadrons than currently available.");
@@ -1408,7 +1441,9 @@
                     targetAcq:card.targetAcq || 2, attackThreshold:card.attackThreshold || card.hitThreshold || 2,
                     canAttackAir:card.canAttackAir, canAttackSurface:card.canAttackSurface,
                     acquired:false, winchester:false, rogue:false, tags:card.Tags, explosive:card.Explosive || false, isCL:(loc === "us-contingency"),
-                    salvos:(card.Tags && card.Tags.includes("Naval")) ? 4 : null
+                    salvos:(card.Tags && card.Tags.includes("Naval")) ? 4 : null,
+                    maxHp:(card.Tags && card.Tags.includes("Naval") && card.Tags.includes("SAG")) ? 3 : null,
+                    currentHp:(card.Tags && card.Tags.includes("Naval") && card.Tags.includes("SAG")) ? 3 : null
                 });
             }
             return true;
@@ -1546,8 +1581,10 @@
 
             for(var i=0; i<setup.picks.length; i++) {
                 if(setup.picks[i].Type === "SQ") sqCount += draftCost(setup.picks[i], setup.selPosture); else enCount++;
-                picksHtml += "<div class='card'><b>" + setup.picks[i].TITLE + "</b> [" + setup.picks[i].Type + "]<br><i style='color:#666;'>" + setup.picks[i].EQ + "</i>" + (setup.picks[i].Type==='SQ' && draftCost(setup.picks[i],setup.selPosture)===0?"<br><b>Posture bonus: no draft cost</b>":"") + "</div>";
+                picksHtml += "<div class='card draft-picked' data-card-id='"+setup.picks[i].ID+"' onclick='undraftCard("+i+")' title='Click to return this card to the draft pool'><b>" + setup.picks[i].TITLE + "</b> [" + setup.picks[i].Type + "]<br><i>" + setup.picks[i].EQ + "</i>" + (setup.picks[i].Type==='SQ' && draftCost(setup.picks[i],setup.selPosture)===0?"<br><b>Posture bonus: no draft cost</b>":"") + "<span class='draft-card-state'>Selected · click to return</span></div>";
             }
+
+            var sqAtLimit=sqCount>=effectiveSqLimit, enAtLimit=enCount>=effectiveEnLimit;
 
             for(var j=0; j<MASTER_DECK.length; j++) {
                 var c = MASTER_DECK[j];
@@ -1560,7 +1597,9 @@
                             var rec = getSquadronRecord(c);
                             statusTxt = "<br><span style='font-size:10px; font-weight:bold;'>Match State: HP " + rec.currentHp + "/" + rec.maxHp + " | Aircraft " + rec.remainingQty + "/" + rec.maxQty + "</span>";
                         }
-                        var cHtml = "<div class='card' onclick='draftCard("+j+")'><b>" + c.TITLE + "</b><br><i style='color:"+(c.Side==="US"?"#1565c0":"#c62828")+"'>" + c.EQ + "</i><br><span style='font-size:10px; color:#546e7a;'>" + c.DESC + "</span>" + statusTxt + "</div>";
+                        var blocked=(c.Type==='SQ' && draftCost(c,setup.selPosture)>0 && sqAtLimit) || (c.Type==='EN' && enAtLimit);
+                        var blockText=blocked?"<span class='draft-card-state'>Quota reached · return a "+(c.Type==='SQ'?'squadron':'enabler')+" to select</span>":"";
+                        var cHtml = "<div class='card"+(blocked?" draft-disabled":"")+"' data-card-id='"+c.ID+"' aria-disabled='"+(blocked?'true':'false')+"' onclick='draftCard("+j+")'><b>" + c.TITLE + "</b><br><i>" + c.EQ + "</i><br><span style='font-size:10px;'>" + c.DESC + "</span>" + statusTxt + blockText + "</div>";
                         if(c.Type === "SQ") sqHtml += cHtml;
                         if(c.Type === "EN") enHtml += cHtml;
                     }
@@ -1572,6 +1611,8 @@
             document.getElementById('draft-picks-list').innerHTML = picksHtml;
             document.getElementById('draft-sq-count').innerText = sqCount;
             document.getElementById('draft-en-count').innerText = enCount;
+            document.getElementById('draft-guidance').innerText = setup.draftNotice || (sqAtLimit || enAtLimit ? 'A draft quota is full. Click a selected roster card to return it, then choose another.' : 'Select any available card. Click a selected roster card to return it to the pool.');
+            setup.draftNotice = '';
 
             document.getElementById('btn-confirm-draft').style.display = (sqCount > 0 && sqCount <= effectiveSqLimit && enCount <= effectiveEnLimit) ? "inline-block" : "none";
         }
@@ -1580,13 +1621,20 @@
             var c = MASTER_DECK[idx];
             var sqC = 0, enC = 0;
             for(var i=0; i<setup.picks.length; i++) { if(setup.picks[i].Type==="SQ") sqC += draftCost(setup.picks[i],setup.selPosture); else enC++; }
-            if(c.Type === "SQ" && draftCost(c,setup.selPosture)>0 && sqC >= getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture)) return;
-            if(c.Type === "EN" && enC >= getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture)) return;
+            if(c.Type === "SQ" && draftCost(c,setup.selPosture)>0 && sqC >= getEffectiveDraftLimit(setup.side, 'SQ', setup.selPosture)) { setup.draftNotice='Squadron quota reached. Return a selected Squadron before choosing another.'; renderDraft(); return; }
+            if(c.Type === "EN" && enC >= getEffectiveDraftLimit(setup.side, 'EN', setup.selPosture)) { setup.draftNotice='Enabler quota reached. Return a selected Enabler before choosing another.'; renderDraft(); return; }
             setup.picks.push(JSON.parse(JSON.stringify(c)));
             renderDraft();
         }
 
-        function resetDraft() { setup.picks = []; renderDraft(); }
+        function undraftCard(pickIndex) {
+            if(pickIndex<0 || pickIndex>=setup.picks.length) return;
+            var returned=setup.picks.splice(pickIndex,1)[0];
+            setup.draftNotice=returned.TITLE+' returned to the draft pool.';
+            renderDraft();
+        }
+
+        function resetDraft() { setup.picks = []; setup.draftNotice='Draft roster reset. All available cards returned to the pool.'; renderDraft(); }
 
         function confirmDraft() {
             for(var u=0; u<setup.picks.length; u++) {
@@ -1841,9 +1889,48 @@
             return first;
         }
 
+        function hasUnitTag(tok, tag) {
+            return !!(tok && tok.tags && tok.tags.indexOf(tag)>=0);
+        }
+
+        function isNavalSurfaceCombatant(tok) {
+            return hasUnitTag(tok,'Naval') && hasUnitTag(tok,'SAG');
+        }
+
+        function isAircraftToken(tok) {
+            if(!tok || tok.isAirbase || tok.isSquadronCard || isNavalSurfaceCombatant(tok) || hasUnitTag(tok,'SAM')) return false;
+            return hasUnitTag(tok,'Fighter') || hasUnitTag(tok,'Bomber') || hasUnitTag(tok,'AEW') || hasUnitTag(tok,'UAS');
+        }
+
         function isSurfaceTarget(tok) {
             if(tok.isAirbase || tok.isSquadronCard) return true;
-            return !!(tok.tags && (tok.tags.indexOf('SAM')>=0 || tok.tags.indexOf('Naval')>=0));
+            return hasUnitTag(tok,'SAM') || isNavalSurfaceCombatant(tok);
+        }
+
+        function unitCanAttackAir(tok) {
+            if(typeof tok.canAttackAir==='boolean') return tok.canAttackAir;
+            return tok.shtR>=0 && (hasUnitTag(tok,'Fighter') || hasUnitTag(tok,'SAM') || isNavalSurfaceCombatant(tok));
+        }
+
+        function unitCanAttackSurface(tok) {
+            if(typeof tok.canAttackSurface==='boolean') return tok.canAttackSurface;
+            return tok.shtR>=0 && (hasUnitTag(tok,'Bomber') || hasUnitTag(tok,'UAS') || hasUnitTag(tok,'Gen4') || isNavalSurfaceCombatant(tok));
+        }
+
+        function attackDomainLegality(atk, tok) {
+            var surface=isSurfaceTarget(tok);
+            if(isNavalSurfaceCombatant(tok) && !isAircraftToken(atk)) return {ok:false,surface:true,reason:'Naval surface combatants may only be targeted by aircraft with Air-to-Surface capability.'};
+            if(surface && !unitCanAttackSurface(atk)) return {ok:false,surface:true,reason:atk.name+' has no Air-to-Surface capability.'};
+            if(!surface && !unitCanAttackAir(atk)) return {ok:false,surface:false,reason:atk.name+' has no Air-to-Air capability.'};
+            return {ok:true,surface:surface,reason:''};
+        }
+
+        function ensureNavalHull(tok) {
+            if(!isNavalSurfaceCombatant(tok)) return null;
+            if(typeof tok.maxHp!=='number') tok.maxHp=3;
+            if(typeof tok.currentHp!=='number') tok.currentHp=tok.maxHp;
+            tok.currentHp=Math.max(0,Math.min(tok.currentHp,tok.maxHp));
+            return tok;
         }
 
         // LOGGING
@@ -2026,17 +2113,19 @@
             var ammunition=tok.winchesterType||'Standard';
             if(tok.winchesterType==='Salvo' && tok.salvos!==null && typeof tok.salvos!=='undefined') ammunition+=' ('+tok.salvos+' remaining)';
             if(tok.winchester) ammunition+=' — WINCHESTER';
+            var hull='';
+            if(ensureNavalHull(tok)) hull='<br>Hull: '+tok.currentHp+'/'+tok.maxHp+' hits';
             var conditions=[];
             conditions.push(tok.acquired?'Acquired by enemy':'Not acquired by enemy');
             if(tok.rogue) conditions.push('Rogue');
             if(tok.isCL) conditions.push('Contingency based');
             if(tok.generatedByEnabler) conditions.push('Enabler generated');
-            panel.className='selected-unit-panel '+tok.side.toLowerCase();
+            panel.className='selected-unit-panel '+tok.side.toLowerCase()+(tok.winchester?' winchester':'');
             panel.innerHTML=image+
                 "<div><div class='selected-name'>"+tok.name+"</div><div class='selected-sub'>TYPE "+typeLabel+" · "+tok.side+" · "+readableLocation(tok.loc)+"<br>"+tags+"</div></div>"+
                 "<div class='selected-stat'><b>Movement</b><br>Move: "+tok.spd+" band(s)<br>Current: "+readableLocation(tok.loc)+"</div>"+
                 "<div class='selected-stat'><b>Sensors &amp; Weapons</b><br>Sensor Range: "+tok.acqR+"<br>Weapon Range: "+weapon+"</div>"+
-                "<div class='selected-stat'><b>Combat Profile</b><br>Target AQ: "+(tok.targetAcq||2)+" | Hit: "+(tok.attackThreshold||tok.hitThreshold||2)+"+<br>Ammo: "+ammunition+"<br>"+conditions.join(' • ')+"</div>";
+                "<div class='selected-stat'><b>Combat Profile</b><br>Target AQ: "+(tok.targetAcq||2)+" | Hit: "+(tok.attackThreshold||tok.hitThreshold||2)+"+"+hull+"<br>Ammo: "+ammunition+"<br>"+conditions.join(' • ')+(tok.winchester?"<br><span class='selected-winchester-alert'>WINCHESTER · RTB TO REARM</span>":"")+"</div>";
         }
 
         function drawUI() {
@@ -2088,7 +2177,7 @@
             }
             var actText = "M-A-S action pool active";
             if(state.selected) {
-                var wText = state.selected.winchester ? " <span style='color:#f57f17; font-weight:bold'>[W]</span>" : "";
+                var wText = state.selected.winchester ? " <span class='status-winchester'>WINCHESTER</span>" : "";
                 var rText = state.selected.rogue ? " <span style='color:#c62828; font-weight:bold'>[ROGUE]</span>" : "";
                 var sqTxt = state.selected.isSquadronCard ? (" [SQ HP:" + state.selected.currentHp + "]") : "";
                 statEl.innerHTML = actText + " &nbsp;|&nbsp; <i>Sel: " + state.selected.name + wText + rText + sqTxt + "</i>";
@@ -2164,7 +2253,7 @@
             for(var t=0; t<state.tokens.length; t++) {
                 var tok = state.tokens[t];
                 var div = document.createElement('div');
-                div.className = "token " + tok.side.toLowerCase();
+                div.className = "token " + tok.side.toLowerCase() + (tok.winchester ? " winchester" : "");
 
                 var displayTxt = ""; var statHtml = "";
 
@@ -2172,15 +2261,15 @@
                     div.className += " unknown"; displayTxt = "<b>UNIDENTIFIED</b>"; statHtml = "M:?|A:?";
                 } else {
                     if(state.selected === tok) div.style.border = "3px solid #ffeb3b";
-                    if(tok.winchester) div.style.borderColor = "#f57f17";
-
                     var typeLabel=tokenTypeLabel(tok.name);
                     displayTxt = tokenImageHtml(tok.cardId, "token-art", tok.assetPath, typeLabel) + "<b class='token-type'>" + typeLabel + "</b>";
+                    if(tok.winchester) displayTxt += "<span class='winchester-badge'>WINCHESTER</span>";
                     if(tok.acquired) displayTxt += "<br>[A]";
                     if(tok.rogue) displayTxt += "<br>[R]";
 
                     var wTypeCode = tok.winchesterType ? tok.winchesterType.charAt(0) : "S";
                     statHtml = "AQ:" + (tok.targetAcq || 2) + "|HT:" + (tok.attackThreshold || tok.hitThreshold || 2);
+                    if(ensureNavalHull(tok)) statHtml += "|H:"+tok.currentHp+"/"+tok.maxHp;
                 }
                 div.innerHTML = displayTxt;
 
@@ -2484,9 +2573,9 @@
         }
 
         function resolveCommittedAttack(atk, tok, pState, useMD, defenderUsed) {
-            var targetIsSurface=isSurfaceTarget(tok);
-            if(targetIsSurface && atk.canAttackSurface===false) { logPriv(state.turnSide,atk.name+' has no surface-attack capability.',true); return; }
-            if(!targetIsSurface && atk.canAttackAir===false) { logPriv(state.turnSide,atk.name+' has no air-to-air capability.',true); return; }
+            var legality=attackDomainLegality(atk,tok);
+            var targetIsSurface=legality.surface;
+            if(!legality.ok) { logPriv(state.turnSide,legality.reason,true); return false; }
             var mod = mergeRollModes(pState.buffs.attackMode, pState.buffs.nextAtk);
             if(!targetIsSurface) mod=mergeRollModes(mod,pState.buffs.airAttackMode);
             if(atk.tags && atk.tags.indexOf('Bomber')>=0) mod=mergeRollModes(mod,pState.buffs.bomberAttackMode);
@@ -2504,7 +2593,7 @@
                 }
             }
 
-            var isExplosive = atk.explosive && targetIsSurface;
+            var isExplosive = atk.explosive && targetIsSurface && !isNavalSurfaceCombatant(tok);
             var shtRoll = rollD4(mod, 0, false);
             var resolvedShootRoll = shtRoll;
             pState.buffs.nextAtk = 'normal'; 
@@ -2559,11 +2648,23 @@
                         logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" SQUADRON DAMAGED (" + tok.sqRef.currentHp + " HP remaining).");
                         logSitrep("ALERT: Deployed squadron " + tok.sqRef.name + " was damaged (" + tok.sqRef.currentHp + " HP remaining).");
                     }
+                } else if(isNavalSurfaceCombatant(tok)) {
+                    ensureNavalHull(tok);
+                    tok.currentHp--;
+                    if(tok.currentHp<=0) {
+                        logPub("Shoot: " + resolvedShootRoll.log + ". THIRD HIT! " + tok.name + " destroyed.");
+                        logSitrep("LOSS: Naval surface combatant " + tok.name + " was destroyed after three hits.");
+                        checkMissionVP(tok);
+                        recordNavalLoss({ Side: tok.side, Tags: tok.tags });
+                        destroyTarget(tok);
+                    } else {
+                        logPub("Shoot: " + resolvedShootRoll.log + ". HIT! " + tok.name + " hull damaged (" + tok.currentHp + "/" + tok.maxHp + " hits remaining).");
+                        logSitrep("NAVAL DAMAGE: Your " + tok.name + " has " + tok.currentHp + " of " + tok.maxHp + " hull hits remaining.");
+                    }
                 } else {
                     logPub("Shoot: " + resolvedShootRoll.log + "."+damageLog+" HIT! " + tok.name + " destroyed.");
                     logSitrep("LOSS: Active " + tok.name + " token at " + tok.loc + " was DESTROYED by enemy fire!");
                     checkMissionVP(tok);
-                    recordNavalLoss({ Side: tok.side, Tags: tok.tags });
                     destroyTarget(tok);
                 }
             }
@@ -2651,8 +2752,8 @@
                     var effectiveRange=atk.shtR;
                     if(pState.buffs.fighterRange && atk.tags && atk.tags.indexOf('Fighter')>=0) effectiveRange=Math.max(effectiveRange,pState.buffs.fighterRange);
                     if(dist > effectiveRange) { logPriv(state.turnSide, "Target out of Weapon Range.", true); return; }
-                    if(isSurfaceTarget(tok) && atk.canAttackSurface===false) { logPriv(state.turnSide,"Selected unit cannot attack surface targets.",true); return; }
-                    if(!isSurfaceTarget(tok) && atk.canAttackAir===false) { logPriv(state.turnSide,"Selected unit cannot attack air targets.",true); return; }
+                    var legality=attackDomainLegality(atk,tok);
+                    if(!legality.ok) { logPriv(state.turnSide,legality.reason,true); return; }
 
                     // Phase 4: Symmetrical Missile Defense (WEZ path crossing check)
                     var oppSide = (state.turnSide === 'US') ? 'PRC' : 'US';

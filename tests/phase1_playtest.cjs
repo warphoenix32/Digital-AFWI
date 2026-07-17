@@ -63,7 +63,7 @@ async function main() {
       specialMission: getMasterCard('PRC-AUTH-EN-08').DESC
     }));
     assert(result.title === 'AFWI Executive Edition', 'executive title missing');
-    assert(result.version === '1.2.1-executive-corrections', 'correction build version missing');
+    assert(result.version === '1.3.0-combat-roster', 'combat-roster build version missing');
     assert(result.validation.valid && result.validation.errors.length === 0, 'content validation failed');
     assert(result.maxRounds === 5 && result.rulesCycles === 5, 'default match is not five ATO cycles');
     assert(result.campaignGlobals === 'undefined,undefined' && !result.campaignUi, 'campaign system was not removed');
@@ -89,6 +89,49 @@ async function main() {
     assert(result.usSquadrons === 10 && result.prcSquadrons === 10, 'all authoritative squadrons are not draftable');
     assert(result.usEnablers === 34 && result.prcEnablers === 34, 'all authoritative enablers are not draftable');
     assert(result.hasBomber && result.hasGen5, 'free draft incorrectly filtered major capabilities');
+  });
+
+  await test('every authoritative card is selectable and removable in the draft UI', async page => {
+    const result = await page.evaluate(() => {
+      const failures=[];
+      for(const side of ['US','PRC']) {
+        setup.side=side; setup.selPosture=POSTURES[side].find(p=>p.title==='STANDARD'); setup.picks=[]; setup.draftNotice='';
+        state[side.toLowerCase()].squadronLedger={};
+        renderDraft();
+        const expected=MASTER_DECK.filter(c=>c.Side===side&&c.Authoritative&&c.Draftable&&cardAllowedByPosture(c,setup.selPosture));
+        const visible=[...document.querySelectorAll('#draft-pool-sq [data-card-id],#draft-pool-en [data-card-id]')].map(el=>el.getAttribute('data-card-id'));
+        for(const card of expected) {
+          if(visible.indexOf(card.ID)<0) failures.push(side+': missing '+card.ID);
+          const masterIndex=MASTER_DECK.indexOf(card);
+          draftCard(masterIndex);
+          if(!setup.picks.some(p=>p.ID===card.ID)) failures.push(side+': could not select '+card.ID);
+          const pickIndex=setup.picks.findIndex(p=>p.ID===card.ID);
+          if(pickIndex>=0) undraftCard(pickIndex);
+          if(setup.picks.some(p=>p.ID===card.ID)) failures.push(side+': could not return '+card.ID);
+        }
+      }
+      return {failures,usCount:MASTER_DECK.filter(c=>c.Side==='US'&&c.Authoritative&&c.Draftable).length,prcCount:MASTER_DECK.filter(c=>c.Side==='PRC'&&c.Authoritative&&c.Draftable).length};
+    });
+    assert(result.usCount===44&&result.prcCount===44,'authoritative draft roster count changed');
+    assert(result.failures.length===0,`draft selection failures: ${result.failures.join(' | ')}`);
+  });
+
+  await test('every authoritative Squadron deploys a complete playable unit profile', async page => {
+    const result = await page.evaluate(() => {
+      const failures=[]; window.confirm=()=>true; window.prompt=()=> '1';
+      for(const card of MASTER_DECK.filter(c=>c.Authoritative&&c.Type==='SQ')) {
+        const player=state[card.Side.toLowerCase()];
+        player.squadronLedger={}; player.deployedSquadrons=[]; state.tokens=[];
+        const ok=deploySquadronCard(card,player), made=state.tokens.filter(t=>t.parentSqId===card.ID);
+        if(!ok || made.length!==card.Qty) failures.push(card.ID+': expected '+card.Qty+' tokens, made '+made.length);
+        for(const tok of made) {
+          if(typeof tok.canAttackAir!=='boolean'||typeof tok.canAttackSurface!=='boolean'||typeof tok.targetAcq!=='number'||typeof tok.attackThreshold!=='number') failures.push(card.ID+': incomplete combat profile');
+        }
+      }
+      return {count:MASTER_DECK.filter(c=>c.Authoritative&&c.Type==='SQ').length,failures};
+    });
+    assert(result.count===20,'expected 20 authoritative Squadrons');
+    assert(result.failures.length===0,`Squadron playability failures: ${result.failures.join(' | ')}`);
   });
 
   await test('posture restrictions and zero-cost draft exceptions', async page => {
@@ -167,6 +210,60 @@ async function main() {
     });
     assert(result.cyberAdvSucceeded, 'cyber superiority did not grant Advantage');
     assert(!result.normalUsedFirstDie, 'normal acquisition incorrectly selected the unused second die');
+  });
+
+  await test('Air-to-Air and Air-to-Surface target domains are enforced', async page => {
+    const result = await page.evaluate(() => {
+      function unit(name,tags,air,surface){return {name,side:'US',loc:'lane-3',shtR:3,tags,canAttackAir:air,canAttackSurface:surface};}
+      const f22=unit('F-22',['Fighter','Gen5'],true,false);
+      const f35=unit('F-35',['Fighter','Gen5'],true,true);
+      const bomber=unit('B-52',['Bomber'],false,true);
+      const sam=unit('Patriot',['SAM'],true,false);
+      const ship=unit('DDG',['Naval','SAG','SAM'],true,true);
+      const fighterTarget={name:'J-20',side:'PRC',tags:['Fighter']};
+      const j15Target={name:'J-15',side:'PRC',tags:['Naval','Carrier','Fighter','Gen4']};
+      const shipTarget={name:'Type 055',side:'PRC',tags:['Naval','SAG','SAM']};
+      const baseTarget={name:'PRC Airbase',side:'PRC',isAirbase:true,tags:[]};
+      return {
+        f22Air:attackDomainLegality(f22,fighterTarget).ok,
+        f22Ship:attackDomainLegality(f22,shipTarget).ok,
+        f35Ship:attackDomainLegality(f35,shipTarget).ok,
+        bomberAir:attackDomainLegality(bomber,fighterTarget).ok,
+        bomberShip:attackDomainLegality(bomber,shipTarget).ok,
+        samAir:attackDomainLegality(sam,fighterTarget).ok,
+        samShip:attackDomainLegality(sam,shipTarget).ok,
+        shipAir:attackDomainLegality(ship,fighterTarget).ok,
+        shipBase:attackDomainLegality(ship,baseTarget).ok,
+        shipShip:attackDomainLegality(ship,shipTarget).ok,
+        j15IsAir:!isSurfaceTarget(j15Target),
+        profiles:{f22:getMasterCard('US-AUTH-SQ-05'),f35:getMasterCard('US-AUTH-SQ-08'),b52:getMasterCard('US-AUTH-SQ-02'),rq4:getMasterCard('US-AUTH-SQ-03'),sam:getMasterCard('PRC-AUTH-SQ-02')}
+      };
+    });
+    assert(result.f22Air&&!result.f22Ship&&result.f35Ship,'fighter Air-to-Air/Air-to-Surface split failed');
+    assert(!result.bomberAir&&result.bomberShip,'bomber target-domain enforcement failed');
+    assert(result.samAir&&!result.samShip,'SAM target-domain enforcement failed');
+    assert(result.shipAir&&result.shipBase&&!result.shipShip,'naval offensive domain enforcement failed');
+    assert(result.j15IsAir,'carrier aircraft was incorrectly classified as a surface combatant');
+    assert(result.profiles.f22.canAttackAir&&!result.profiles.f22.canAttackSurface&&result.profiles.f35.canAttackAir&&result.profiles.f35.canAttackSurface,'fifth-generation unit profiles are wrong');
+    assert(!result.profiles.b52.canAttackAir&&result.profiles.b52.canAttackSurface&&!result.profiles.rq4.canAttackAir&&!result.profiles.rq4.canAttackSurface,'bomber/recon profiles are wrong');
+    assert(result.profiles.sam.canAttackAir&&!result.profiles.sam.canAttackSurface,'authoritative SAM profile is wrong');
+  });
+
+  await test('naval surface combatants require three successful hits', async page => {
+    const result = await page.evaluate(() => {
+      state.phase='action';state.actionLocked=false;state.turnSide='US';state.us.vp=0;state.us.mission={title:'ATTRITION'};state.prc.losses=[];state.prc.navalLosses=0;state.tokens=[];
+      state.us.buffs={nextAtk:'normal',nextCyb:'normal',moveDenied:false,attackMode:'normal',acquisitionMode:'normal',airAttackMode:'normal',bomberAttackMode:'normal',contingencyAutoGenerate:false,fighterRange:null,nextAutoHit:false,nextUASReroll:false,sofProtected:false};
+      const attacker={side:'US',name:'F-35A',loc:'lane-3',shtR:1,attackThreshold:2,canAttackAir:true,canAttackSurface:true,explosive:false,winchesterType:'Standard',winchester:false,tags:['Fighter','Gen5']};
+      const target={side:'PRC',name:'Type 055',loc:'lane-3',acquired:true,parentSqId:null,tags:['Naval','SAG','SAM'],maxHp:3,currentHp:3};
+      state.tokens=[attacker,target];AFWI.Random.setSequence([4,4,4]);
+      const history=[];
+      for(let i=0;i<3;i++){resolveCommittedAttack(attacker,target,state.us,false,null);history.push({present:state.tokens.indexOf(target)>=0,hp:target.currentHp,vp:state.us.vp,losses:state.prc.losses.length});}
+      return {history,navalLosses:state.prc.navalLosses};
+    });
+    assert(result.history[0].present&&result.history[0].hp===2&&result.history[0].vp===0,'first naval hit destroyed or scored the ship');
+    assert(result.history[1].present&&result.history[1].hp===1&&result.history[1].vp===0,'second naval hit destroyed or scored the ship');
+    assert(!result.history[2].present&&result.history[2].hp===0&&result.history[2].vp===3&&result.history[2].losses===1,'third naval hit did not destroy and score the ship');
+    assert(result.navalLosses===1,'naval loss ledger did not record the destroyed surface combatant');
   });
 
   await test('Squadron cards stay masked until AQ 1 targeting reveals them', async page => {
@@ -281,6 +378,20 @@ async function main() {
     assert(!result.adaWinchester, 'static ADA went Winchester');
     assert(result.uasWinchester, 'UAS failed to go Winchester on natural 1-2');
     assert(result.navalSalvos === 2, 'naval natural 4 failed to conserve a salvo');
+  });
+
+  await test('Winchester state and HUD typography are prominent', async page => {
+    const result = await page.evaluate(() => {
+      state.phase='action';state.actionLocked=false;state.turnSide='US';state.acts={move:1,acq:1,sht:1};
+      const tok={side:'US',cardId:'US-AUTH-SQ-10',name:'F-16C Fighting Falcon',loc:'lane-3',spd:2,acqR:2,shtR:1,targetAcq:3,attackThreshold:3,canAttackAir:true,canAttackSurface:true,winchesterType:'Standard',winchester:true,tags:['Fighter','Gen4'],acquired:false,rogue:false};
+      state.tokens=[tok];state.selected=tok;drawUI();
+      const tokenEl=document.querySelector('#lane-3 .token');
+      const panel=document.getElementById('selected-unit-panel');
+      return {tokenClass:tokenEl.className,badge:!!tokenEl.querySelector('.winchester-badge'),panelClass:panel.className,panelAlert:!!panel.querySelector('.selected-winchester-alert'),statusPill:!!document.querySelector('#unit-status .status-winchester'),hudFont:parseFloat(getComputedStyle(document.getElementById('unit-status')).fontSize),panelFont:parseFloat(getComputedStyle(panel.querySelector('.selected-stat')).fontSize)};
+    });
+    assert(/winchester/.test(result.tokenClass)&&result.badge,'Winchester token marker is not prominent');
+    assert(/winchester/.test(result.panelClass)&&result.panelAlert&&result.statusPill,'Winchester HUD alert is incomplete');
+    assert(result.hudFont>=13&&result.panelFont>=11,'HUD font sizes were not increased');
   });
 
   await test('Counter-UAS destroys tokens without runtime failure', async page => {
